@@ -1,0 +1,22 @@
+{
+  "manver" : "1",
+  "project" : "pose",
+  "description" : "",
+  "version" : "0.0.1",
+  "license" : "Apache 2.0",
+  "author" : "kobbled",
+  "source" : [
+    "src/pose.kl"
+  ],
+  "tests" : [
+    "src/test/test_pose.kl"
+  ],
+  "includes" : [
+    "include"
+  ],
+  "depends" : [
+    "errors",
+    "Strings",
+    "KUnit"
+  ]
+}
