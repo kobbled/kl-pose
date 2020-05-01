@@ -1,0 +1,29 @@
+%ifndef pose_h
+%define pose_h
+
+--functions
+ROUTINE solveIK(pose_in: XYZWPR; grp_no : INTEGER) : JOINTPOS FROM pose
+ROUTINE solveK(jpos: JOINTPOS; grp_no : INTEGER) : XYZWPR FROM pose
+
+--setters
+ROUTINE setuframe(frm_no, grp_no : INTEGER) FROM pose
+ROUTINE setutool(frm_no, grp_no : INTEGER) FROM pose
+--update
+ROUTINE updateframe(frame : XYZWPR; frm_no, grp_no : INTEGER) FROM pose
+ROUTINE updatetool(frame : XYZWPR; frm_no, grp_no : INTEGER) FROM pose
+
+-- setters
+ROUTINE set_joint(arr: ARRAY[*] OF REAL) : JOINTPOS FROM pose
+ROUTINE set_xyz(arr: ARRAY[*] OF REAL; conf_str : STRING) : XYZWPR FROM pose
+ROUTINE setpr_joint(pose_in : JOINTPOS ; reg_no, grp_no : INTEGER) FROM pose
+ROUTINE setpr_xyz(pose_in : XYZWPR ; reg_no, grp_no : INTEGER) FROM pose
+
+-- getters
+ROUTINE getuframe(grp_no : INTEGER) : XYZWPR FROM pose
+ROUTINE getutool(grp_no : INTEGER) : XYZWPR FROM pose
+ROUTINE get_lpos(grp_no : INTEGER) : XYZWPR FROM pose
+ROUTINE get_jpos(grp_no : INTEGER) : JOINTPOS FROM pose
+
+ROUTINE getpr(reg_no, grp_no : INTEGER) : POSEDATA FROM pose
+
+%endif --pose_h

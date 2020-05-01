@@ -1,0 +1,6 @@
+%ifndef pose_private_h
+%define pose_private_h
+
+ROUTINE CHK_STAT(rec_stat: INTEGER) FROM pose
+
+%endif --pose_private_h

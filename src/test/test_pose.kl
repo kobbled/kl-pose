@@ -1,0 +1,314 @@
+PROGRAM test_pose
+%NOLOCKGROUP
+
+VAR
+  entry : INTEGER
+  status : INTEGER
+
+%INCLUDE pose.klt
+%INCLUDE pose.klh
+%INCLUDE strings.klh
+%INCLUDE kunit.klh
+
+-- set frames
+ROUTINE t_set_uf : BOOLEAN
+  VAR
+    b : BOOLEAN
+    frame_no : INTEGER
+    group_no : INTEGER
+    expect : INTEGER
+  BEGIN
+    -- set uframe
+    frame_no = 3
+
+    -- test without group
+    setuframe(frame_no, 0)
+    GET_VAR(entry, 'pose', 'ok', b, status)
+
+    --get current frame number
+    GET_VAR(entry, '*SYSTEM*', '$MNUFRAMENUM[1]', expect, status)
+
+    RETURN(b AND kunit_eq_int(expect, frame_no))
+  END t_set_uf
+
+ROUTINE t_set_uf_grp : BOOLEAN
+  VAR
+    b : BOOLEAN
+    frame_no : INTEGER
+    group_no : INTEGER
+    expect : INTEGER
+  BEGIN
+    -- set uframe
+    frame_no = 2
+    group_no = 2
+
+    setuframe(frame_no, group_no)
+    GET_VAR(entry, 'pose', 'ok', b, status)
+
+    --get current frame number
+    GET_VAR(entry, '*SYSTEM*', '$MNUFRAMENUM['+i_to_s(group_no)+']', expect, status)
+
+    RETURN(b AND kunit_eq_int(expect, frame_no))
+  END t_set_uf_grp
+
+ROUTINE t_set_ut : BOOLEAN
+  VAR
+    b : BOOLEAN
+    frame_no : INTEGER
+    group_no : INTEGER
+    expect : INTEGER
+  BEGIN
+    -- set uframe
+    frame_no = 1
+
+    -- test without group
+    setutool(frame_no, 0)
+    GET_VAR(entry, 'pose', 'ok', b, status)
+
+    --get current frame number
+    GET_VAR(entry, '*SYSTEM*', '$MNUTOOLNUM[1]', expect, status)
+
+    RETURN(b AND kunit_eq_int(expect, frame_no))
+  END t_set_ut
+
+ROUTINE t_set_ut_grp : BOOLEAN
+  VAR
+    b : BOOLEAN
+    frame_no : INTEGER
+    group_no : INTEGER
+    expect : INTEGER
+  BEGIN
+    -- set uframe
+    frame_no = 1
+    group_no = 2
+
+    setutool(frame_no, group_no)
+    GET_VAR(entry, 'pose', 'ok', b, status)
+
+    --get current frame number
+    GET_VAR(entry, '*SYSTEM*', '$MNUTOOLNUM['+i_to_s(group_no)+']', expect, status)
+
+    RETURN(b AND kunit_eq_int(frame_no, expect))
+  END t_set_ut_grp
+
+-- get uframe
+ROUTINE t_get_uf : BOOLEAN
+  VAR
+    b : ARRAY[2] OF BOOLEAN
+    frame : XYZWPR
+    frame_no : INTEGER
+    group_no : INTEGER
+    actual : XYZWPR
+  BEGIN
+    -- set frame
+    frame_no = 3
+    group_no = 1
+    setuframe(frame_no, group_no)
+    GET_VAR(entry, 'pose', 'ok', b[1], status)
+    IF NOT b[1] THEN
+      RETURN(b[1])
+    ENDIF
+
+    -- get frame
+    frame = getuframe(group_no)
+    GET_VAR(entry, 'pose', 'ok', b[2], status)
+    actual = $MNUFRAME[group_no, frame_no]
+
+    RETURN(b[1] AND b[2] AND kunit_eq_pos(actual, frame))
+  END t_get_uf
+
+-- get utool
+ROUTINE t_get_ut : BOOLEAN
+  VAR
+    b : ARRAY[2] OF BOOLEAN
+    tool : XYZWPR
+    tool_no : INTEGER
+    group_no : INTEGER
+    actual : XYZWPR
+  BEGIN
+
+    -- set frame
+    tool_no = 1
+    group_no = 1
+    setutool(tool_no, group_no)
+    GET_VAR(entry, 'pose', 'ok', b[1], status)
+    IF NOT b[1] THEN
+      RETURN(b[1])
+    ENDIF
+
+    tool = getutool(group_no)
+    GET_VAR(entry, 'pose', 'ok', b[2], status)
+    IF NOT b[2] THEN
+      RETURN(b[2])
+    ENDIF
+    actual = $MNUTOOL[group_no, tool_no]
+
+    RETURN(b[1] AND b[2] AND kunit_eq_pos(actual, tool))
+  END t_get_ut
+
+ROUTINE t_set_joint : BOOLEAN
+  VAR
+    pose : JOINTPOS6
+    b  : BOOLEAN
+    actual : ARRAY[6] OF REAL
+    expected : ARRAY[6] OF REAL
+  BEGIN
+    -- set proper frame
+    setutool(1, 1)
+    setuframe(5, 1)
+    -- set jointpos type
+    expected[1] = 10.0
+    expected[2] = 30.0
+    expected[3] = 190.0
+    expected[4] = -90.0
+    expected[5] = 0.0
+    expected[6] = 180.0
+    
+    pose = set_joint(expected)
+    GET_VAR(entry, 'pose', 'ok', b, status)
+    IF NOT b THEN
+      RETURN(b)
+    ENDIF
+
+    -- check positions
+    CNV_JPOS_REL(pose, actual, status)
+
+    RETURN(b AND kunit_eq_arr(expected, actual))
+  END t_set_joint
+
+ROUTINE t_set_xyz : BOOLEAN
+  VAR
+    expected : XYZWPR
+    actual : XYZWPR
+    conf_str : STRING[25]
+    arr : ARRAY[6] OF REAL
+    b : BOOLEAN
+  BEGIN
+    -- set proper frame
+    setutool(1, 1)
+    setuframe(5, 1)
+
+    --set position
+    expected.x = 10.0
+    expected.y = 30.0
+    expected.z = 190.0
+    expected.w = -90.0
+    expected.p = 0.0
+    expected.r = 180.0
+    conf_str = 'F U T, 0, 0, 0'
+    --convert to config type
+    CNV_STR_CONF(conf_str, expected.config_data, STATUS)
+    IF STATUS <> 0 THEN
+      b = FALSE
+      RETURN(FALSE)
+    ENDIF
+
+    -- set array
+    arr[1] = 10.0
+    arr[2] = 30.0
+    arr[3] = 190.0
+    arr[4] = -90.0
+    arr[5] = 0.0
+    arr[6] = 180.0
+
+    actual = set_xyz(arr, conf_str)
+    GET_VAR(entry, 'pose', 'ok', b, status)
+
+    RETURN(b AND kunit_eq_pos(expected, actual))
+  END t_set_xyz
+
+ROUTINE t_set_prc : BOOLEAN
+  VAR
+    expected : XYZWPR
+    pr_num : INTEGER
+    conf_str : STRING[25]
+    grp_num : INTEGER
+    STATUS : INTEGER
+    b : BOOLEAN
+    actual : XYZWPR
+  BEGIN
+    b = TRUE
+    --set posreg number
+    pr_num = 80
+    grp_num = 1
+    --set position
+    expected.x = 10.0
+    expected.y = 30.0
+    expected.z = 190.0
+    expected.w = -90.0
+    expected.p = 0.0
+    expected.r = 180.0
+    conf_str = 'F U T, 0, 0, 0'
+    --convert to config type
+    CNV_STR_CONF(conf_str, expected.config_data, STATUS)
+    IF STATUS <> 0 THEN
+      WRITE TPDISPLAY('config conversion failure')
+      b = FALSE
+      RETURN(FALSE)
+    ENDIF
+    -- set pr
+    setpr_xyz(expected, pr_num, grp_num)
+    GET_VAR(entry, 'pose', 'ok', b, status)
+    -- get pr for comparision
+    actual = GET_POS_REG(pr_num, status, grp_num)
+    IF STATUS <> 0 THEN
+      WRITE TPDISPLAY('get PR failure')
+      b = FALSE
+      RETURN(FALSE)
+    ENDIF
+
+    RETURN(b AND kunit_eq_pos(expected, actual))
+
+  END t_set_prc
+
+ROUTINE t_set_prj : BOOLEAN
+  VAR
+    pr_num : INTEGER
+    expected : ARRAY[6] OF REAL
+    jpos_exp : JOINTPOS6
+    jpos_act : JOINTPOS6
+    b : BOOLEAN
+  BEGIN
+    pr_num = 49
+    -- set jointpos type
+    expected[1] = 10.0
+    expected[2] = 30.0
+    expected[3] = 190.0
+    expected[4] = -90.0
+    expected[5] = 0.0
+    expected[6] = 180.0
+    -- convert into jointpos form
+    jpos_exp = set_joint(expected)
+    -- push jointpos to pr
+    setpr_joint(jpos_exp, pr_num, 0)
+    -- check that functions completed
+    GET_VAR(entry, 'pose', 'ok', b, status)
+    IF NOT b THEN
+      RETURN(FALSE)
+    ENDIF
+
+    -- get pr for comparision
+    jpos_act = GET_JPOS_REG(pr_num, status)
+    IF STATUS <> 0 THEN
+      RETURN(FALSE)
+    ENDIF
+
+    RETURN(b AND kunit_eq_jnt(jpos_exp, jpos_act))
+
+  END t_set_prj
+
+BEGIN
+  kunit_test('set_uframe()', t_set_uf)
+  kunit_test('set_uframe_group()', t_set_uf_grp)
+  kunit_test('set_utool()', t_set_ut)
+  kunit_test('set_utool_group()', t_set_ut_grp)
+  kunit_test('get_uframe()', t_get_uf)
+  kunit_test('get_utool()', t_get_ut)
+
+  kunit_test('set_joint()', t_set_joint)
+  kunit_test('set_xyz()', t_set_xyz)
+  kunit_test('set_pr_xyz()', t_set_prc)
+  kunit_test('set_pr_joint()', t_set_prj)
+
+  kunit_done
+END test_pose
