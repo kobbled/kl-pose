@@ -6,6 +6,7 @@ VAR
   status : INTEGER
 
 %INCLUDE pose.klt
+
 %INCLUDE pose.klh
 %INCLUDE strings.klh
 %INCLUDE kunit.klh

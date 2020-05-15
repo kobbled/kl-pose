@@ -1,16 +1,8 @@
 %ifndef pose_t
 %define pose_t
 
-%INCLUDE pose.type.klt
-
-CONST
-    MAX_AXS		= 9		-- Maximum number of axes JOINTPOS has
-	MAX_GRPS = 5
-    -- position types
-    CC_POSITION = 1
-    CC_XYZWPR = 2
-    CC_EXT = 6
-	CC_JOINT = 9
+%include pose.type.klt
+%include pose.const.klt
 
 VAR
     ok : BOOLEAN
