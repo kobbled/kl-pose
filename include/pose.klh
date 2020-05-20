@@ -1,29 +1,64 @@
 %ifndef pose_h
 %define pose_h
 
+%include namespace.m
+
+%define prog_name pose
+%define prog_name_alias pose
+
+-- namespaced members in format <prog_name_alias>__<func_name>
+
+declare(prog_name,solveIK,prog_name_alias,solveIK)
+declare(prog_name,solveK,prog_name_alias,solveK)
+--setters
+declare(prog_name,set_userframe,prog_name_alias,setUF)
+declare(prog_name,set_toolframe,prog_name_alias,setUT)
+declare(prog_name,update_uframe,prog_name_alias,updtUF)
+declare(prog_name,update_utool,prog_name_alias,updtUT)
+declare(prog_name,set_jointpos,prog_name_alias,setjnt)
+declare(prog_name,set_xyzwpr,prog_name_alias,setxyz)
+declare(prog_name,set_posreg_joint,prog_name_alias,setprj)
+declare(prog_name,set_posreg_xyz,prog_name_alias,setprx)
+--getters
+declare(prog_name,get_userframe,prog_name_alias,getUF)
+declare(prog_name,get_toolframe,prog_name_alias,getUT)
+declare(prog_name,get_lpos,prog_name_alias,getlpos)
+declare(prog_name,get_jpos,prog_name_alias,getjpos)
+declare(prog_name,get_posreg,prog_name_alias,getpr)
+--conversion
+declare(prog_name,jpos_to_jpos2,prog_name_alias,cnvjps2)
+declare(prog_name,jpos_to_jpos3,prog_name_alias,cnvjps3)
+declare(prog_name,jpos_to_jpos6,prog_name_alias,cnvjps6)
+
 --functions
-ROUTINE solveIK(pose_in: XYZWPR; grp_no : INTEGER) : JOINTPOS FROM pose
-ROUTINE solveK(jpos: JOINTPOS; grp_no : INTEGER) : XYZWPR FROM pose
+ROUTINE pose__solveIK(pose_in: XYZWPR; grp_no : INTEGER) : JOINTPOS FROM pose
+ROUTINE pose__solveK(jpos: JOINTPOS; grp_no : INTEGER) : XYZWPR FROM pose
 
 --setters
-ROUTINE setuframe(frm_no, grp_no : INTEGER) FROM pose
-ROUTINE setutool(frm_no, grp_no : INTEGER) FROM pose
+ROUTINE pose__set_userframe(frm_no, grp_no : INTEGER) FROM pose
+ROUTINE pose__set_toolframe(frm_no, grp_no : INTEGER) FROM pose
 --update
-ROUTINE updateframe(frame : XYZWPR; frm_no, grp_no : INTEGER) FROM pose
-ROUTINE updatetool(frame : XYZWPR; frm_no, grp_no : INTEGER) FROM pose
+ROUTINE pose__update_uframe(frame : XYZWPR; frm_no, grp_no : INTEGER) FROM pose
+ROUTINE pose__update_utool(frame : XYZWPR; frm_no, grp_no : INTEGER) FROM pose
 
 -- setters
-ROUTINE set_joint(arr: ARRAY[*] OF REAL) : JOINTPOS FROM pose
-ROUTINE set_xyz(arr: ARRAY[*] OF REAL; conf_str : STRING) : XYZWPR FROM pose
-ROUTINE setpr_joint(pose_in : JOINTPOS ; reg_no, grp_no : INTEGER) FROM pose
-ROUTINE setpr_xyz(pose_in : XYZWPR ; reg_no, grp_no : INTEGER) FROM pose
+ROUTINE pose__set_jointpos(arr: ARRAY[*] OF REAL) : JOINTPOS FROM pose
+ROUTINE pose__set_xyzwpr(arr: ARRAY[*] OF REAL; conf_str : STRING) : XYZWPR FROM pose
+ROUTINE pose__set_posreg_xyz(pose_in : XYZWPR ; reg_no, grp_no : INTEGER) FROM pose
+ROUTINE pose__set_posreg_joint(pose_in : JOINTPOS ; reg_no, grp_no : INTEGER) FROM pose
 
 -- getters
-ROUTINE getuframe(grp_no : INTEGER) : XYZWPR FROM pose
-ROUTINE getutool(grp_no : INTEGER) : XYZWPR FROM pose
-ROUTINE get_lpos(grp_no : INTEGER) : XYZWPR FROM pose
-ROUTINE get_jpos(grp_no : INTEGER) : JOINTPOS FROM pose
+ROUTINE pose__get_userframe(grp_no : INTEGER) : XYZWPR FROM pose
+ROUTINE pose__get_toolframe(grp_no : INTEGER) : XYZWPR FROM pose
+ROUTINE pose__get_lpos(grp_no : INTEGER) : XYZWPR FROM pose
+ROUTINE pose__get_jpos(grp_no : INTEGER) : JOINTPOS FROM pose
+ROUTINE pose__get_posreg(reg_no, grp_no : INTEGER) : POSEDATA FROM pose
 
-ROUTINE getpr(reg_no, grp_no : INTEGER) : POSEDATA FROM pose
+-- conversions
+-- pass out_arr by reference. If return type controller throws 
+-- "550 Axis Configuration mismatch"
+ROUTINE pose__jpos_to_jpos2(pose : JOINTPOS) : JOINTPOS2 FROM pose
+ROUTINE pose__jpos_to_jpos3(pose : JOINTPOS) : JOINTPOS3 FROM pose
+ROUTINE pose__jpos_to_jpos6(pose : JOINTPOS) : JOINTPOS6 FROM pose
 
 %endif --pose_h

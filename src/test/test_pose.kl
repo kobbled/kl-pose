@@ -5,11 +5,11 @@ VAR
   entry : INTEGER
   status : INTEGER
 
-%INCLUDE pose.klt
+%include pose.klt
 
-%INCLUDE pose.klh
-%INCLUDE strings.klh
-%INCLUDE kunit.klh
+%include pose.klh
+%include strings.klh
+%include kunit.klh
 
 -- set frames
 ROUTINE t_set_uf : BOOLEAN
@@ -23,7 +23,7 @@ ROUTINE t_set_uf : BOOLEAN
     frame_no = 3
 
     -- test without group
-    setuframe(frame_no, 0)
+    pose__set_userframe(frame_no, 0)
     GET_VAR(entry, 'pose', 'ok', b, status)
 
     --get current frame number
@@ -41,9 +41,9 @@ ROUTINE t_set_uf_grp : BOOLEAN
   BEGIN
     -- set uframe
     frame_no = 2
-    group_no = 2
+    group_no = 1
 
-    setuframe(frame_no, group_no)
+    pose__set_userframe(frame_no, group_no)
     GET_VAR(entry, 'pose', 'ok', b, status)
 
     --get current frame number
@@ -63,7 +63,7 @@ ROUTINE t_set_ut : BOOLEAN
     frame_no = 1
 
     -- test without group
-    setutool(frame_no, 0)
+    pose__set_toolframe(frame_no, 0)
     GET_VAR(entry, 'pose', 'ok', b, status)
 
     --get current frame number
@@ -81,9 +81,9 @@ ROUTINE t_set_ut_grp : BOOLEAN
   BEGIN
     -- set uframe
     frame_no = 1
-    group_no = 2
+    group_no = 1
 
-    setutool(frame_no, group_no)
+    pose__set_toolframe(frame_no, group_no)
     GET_VAR(entry, 'pose', 'ok', b, status)
 
     --get current frame number
@@ -104,14 +104,14 @@ ROUTINE t_get_uf : BOOLEAN
     -- set frame
     frame_no = 3
     group_no = 1
-    setuframe(frame_no, group_no)
+    pose__set_userframe(frame_no, group_no)
     GET_VAR(entry, 'pose', 'ok', b[1], status)
     IF NOT b[1] THEN
       RETURN(b[1])
     ENDIF
 
     -- get frame
-    frame = getuframe(group_no)
+    frame = pose__get_userframe(group_no)
     GET_VAR(entry, 'pose', 'ok', b[2], status)
     actual = $MNUFRAME[group_no, frame_no]
 
@@ -131,13 +131,13 @@ ROUTINE t_get_ut : BOOLEAN
     -- set frame
     tool_no = 1
     group_no = 1
-    setutool(tool_no, group_no)
+    pose__set_toolframe(tool_no, group_no)
     GET_VAR(entry, 'pose', 'ok', b[1], status)
     IF NOT b[1] THEN
       RETURN(b[1])
     ENDIF
 
-    tool = getutool(group_no)
+    tool = pose__get_toolframe(group_no)
     GET_VAR(entry, 'pose', 'ok', b[2], status)
     IF NOT b[2] THEN
       RETURN(b[2])
@@ -155,8 +155,8 @@ ROUTINE t_set_joint : BOOLEAN
     expected : ARRAY[6] OF REAL
   BEGIN
     -- set proper frame
-    setutool(1, 1)
-    setuframe(5, 1)
+    pose__set_toolframe(1, 1)
+    pose__set_userframe(4, 1)
     -- set jointpos type
     expected[1] = 10.0
     expected[2] = 30.0
@@ -165,7 +165,7 @@ ROUTINE t_set_joint : BOOLEAN
     expected[5] = 0.0
     expected[6] = 180.0
     
-    pose = set_joint(expected)
+    pose = pose__set_jointpos(expected)
     GET_VAR(entry, 'pose', 'ok', b, status)
     IF NOT b THEN
       RETURN(b)
@@ -186,8 +186,8 @@ ROUTINE t_set_xyz : BOOLEAN
     b : BOOLEAN
   BEGIN
     -- set proper frame
-    setutool(1, 1)
-    setuframe(5, 1)
+    pose__set_toolframe(1, 1)
+    pose__set_userframe(4, 1)
 
     --set position
     expected.x = 10.0
@@ -212,7 +212,7 @@ ROUTINE t_set_xyz : BOOLEAN
     arr[5] = 0.0
     arr[6] = 180.0
 
-    actual = set_xyz(arr, conf_str)
+    actual = pose__set_xyzwpr(arr, conf_str)
     GET_VAR(entry, 'pose', 'ok', b, status)
 
     RETURN(b AND kunit_eq_pos(expected, actual))
@@ -248,7 +248,7 @@ ROUTINE t_set_prc : BOOLEAN
       RETURN(FALSE)
     ENDIF
     -- set pr
-    setpr_xyz(expected, pr_num, grp_num)
+    pose__set_posreg_xyz(expected, pr_num, grp_num)
     GET_VAR(entry, 'pose', 'ok', b, status)
     -- get pr for comparision
     actual = GET_POS_REG(pr_num, status, grp_num)
@@ -279,9 +279,9 @@ ROUTINE t_set_prj : BOOLEAN
     expected[5] = 0.0
     expected[6] = 180.0
     -- convert into jointpos form
-    jpos_exp = set_joint(expected)
+    jpos_exp = pose__set_jointpos(expected)
     -- push jointpos to pr
-    setpr_joint(jpos_exp, pr_num, 0)
+    pose__set_posreg_joint(jpos_exp, pr_num, 0)
     -- check that functions completed
     GET_VAR(entry, 'pose', 'ok', b, status)
     IF NOT b THEN
