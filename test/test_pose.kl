@@ -24,7 +24,7 @@ ROUTINE t_set_uf : BOOLEAN
 
     -- test without group
     pose__set_userframe(frame_no, 0)
-    GET_VAR(entry, 'pose', 'ok', b, status)
+    b = pose__get_ok
 
     --get current frame number
     GET_VAR(entry, '*SYSTEM*', '$MNUFRAMENUM[1]', expect, status)
@@ -44,7 +44,7 @@ ROUTINE t_set_uf_grp : BOOLEAN
     group_no = 1
 
     pose__set_userframe(frame_no, group_no)
-    GET_VAR(entry, 'pose', 'ok', b, status)
+    b = pose__get_ok
 
     --get current frame number
     GET_VAR(entry, '*SYSTEM*', '$MNUFRAMENUM['+i_to_s(group_no)+']', expect, status)
@@ -64,7 +64,7 @@ ROUTINE t_set_ut : BOOLEAN
 
     -- test without group
     pose__set_toolframe(frame_no, 0)
-    GET_VAR(entry, 'pose', 'ok', b, status)
+    b = pose__get_ok
 
     --get current frame number
     GET_VAR(entry, '*SYSTEM*', '$MNUTOOLNUM[1]', expect, status)
@@ -84,7 +84,7 @@ ROUTINE t_set_ut_grp : BOOLEAN
     group_no = 1
 
     pose__set_toolframe(frame_no, group_no)
-    GET_VAR(entry, 'pose', 'ok', b, status)
+    b = pose__get_ok
 
     --get current frame number
     GET_VAR(entry, '*SYSTEM*', '$MNUTOOLNUM['+i_to_s(group_no)+']', expect, status)
@@ -105,14 +105,15 @@ ROUTINE t_get_uf : BOOLEAN
     frame_no = 3
     group_no = 1
     pose__set_userframe(frame_no, group_no)
-    GET_VAR(entry, 'pose', 'ok', b[1], status)
+    b[1] = pose__get_ok
+
     IF NOT b[1] THEN
       RETURN(b[1])
     ENDIF
 
     -- get frame
     frame = pose__get_userframe(group_no)
-    GET_VAR(entry, 'pose', 'ok', b[2], status)
+    b[2] = pose__get_ok
     actual = $MNUFRAME[group_no, frame_no]
 
     RETURN(b[1] AND b[2] AND kunit_eq_pos(actual, frame))
@@ -132,13 +133,15 @@ ROUTINE t_get_ut : BOOLEAN
     tool_no = 1
     group_no = 1
     pose__set_toolframe(tool_no, group_no)
-    GET_VAR(entry, 'pose', 'ok', b[1], status)
+
+    b[1] = pose__get_ok
     IF NOT b[1] THEN
       RETURN(b[1])
     ENDIF
 
     tool = pose__get_toolframe(group_no)
-    GET_VAR(entry, 'pose', 'ok', b[2], status)
+
+    b[2] = pose__get_ok
     IF NOT b[2] THEN
       RETURN(b[2])
     ENDIF
@@ -166,7 +169,8 @@ ROUTINE t_set_joint : BOOLEAN
     expected[6] = 180.0
     
     pose = pose__set_jointpos(expected)
-    GET_VAR(entry, 'pose', 'ok', b, status)
+
+    b = pose__get_ok
     IF NOT b THEN
       RETURN(b)
     ENDIF
@@ -213,7 +217,7 @@ ROUTINE t_set_xyz : BOOLEAN
     arr[6] = 180.0
 
     actual = pose__set_xyzwpr(arr, conf_str)
-    GET_VAR(entry, 'pose', 'ok', b, status)
+    b = pose__get_ok
 
     RETURN(b AND kunit_eq_pos(expected, actual))
   END t_set_xyz
@@ -249,7 +253,7 @@ ROUTINE t_set_prc : BOOLEAN
     ENDIF
     -- set pr
     pose__set_posreg_xyz(expected, pr_num, grp_num)
-    GET_VAR(entry, 'pose', 'ok', b, status)
+    b = pose__get_ok
     -- get pr for comparision
     actual = GET_POS_REG(pr_num, status, grp_num)
     IF STATUS <> 0 THEN
@@ -283,7 +287,7 @@ ROUTINE t_set_prj : BOOLEAN
     -- push jointpos to pr
     pose__set_posreg_joint(jpos_exp, pr_num, 0)
     -- check that functions completed
-    GET_VAR(entry, 'pose', 'ok', b, status)
+    b = pose__get_ok
     IF NOT b THEN
       RETURN(FALSE)
     ENDIF

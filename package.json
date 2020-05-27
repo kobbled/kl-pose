@@ -9,7 +9,7 @@
     "src/pose.kl"
   ],
   "tests" : [
-    "src/test/test_pose.kl"
+    "test/test_pose.kl"
   ],
   "includes" : [
     "include"

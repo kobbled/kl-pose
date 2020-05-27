@@ -25,6 +25,7 @@ declare(prog_name,get_toolframe,prog_name_alias,getUT)
 declare(prog_name,get_lpos,prog_name_alias,getlpos)
 declare(prog_name,get_jpos,prog_name_alias,getjpos)
 declare(prog_name,get_posreg,prog_name_alias,getpr)
+declare(prog_name,get_ok,prog_name_alias,getok)
 --conversion
 declare(prog_name,jpos_to_jpos2,prog_name_alias,cnvjps2)
 declare(prog_name,jpos_to_jpos3,prog_name_alias,cnvjps3)
@@ -53,6 +54,7 @@ ROUTINE pose__get_toolframe(grp_no : INTEGER) : XYZWPR FROM pose
 ROUTINE pose__get_lpos(grp_no : INTEGER) : XYZWPR FROM pose
 ROUTINE pose__get_jpos(grp_no : INTEGER) : JOINTPOS FROM pose
 ROUTINE pose__get_posreg(reg_no, grp_no : INTEGER) : POSEDATA FROM pose
+ROUTINE pose__get_ok : BOOLEAN FROM pose
 
 -- conversions
 -- pass out_arr by reference. If return type controller throws 

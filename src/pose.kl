@@ -27,29 +27,29 @@ ROUTINE pose__solveIK
 -- return: JOINTPOS
 -- desc: run IK routine on XYZWPR type to get joint angles
 -- -----------
-VAR
-    jpos : JOINTPOS
-    jpos_ref : JOINTPOS
-    wjnt_cfg : CONFIG
-    ext_ax : ARRAY[*] OF REAL
-    STATUS : INTEGER
-    frame, tool : XYZWPR
-BEGIN
-    -- update karel frames
-    frame = pose__get_userframe(grp_no)
-    tool = pose__get_toolframe(grp_no)
-    -- get current joint rep
-    jpos_ref = pose__get_jpos(grp_no) -- needed for POS2JOINT built-in
-    wjnt_cfg = pose_in.config_data
-    -- run IK
-    POS2JOINT(jpos_ref, (pose_in), $uframe, $utool, FULL_SOLN, wjnt_cfg, ext_ax, jpos, STATUS)
-    
-    IF (STATUS <> 0) THEN
-        ok = FALSE
-    ENDIF
+  VAR
+      jpos : JOINTPOS
+      jpos_ref : JOINTPOS
+      wjnt_cfg : CONFIG
+      ext_ax : ARRAY[*] OF REAL
+      STATUS : INTEGER
+      frame, tool : XYZWPR
+  BEGIN
+      -- update karel frames
+      frame = pose__get_userframe(grp_no)
+      tool = pose__get_toolframe(grp_no)
+      -- get current joint rep
+      jpos_ref = pose__get_jpos(grp_no) -- needed for POS2JOINT built-in
+      wjnt_cfg = pose_in.config_data
+      -- run IK
+      POS2JOINT(jpos_ref, (pose_in), $uframe, $utool, FULL_SOLN, wjnt_cfg, ext_ax, jpos, STATUS)
+      
+      IF (STATUS <> 0) THEN
+          ok = FALSE
+      ENDIF
 
-    RETURN(jpos)
-END pose__solveIK
+      RETURN(jpos)
+  END pose__solveIK
 
 ROUTINE pose__solveK
 -- -----------
@@ -57,27 +57,27 @@ ROUTINE pose__solveK
 -- return: XYZWPR
 -- desc: run kinematics routine on jpos
 -- -----------
-VAR
-    pose : POSITION
-    pose2 : XYZWPR
-    wjnt_cfg : CONFIG
-    ext_ax : ARRAY[*] OF REAL
-    STATUS : INTEGER
-    frame, tool : XYZWPR
-BEGIN
-    -- update karel frames
-    frame = pose__get_userframe(grp_no)
-    tool = pose__get_toolframe(grp_no)
-    JOINT2POS((jpos), $uframe, $utool, FULL_SOLN, pose, wjnt_cfg, ext_ax, STATUS)
+  VAR
+      pose : POSITION
+      pose2 : XYZWPR
+      wjnt_cfg : CONFIG
+      ext_ax : ARRAY[*] OF REAL
+      STATUS : INTEGER
+      frame, tool : XYZWPR
+  BEGIN
+      -- update karel frames
+      frame = pose__get_userframe(grp_no)
+      tool = pose__get_toolframe(grp_no)
+      JOINT2POS((jpos), $uframe, $utool, FULL_SOLN, pose, wjnt_cfg, ext_ax, STATUS)
 
-    IF (STATUS <> 0) THEN
-        ok = FALSE
-    ENDIF
+      IF (STATUS <> 0) THEN
+          ok = FALSE
+      ENDIF
 
-    pose2 = pose
+      pose2 = pose
 
-    RETURN(pose2)
-END pose__solveK
+      RETURN(pose2)
+  END pose__solveK
 
 --***********
 -- setters
@@ -90,29 +90,29 @@ ROUTINE pose__set_userframe
 -- desc: Set uframe to 'frm_no'. If grp_no > 0 only frame 
 --       of group is changed.
 -- -----------
-VAR
-    entry : INTEGER
-    STATUS : INTEGER
-BEGIN
-    ok = TRUE
-    --record previous frame number
-    -- for reference
-    GET_VAR(entry, '*SYSTEM*', '$MNUFRAMENUM['+i_to_s(grp_no)+']', prev_ufnum, status)
-    -- if grp is not initialized default to group 1
-    IF (grp_no = 0) OR (UNINIT(grp_no)) THEN
-        grp_no = 1
-    ENDIF
+  VAR
+      entry : INTEGER
+      STATUS : INTEGER
+  BEGIN
+      ok = TRUE
+      --record previous frame number
+      -- for reference
+      GET_VAR(entry, '*SYSTEM*', '$MNUFRAMENUM['+i_to_s(grp_no)+']', prev_ufnum, status)
+      -- if grp is not initialized default to group 1
+      IF (grp_no = 0) OR (UNINIT(grp_no)) THEN
+          grp_no = 1
+      ENDIF
 
-    -- store current frame number in attr
-    cur_ufnum = frm_no
-    $MNUFRAMENUM[grp_no] = frm_no
-    -- change to frame number, frm_no
-    IF frm_no = 0 THEN 
-        $UFRAME = $MOR_GRP[grp_no].$NILPOS
-    ELSE
-        $UFRAME = $MNUFRAME[grp_no,frm_no]
-    ENDIF
-END pose__set_userframe
+      -- store current frame number in attr
+      cur_ufnum = frm_no
+      $MNUFRAMENUM[grp_no] = frm_no
+      -- change to frame number, frm_no
+      IF frm_no = 0 THEN 
+          $UFRAME = $MOR_GRP[grp_no].$NILPOS
+      ELSE
+          $UFRAME = $MNUFRAME[grp_no,frm_no]
+      ENDIF
+  END pose__set_userframe
 
 
 ROUTINE pose__set_toolframe
@@ -123,92 +123,92 @@ ROUTINE pose__set_toolframe
 --       of group is changed. If grp_no is uninitialized
 --       or 0, will change to 'frm_no' for all groups.
 -- -----------
-VAR
-    entry : INTEGER
-    STATUS : INTEGER
-BEGIN
-    ok = TRUE
-    --record previous frame
-    GET_VAR(entry, '*SYSTEM*', '$MNUTOOLNUM['+i_to_s(grp_no)+']', prev_utnum, status)
-    -- if grp is not initialized default to group 1
-    IF (grp_no = 0) OR (UNINIT(grp_no)) THEN
-        grp_no = 1
-    ENDIF
+  VAR
+      entry : INTEGER
+      STATUS : INTEGER
+  BEGIN
+      ok = TRUE
+      --record previous frame
+      GET_VAR(entry, '*SYSTEM*', '$MNUTOOLNUM['+i_to_s(grp_no)+']', prev_utnum, status)
+      -- if grp is not initialized default to group 1
+      IF (grp_no = 0) OR (UNINIT(grp_no)) THEN
+          grp_no = 1
+      ENDIF
 
-    -- store current frame number in attr
-    cur_utnum = frm_no
-    $MNUTOOLNUM[grp_no] = frm_no
-    -- change to frame number, frm_no
-    IF frm_no = 0 THEN
-        $UTOOL = $MOR_GRP[grp_no].$NILPOS
-    ELSE
-        $UTOOL = $MNUTOOL[grp_no,frm_no]
-    ENDIF
-END pose__set_toolframe
+      -- store current frame number in attr
+      cur_utnum = frm_no
+      $MNUTOOLNUM[grp_no] = frm_no
+      -- change to frame number, frm_no
+      IF frm_no = 0 THEN
+          $UTOOL = $MOR_GRP[grp_no].$NILPOS
+      ELSE
+          $UTOOL = $MNUTOOL[grp_no,frm_no]
+      ENDIF
+  END pose__set_toolframe
 
 ROUTINE pose__update_uframe
-BEGIN
-    ok = TRUE
-    --sanity check frame number and group number
-    --arguments
-    IF (grp_no = 0) OR (UNINIT(grp_no)) THEN
-        grp_no = 1
-    ENDIF
+  BEGIN
+      ok = TRUE
+      --sanity check frame number and group number
+      --arguments
+      IF (grp_no = 0) OR (UNINIT(grp_no)) THEN
+          grp_no = 1
+      ENDIF
 
-    IF (frm_no = 0) OR (UNINIT(frm_no)) THEN
-        ok = FALSE
-        WRITE TPERROR (CR, 'Frame number is not set')
-    ENDIF
-    -- set xyzwpr to frame number
-    $MNUFRAME[grp_no,frm_no] = frame
-    -- make this frame the current frame
-    pose__set_userframe(frm_no, grp_no)
-END pose__update_uframe
+      IF (frm_no = 0) OR (UNINIT(frm_no)) THEN
+          ok = FALSE
+          WRITE TPERROR (CR, 'Frame number is not set')
+      ENDIF
+      -- set xyzwpr to frame number
+      $MNUFRAME[grp_no,frm_no] = frame
+      -- make this frame the current frame
+      pose__set_userframe(frm_no, grp_no)
+  END pose__update_uframe
 
 ROUTINE pose__update_utool
-BEGIN
-    ok = TRUE
-    --sanity check frame number and group number
-    --arguments
-    IF (grp_no = 0) OR (UNINIT(grp_no)) THEN
-        grp_no = 1
-    ENDIF
+  BEGIN
+      ok = TRUE
+      --sanity check frame number and group number
+      --arguments
+      IF (grp_no = 0) OR (UNINIT(grp_no)) THEN
+          grp_no = 1
+      ENDIF
 
-    IF (frm_no = 0) OR (UNINIT(frm_no)) THEN
-        ok = FALSE
-        WRITE TPERROR (CR, 'Tool number is not set')
-    ENDIF
-    -- set xyzwpr to frame number
-    $MNUTOOL[grp_no,frm_no] = frame
-    -- make this frame the current frame
-    pose__set_toolframe(frm_no, grp_no)
-END pose__update_utool
+      IF (frm_no = 0) OR (UNINIT(frm_no)) THEN
+          ok = FALSE
+          WRITE TPERROR (CR, 'Tool number is not set')
+      ENDIF
+      -- set xyzwpr to frame number
+      $MNUTOOL[grp_no,frm_no] = frame
+      -- make this frame the current frame
+      pose__set_toolframe(frm_no, grp_no)
+  END pose__update_utool
 
 ROUTINE pose__set_jointpos
-VAR
-    joint_pose : JOINTPOS9
-    STATUS : INTEGER
-    i : INTEGER
-    r_joints : ARRAY[9] OF REAL
-BEGIN
-    ok = TRUE
+  VAR
+      joint_pose : JOINTPOS9
+      STATUS : INTEGER
+      i : INTEGER
+      r_joints : ARRAY[9] OF REAL
+  BEGIN
+      ok = TRUE
 
-    FOR i=1 TO ARRAY_LEN(r_joints) DO
-        IF i <= ARRAY_LEN(arr) THEN
-            r_joints[i] = arr[i]
-        ELSE
-            r_joints[i] = 0
-        ENDIF
-    ENDFOR
+      FOR i=1 TO ARRAY_LEN(r_joints) DO
+          IF i <= ARRAY_LEN(arr) THEN
+              r_joints[i] = arr[i]
+          ELSE
+              r_joints[i] = 0
+          ENDIF
+      ENDFOR
 
-    CNV_REL_JPOS(r_joints, joint_pose, STATUS)
-    CHK_STAT(STATUS)
-    IF STATUS <> 0 THEN
-        ok = FALSE
-    ENDIF
+      CNV_REL_JPOS(r_joints, joint_pose, STATUS)
+      CHK_STAT(STATUS)
+      IF STATUS <> 0 THEN
+          ok = FALSE
+      ENDIF
 
-    RETURN(joint_pose)
-END pose__set_jointpos
+      RETURN(joint_pose)
+  END pose__set_jointpos
 
 
 ROUTINE pose__set_xyzwpr
@@ -216,28 +216,28 @@ ROUTINE pose__set_xyzwpr
 -- in: pose_in (ARRAY[6] OF REAL), conf_str (STRING[25])
 -- desc: convert into XYZWPR type
 -- -----------
-VAR
-    pose : XYZWPR
-    STATUS : INTEGER
-BEGIN
-    ok = TRUE
-    --store array into xyzwpr data type
-    pose.x = arr[1]
-    pose.y = arr[2]
-    pose.z = arr[3]
-    pose.w = arr[4]
-    pose.p = arr[5]
-    pose.r = arr[6]
-    -- convert config string into config type
-    CNV_STR_CONF(conf_str, pose.config_data, STATUS)
-    CHK_STAT(STATUS)
-    IF (STATUS <> 0) THEN
-        ok = FALSE
-    ENDIF
+  VAR
+      pose : XYZWPR
+      STATUS : INTEGER
+  BEGIN
+      ok = TRUE
+      --store array into xyzwpr data type
+      pose.x = arr[1]
+      pose.y = arr[2]
+      pose.z = arr[3]
+      pose.w = arr[4]
+      pose.p = arr[5]
+      pose.r = arr[6]
+      -- convert config string into config type
+      CNV_STR_CONF(conf_str, pose.config_data, STATUS)
+      CHK_STAT(STATUS)
+      IF (STATUS <> 0) THEN
+          ok = FALSE
+      ENDIF
 
-    RETURN(pose)
-    
-END pose__set_xyzwpr
+      RETURN(pose)
+      
+  END pose__set_xyzwpr
 
 
 ROUTINE pose__set_posreg_xyz
@@ -249,26 +249,26 @@ ROUTINE pose__set_posreg_xyz
 --       wrapper for SET_POS_REG built-in. 
 --       independant of pose class.
 -- -----------
-VAR
-    STATUS : INTEGER
-BEGIN
-    ok = TRUE
-    --default to 1 if group number is not set
-    IF (grp_no = 0) OR UNINIT(grp_no) THEN
-        grp_no = 1
-    ENDIF
+  VAR
+      STATUS : INTEGER
+  BEGIN
+      ok = TRUE
+      --default to 1 if group number is not set
+      IF (grp_no = 0) OR UNINIT(grp_no) THEN
+          grp_no = 1
+      ENDIF
 
-    IF (reg_no <= 0) THEN
-        WRITE TPERROR (CR, 'position register must be > 0')
-        ok = FALSE
-    ELSE
-        SET_POS_REG(reg_no, (pose_in), STATUS, grp_no)
-        CHK_STAT(STATUS)
-        IF (STATUS <> 0) THEN
-            ok = FALSE
-        ENDIF
-    ENDIF
-END pose__set_posreg_xyz
+      IF (reg_no <= 0) THEN
+          WRITE TPERROR (CR, 'position register must be > 0')
+          ok = FALSE
+      ELSE
+          SET_POS_REG(reg_no, (pose_in), STATUS, grp_no)
+          CHK_STAT(STATUS)
+          IF (STATUS <> 0) THEN
+              ok = FALSE
+          ENDIF
+      ENDIF
+  END pose__set_posreg_xyz
 
 
 ROUTINE pose__set_posreg_joint
@@ -280,27 +280,27 @@ ROUTINE pose__set_posreg_joint
 --       wrapper for SET_POS_REG built-in. 
 --       independant of pose class.
 -- -----------
-VAR
-    STATUS : INTEGER
-BEGIN
-    ok = TRUE
-    --default to 1 if group number is not set
-    IF (grp_no = 0) OR UNINIT(grp_no) THEN
-        grp_no = 1
-    ENDIF
+  VAR
+      STATUS : INTEGER
+  BEGIN
+      ok = TRUE
+      --default to 1 if group number is not set
+      IF (grp_no = 0) OR UNINIT(grp_no) THEN
+          grp_no = 1
+      ENDIF
 
-    IF (reg_no <= 0) THEN
-        WRITE TPERROR (CR, 'position register must be > 0')
-        ok = FALSE
-    ELSE
-        -- set jointpos to posreg
-        SET_JPOS_REG(reg_no, (pose_in), STATUS, grp_no)
-        CHK_STAT(STATUS)
-        IF STATUS <> 0 THEN
-            ok = FALSE
-        ENDIF
-    ENDIF
-END pose__set_posreg_joint
+      IF (reg_no <= 0) THEN
+          WRITE TPERROR (CR, 'position register must be > 0')
+          ok = FALSE
+      ELSE
+          -- set jointpos to posreg
+          SET_JPOS_REG(reg_no, (pose_in), STATUS, grp_no)
+          CHK_STAT(STATUS)
+          IF STATUS <> 0 THEN
+              ok = FALSE
+          ENDIF
+      ENDIF
+  END pose__set_posreg_joint
 
 --***********
 -- getters
@@ -313,31 +313,31 @@ ROUTINE pose__get_userframe
 -- desc: gets current uframe and stores it in
 --       pose object.
 -- -----------
-VAR
-    entry : INTEGER
-    STATUS : INTEGER
-BEGIN
-    ok = TRUE
-    IF (grp_no = 0) OR UNINIT(grp_no) THEN
-        grp_no = 1
-    ENDIF
+  VAR
+      entry : INTEGER
+      STATUS : INTEGER
+  BEGIN
+      ok = TRUE
+      IF (grp_no = 0) OR UNINIT(grp_no) THEN
+          grp_no = 1
+      ENDIF
 
-    IF (grp_no > $SCR.$NUM_GROUP) THEN
-        ok = FALSE
-        WRITE TPERROR (CR, 'group number is higher than available groups')
-    ENDIF 
-    -- if uframe = 0, frame is zeros
-    -- if uframe > 0, set $uframe to current frame
-    IF $MNUFRAMENUM[grp_no] = 0 THEN 
-        cur_ufnum = 0
-        $UFRAME = $MOR_GRP[grp_no].$NILPOS
-    ELSE
-        cur_ufnum = $MNUFRAMENUM[grp_no]
-        $UFRAME = $MNUFRAME[grp_no,cur_ufnum]
-    ENDIF
+      IF (grp_no > $SCR.$NUM_GROUP) THEN
+          ok = FALSE
+          WRITE TPERROR (CR, 'group number is higher than available groups')
+      ENDIF 
+      -- if uframe = 0, frame is zeros
+      -- if uframe > 0, set $uframe to current frame
+      IF $MNUFRAMENUM[grp_no] = 0 THEN 
+          cur_ufnum = 0
+          $UFRAME = $MOR_GRP[grp_no].$NILPOS
+      ELSE
+          cur_ufnum = $MNUFRAMENUM[grp_no]
+          $UFRAME = $MNUFRAME[grp_no,cur_ufnum]
+      ENDIF
 
-    RETURN($UFRAME)
-END pose__get_userframe
+      RETURN($UFRAME)
+  END pose__get_userframe
 
 
 ROUTINE pose__get_toolframe
@@ -347,32 +347,32 @@ ROUTINE pose__get_toolframe
 -- desc: gets current utool and stores it in
 --       pose object.
 -- -----------
-VAR
-    entry : INTEGER
-    STATUS : INTEGER
-BEGIN
-    ok = TRUE
-    IF (grp_no = 0) OR UNINIT(grp_no) THEN
-        grp_no = 1
-    ENDIF
-    -- check user input group number
-    IF (grp_no > $SCR.$NUM_GROUP) THEN
-        ok = FALSE
-        WRITE TPERROR (CR, 'group number is higher than available groups')
-    ENDIF
-    -- lookup currently selected utool.
-    -- if utool = 0, frame is zeros
-    -- if utool > 0, $utool to current frame
-    IF $MNUTOOLNUM[grp_no] = 0 THEN
-        cur_utnum = 0
-        $UTOOL = $MOR_GRP[grp_no].$NILPOS
-    ELSE
-        cur_utnum = $MNUTOOLNUM[grp_no]
-        $UTOOL = $MNUTOOL[grp_no,cur_utnum]
-    ENDIF
+  VAR
+      entry : INTEGER
+      STATUS : INTEGER
+  BEGIN
+      ok = TRUE
+      IF (grp_no = 0) OR UNINIT(grp_no) THEN
+          grp_no = 1
+      ENDIF
+      -- check user input group number
+      IF (grp_no > $SCR.$NUM_GROUP) THEN
+          ok = FALSE
+          WRITE TPERROR (CR, 'group number is higher than available groups')
+      ENDIF
+      -- lookup currently selected utool.
+      -- if utool = 0, frame is zeros
+      -- if utool > 0, $utool to current frame
+      IF $MNUTOOLNUM[grp_no] = 0 THEN
+          cur_utnum = 0
+          $UTOOL = $MOR_GRP[grp_no].$NILPOS
+      ELSE
+          cur_utnum = $MNUTOOLNUM[grp_no]
+          $UTOOL = $MNUTOOL[grp_no,cur_utnum]
+      ENDIF
 
-    RETURN($UTOOL)
-END pose__get_toolframe
+      RETURN($UTOOL)
+  END pose__get_toolframe
 
 
 ROUTINE pose__get_lpos
@@ -381,17 +381,17 @@ ROUTINE pose__get_lpos
 -- return: XYZWPR
 -- desc: gets current linear position
 -- -----------
-VAR
-    lpos : XYZWPR
-BEGIN
-    IF UNINIT(grp_no) THEN
-        lpos = CURPOS(0, 0)
-    ELSE
-        lpos = CURPOS(0, 0, grp_no)
-    ENDIF
-    
-    RETURN(lpos)
-END pose__get_lpos
+  VAR
+      lpos : XYZWPR
+  BEGIN
+      IF UNINIT(grp_no) THEN
+          lpos = CURPOS(0, 0)
+      ELSE
+          lpos = CURPOS(0, 0, grp_no)
+      ENDIF
+      
+      RETURN(lpos)
+  END pose__get_lpos
 
 
 ROUTINE pose__get_jpos
@@ -400,17 +400,17 @@ ROUTINE pose__get_jpos
 -- return: JOINTPOS6
 -- desc: gets current joint position
 -- -----------
-VAR
-    jpos : JOINTPOS6
-BEGIN
-    IF UNINIT(grp_no) THEN
-        jpos = CURJPOS(0, 0)
-    ELSE
-        jpos = CURJPOS(0, 0, grp_no)
-    ENDIF
-    
-    RETURN(jpos)
-END pose__get_jpos
+  VAR
+      jpos : JOINTPOS6
+  BEGIN
+      IF UNINIT(grp_no) THEN
+          jpos = CURJPOS(0, 0)
+      ELSE
+          jpos = CURJPOS(0, 0, grp_no)
+      ENDIF
+      
+      RETURN(jpos)
+  END pose__get_jpos
 
 
 ROUTINE pose__get_posreg
@@ -420,60 +420,65 @@ ROUTINE pose__get_posreg
 -- desc: get posreg of group, grp_no, and return
 -- it in a struct of POSEDATA.
 -- -----------
-VAR
-    pos_type : INTEGER
-    num_axes  : INTEGER
-    pose : POSEDATA
-    STATUS : INTEGER
-    frame, tool : XYZWPR
-BEGIN
-    -- reset ok
-    ok = TRUE
-    -- see which representation the posreg is in
-    POS_REG_TYPE(reg_no, grp_no, pos_type, num_axes, STATUS)
-    
-    -- abort out if something is wrong
-    CHK_STAT(STATUS)
-    IF (STATUS <> 0) THEN
-        ok = FALSE
-        RETURN(pose)
-    ENDIF
+  VAR
+      pos_type : INTEGER
+      num_axes  : INTEGER
+      pose : POSEDATA
+      STATUS : INTEGER
+      frame, tool : XYZWPR
+  BEGIN
+      -- reset ok
+      ok = TRUE
+      -- see which representation the posreg is in
+      POS_REG_TYPE(reg_no, grp_no, pos_type, num_axes, STATUS)
+      
+      -- abort out if something is wrong
+      CHK_STAT(STATUS)
+      IF (STATUS <> 0) THEN
+          ok = FALSE
+          RETURN(pose)
+      ENDIF
 
-    SELECT pos_type OF
-        -- cartesian rep
-        CASE (CC_POSITION,CC_XYZWPR,CC_EXT) :
-            -- store cartesian representation
-            pose.xyz = GET_POS_REG(reg_no, STATUS, grp_no)
-            CHK_STAT(STATUS)
-            IF STATUS <> 0 THEN
-                ok = FALSE
-                RETURN(pose)
-            ENDIF
-            -- current frame and tool must already be set
-            frame = pose__get_userframe(grp_no)
-            tool = pose__get_toolframe(grp_no)
-            -- store joint represenation of pose in 'pose.joint'
-            pose.joint = pose__solveIK(pose.xyz,grp_no) -- run IK
-            
-            RETURN(pose)
-        -- joint rep
-        CASE (CC_JOINT) :
-            -- get joint represenation of posreg
-            pose.joint = GET_JPOS_REG(reg_no, STATUS, grp_no)
-            -- abort out if something is wrong
-            CHK_STAT(STATUS)
-            IF STATUS <> 0 THEN
-                ok = FALSE
-                RETURN(pose)
-            ENDIF
-            -- use current uframe and utool. Convert to  
-            frame = pose__get_userframe(grp_no)
-            tool = pose__get_toolframe(grp_no)
-            -- JOINT2POS((pose.jpos), $uframe, $utool, FULL_SOLN, pose.xyz, wjnt_cfg, ext_ang, STATUS)
-            pose.xyz = pose__solveK(pose.joint, grp_no)
-            RETURN(pose)
-    ENDSELECT
-END pose__get_posreg
+      SELECT pos_type OF
+          -- cartesian rep
+          CASE (CC_POSITION,CC_XYZWPR,CC_EXT) :
+              -- store cartesian representation
+              pose.xyz = GET_POS_REG(reg_no, STATUS, grp_no)
+              CHK_STAT(STATUS)
+              IF STATUS <> 0 THEN
+                  ok = FALSE
+                  RETURN(pose)
+              ENDIF
+              -- current frame and tool must already be set
+              frame = pose__get_userframe(grp_no)
+              tool = pose__get_toolframe(grp_no)
+              -- store joint represenation of pose in 'pose.joint'
+              pose.joint = pose__solveIK(pose.xyz,grp_no) -- run IK
+              
+              RETURN(pose)
+          -- joint rep
+          CASE (CC_JOINT) :
+              -- get joint represenation of posreg
+              pose.joint = GET_JPOS_REG(reg_no, STATUS, grp_no)
+              -- abort out if something is wrong
+              CHK_STAT(STATUS)
+              IF STATUS <> 0 THEN
+                  ok = FALSE
+                  RETURN(pose)
+              ENDIF
+              -- use current uframe and utool. Convert to  
+              frame = pose__get_userframe(grp_no)
+              tool = pose__get_toolframe(grp_no)
+              -- JOINT2POS((pose.jpos), $uframe, $utool, FULL_SOLN, pose.xyz, wjnt_cfg, ext_ang, STATUS)
+              pose.xyz = pose__solveK(pose.joint, grp_no)
+              RETURN(pose)
+      ENDSELECT
+  END pose__get_posreg
+
+ROUTINE pose__get_ok
+  BEGIN
+    RETURN(ok)
+  END pose__get_ok
 
 
 ROUTINE pose__jpos_to_jpos2
