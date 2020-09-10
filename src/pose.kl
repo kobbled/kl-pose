@@ -8,8 +8,8 @@ PROGRAM pose
 %include pose.klt
 %include errors.klt
 
-%INCLUDE errors.klh
-%include strings.klh
+%from errors.klh %import CHK_STAT
+%from strings.klh %import s_to_joint, i_to_s
 %include pose.klh
 
 BEGIN
@@ -469,7 +469,6 @@ ROUTINE pose__get_posreg
               -- use current uframe and utool. Convert to  
               frame = pose__get_userframe(grp_no)
               tool = pose__get_toolframe(grp_no)
-              -- JOINT2POS((pose.jpos), $uframe, $utool, FULL_SOLN, pose.xyz, wjnt_cfg, ext_ang, STATUS)
               pose.xyz = pose__solveK(pose.joint, grp_no)
               RETURN(pose)
       ENDSELECT
@@ -499,34 +498,36 @@ ROUTINE pose__jpos_to_jpos2
 
 
   ROUTINE pose__jpos_to_jpos3
-  VAR
-    arr : ARRAY[3] OF REAL
-    status : INTEGER
-    out_arr : JOINTPOS3
-  BEGIN
-    --extract into real array
-    CNV_JPOS_REL(pose, arr, status)
-    CHK_STAT(status)
-    --store in different joint pose type
-    CNV_REL_JPOS(arr, out_arr, status)
-    CHK_STAT(status)
+    VAR
+      arr : ARRAY[3] OF REAL
+      status : INTEGER
+      out_arr : JOINTPOS3
+    BEGIN
+      --extract into real array
+      CNV_JPOS_REL(pose, arr, status)
+      CHK_STAT(status)
+      --store in different joint pose type
+      CNV_REL_JPOS(arr, out_arr, status)
+      CHK_STAT(status)
 
-    RETURN(out_arr)
-  END pose__jpos_to_jpos3
+      RETURN(out_arr)
+    END pose__jpos_to_jpos3
 
   ROUTINE pose__jpos_to_jpos6
-  VAR
-    arr : ARRAY[6] OF REAL
-    status : INTEGER
-    out_arr : JOINTPOS6
-  BEGIN
-    --extract into real array
-    CNV_JPOS_REL(pose, arr, status)
-    CHK_STAT(status)
-    --store in different joint pose type
-    CNV_REL_JPOS(arr, out_arr, status)
-    CHK_STAT(status)
+    VAR
+      arr : ARRAY[6] OF REAL
+      status : INTEGER
+      out_arr : JOINTPOS6
+    BEGIN
+      --extract into real array
+      CNV_JPOS_REL(pose, arr, status)
+      CHK_STAT(status)
+      --store in different joint pose type
+      CNV_REL_JPOS(arr, out_arr, status)
+      CHK_STAT(status)
 
-    RETURN(out_arr)
-  END pose__jpos_to_jpos6
+      RETURN(out_arr)
+    END pose__jpos_to_jpos6
+
+
 

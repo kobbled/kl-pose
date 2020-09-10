@@ -8,7 +8,7 @@ VAR
 %include pose.klt
 
 %include pose.klh
-%include strings.klh
+%from strings.klh %import i_to_s
 %include kunit.klh
 
 -- set frames
