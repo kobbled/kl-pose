@@ -9,7 +9,8 @@
     "src/pose.kl"
   ],
   "tests" : [
-    "test/test_pose.kl"
+    "test/test_pose.kl",
+    "test/test_pos_mat.ls"
   ],
   "includes" : [
     "include"
@@ -17,7 +18,11 @@
   "depends" : [
     "errors",
     "Strings",
+    "TPElib",
     "KUnit",
     "ktransw-macros"
+  ],
+  "tp-interfaces" : [
+    {"routine" : "pose__matrix_to_cart", "program_name" : "pose_cnvcart"}
   ]
 }

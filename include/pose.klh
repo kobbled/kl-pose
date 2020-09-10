@@ -56,5 +56,7 @@ declare_function(prog_name,jpos_to_jpos3,prog_name_alias,cnvjps3)
 ROUTINE pose__jpos_to_jpos3(pose : JOINTPOS) : JOINTPOS3 FROM pose
 declare_function(prog_name,jpos_to_jpos6,prog_name_alias,cnvjps6)
 ROUTINE pose__jpos_to_jpos6(pose : JOINTPOS) : JOINTPOS6 FROM pose
+declare_function(prog_name,matrix_to_cart,prog_name_alias,mat2xyz)
+ROUTINE pose__matrix_to_cart(reg_no : INTEGER; grp_no : INTEGER) FROM pose
 
 %endif --pose_h

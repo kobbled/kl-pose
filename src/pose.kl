@@ -546,5 +546,31 @@ ROUTINE pose__jpos_to_jpos2
       RETURN(out_arr)
     END pose__jpos_to_jpos6
 
+  ROUTINE pose__matrix_to_cart
+    VAR
+      STATUS : INTEGER
+      pose_in : POSEDATA
+      pos_type, num_axes  : INTEGER
+    BEGIN
+      ok = TRUE
+      --default to 1 if group number is not set
+      IF (grp_no = 0) OR UNINIT(grp_no) THEN
+          grp_no = 1
+      ENDIF
+
+      IF (reg_no <= 0) THEN
+          WRITE TPERROR (CR, 'position register must be > 0')
+          ok = FALSE
+      ELSE
+          --get matrix pos reg
+          pose_in = pose__get_posreg(reg_no, grp_no)
+          --convert to XYZWPR representation
+          SET_POS_REG(reg_no, (pose_in.xyz), STATUS, grp_no)
+          CHK_STAT(STATUS)
+          IF (STATUS <> 0) THEN
+              ok = FALSE
+          ENDIF
+      ENDIF
+    END pose__matrix_to_cart
 
 
