@@ -46,6 +46,12 @@ ROUTINE pose__solveIK
       
       IF (STATUS <> 0) THEN
           ok = FALSE
+
+          IF UNINIT(jpos) THEN
+            jpos = s_to_joint('0,0,0,0,0,0', ',')
+          ELSE
+            CHK_STAT(STATUS)
+          ENDIF
       ENDIF
 
       RETURN(jpos)
@@ -72,11 +78,19 @@ ROUTINE pose__solveK
 
       IF (STATUS <> 0) THEN
           ok = FALSE
+
+          IF UNINIT(pose) THEN
+            pose2.x = 0; pose2.y = 0; pose2.z = 0; pose2.w = 0; pose2.p = 0; pose2.r =0;
+          ELSE
+            CHK_STAT(STATUS)
+          ENDIF
+
+          RETURN(pose2)
+      ELSE
+        --convert into XYZWPR
+        pose2 = pose
+        RETURN(pose2)
       ENDIF
-
-      pose2 = pose
-
-      RETURN(pose2)
   END pose__solveK
 
 --***********
@@ -194,10 +208,13 @@ ROUTINE pose__set_jointpos
       ok = TRUE
 
       FOR i=1 TO ARRAY_LEN(r_joints) DO
-          IF i <= ARRAY_LEN(arr) THEN
-              r_joints[i] = arr[i]
+          IF i > ARRAY_LEN(arr) THEN
+            r_joints[i] = 0
+          ELSE IF UNINIT(arr[i]) THEN
+            r_joints[i] = 0
           ELSE
-              r_joints[i] = 0
+            r_joints[i] = arr[i]
+          ENDIF
           ENDIF
       ENDFOR
 
