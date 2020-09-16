@@ -1,4 +1,6 @@
 PROGRAM test_pose
+%NOBUSYLAMP
+%COMMENT = ''
 %NOLOCKGROUP
 
 VAR
@@ -6,10 +8,18 @@ VAR
   status : INTEGER
 
 %include pose.klt
+%include pose_type.klt
+--cell position type
+path_type_define(kinpos)
+%undef path_type_define
 
 %include pose.klh
 %from strings.klh %import i_to_s
 %include kunit.klh
+
+--template for full kinematic model poses 
+%class kinpos('pose.klc','pose_class.klh','pose_type.klt')
+-- ** Need to add test for this class **
 
 -- set frames
 ROUTINE t_set_uf : BOOLEAN

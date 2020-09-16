@@ -1,0 +1,82 @@
+PROGRAM class_name
+%NOBUSYLAMP
+%COMMENT = 't_joint poses'
+%NOLOCKGROUP
+%UNINITVARS
+
+%include namespace.m
+-- declare type
+%include define_type.m
+
+%include errors.klt
+%include pose.const.klt
+
+--print user defined struct
+%ifdef path_type_define
+path_type_define(class_name)
+%endif
+
+%from errors.klh %import karelError, CHK_STAT
+%from strings.klh %import s_to_joint, s_to_xyzwpr, i_to_s
+%include pose.klh
+%include pose_class.klh
+
+ROUTINE get_posreg
+-- -----------
+-- in: reg_no, grp_no
+-- return: t_node
+-- desc: get posreg of group, grp_no, and return
+-- it in a struct of POSEDATA.
+-- -----------
+  VAR
+      pos_type : INTEGER
+      num_axes  : INTEGER
+      pose : t_node
+      STATUS : INTEGER
+      frame, tool : XYZWPR
+  BEGIN
+      -- see which representation the posreg is in
+      POS_REG_TYPE(reg_no, grp_no, pos_type, num_axes, STATUS)
+      
+      -- abort out if something is wrong
+      CHK_STAT(STATUS)
+      IF (STATUS <> 0) THEN
+          karelError(POS_TYPE_MISMATCH,'pose type not set', ER_ABORT)
+      ENDIF
+
+      SELECT pos_type OF
+          -- cartesian rep
+          CASE (CC_POSITION,CC_XYZWPR,CC_EXT) :
+              -- store cartesian representation
+              pose.t_xyz = GET_POS_REG(reg_no, STATUS, grp_no)
+              CHK_STAT(STATUS)
+              IF STATUS <> 0 THEN
+                  karelError(POS_REG_NOT_SET,'PR' + i_to_s(reg_no) + ' not set', ER_ABORT)
+              ENDIF
+              -- current frame and tool must already be set
+              frame = pose__get_userframe(grp_no)
+              tool = pose__get_toolframe(grp_no)
+              -- store joint represenation of pose in 'pose.t_joint'
+              pose.t_joint = pose__solveIK(pose.t_xyz,grp_no) -- run IK
+              
+              RETURN(pose)
+          -- joint rep
+          CASE (CC_JOINT) :
+              -- get joint represenation of posreg
+              pose.t_joint = GET_JPOS_REG(reg_no, STATUS, grp_no)
+              -- abort out if something is wrong
+              CHK_STAT(STATUS)
+              IF STATUS <> 0 THEN
+                  karelError(POS_REG_NOT_SET,'PR' + i_to_s(reg_no) + ' not set', ER_ABORT)
+              ENDIF
+              -- use current uframe and utool. Convert to  
+              frame = pose__get_userframe(grp_no)
+              tool = pose__get_toolframe(grp_no)
+              pose.t_xyz = pose__solveK(pose.t_joint, grp_no)
+              RETURN(pose)
+      ENDSELECT
+  END get_posreg
+
+
+BEGIN
+END class_name

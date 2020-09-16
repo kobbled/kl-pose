@@ -1,0 +1,14 @@
+%define t_xyz xyz
+%define t_joint joint
+
+%mode push
+%mode string QQQ "`" "`" "\\"
+%define path_type_define(object_name) `TYPE
+  -- 85 bytes
+  POSEDATA FROM object_name = STRUCTURE
+		t_xyz : XYZWPR
+    t_joint : JOINTPOS
+	ENDSTRUCTURE`
+%mode pop
+
+%defeval t_node POSEDATA

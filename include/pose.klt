@@ -1,12 +1,10 @@
 %ifndef pose_t
 %define pose_t
 
-%include pose.type.klt
 %include pose.const.klt
 
 VAR
     ok : BOOLEAN
-    pr_num : INTEGER
     cur_ufnum : INTEGER
     cur_utnum : INTEGER
     prev_ufnum : INTEGER

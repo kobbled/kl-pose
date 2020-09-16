@@ -24,10 +24,19 @@ declare_function(prog_name,update_utool,prog_name_alias,updtUT)
 ROUTINE pose__update_utool(frame : XYZWPR; frm_no, grp_no : INTEGER) FROM pose
 
 -- setters
+-- use array
 declare_function(prog_name,set_jointpos,prog_name_alias,setjnt)
 ROUTINE pose__set_jointpos(arr: ARRAY[*] OF REAL) : JOINTPOS FROM pose
+--use string instead of array
+declare_function(prog_name,set_jointpos_str,prog_name_alias,setsjnt)
+ROUTINE pose__set_jointpos_str(pose_in : STRING) : JOINTPOS FROM pose
+-- use array
 declare_function(prog_name,set_xyzwpr,prog_name_alias,setxyz)
 ROUTINE pose__set_xyzwpr(arr: ARRAY[*] OF REAL; conf_str : STRING) : XYZWPR FROM pose
+--use string instead of array
+declare_function(prog_name,set_xyzwpr_str,prog_name_alias,setsxyz)
+ROUTINE pose__set_xyzwpr_str(pose_in : STRING; conf_str : STRING) : XYZWPR FROM pose
+
 declare_function(prog_name,set_posreg_xyz,prog_name_alias,setprx)
 ROUTINE pose__set_posreg_xyz(pose_in : XYZWPR ; reg_no, grp_no : INTEGER) FROM pose
 declare_function(prog_name,set_posreg_joint,prog_name_alias,setprj)
@@ -42,8 +51,10 @@ declare_function(prog_name,get_lpos,prog_name_alias,getlpos)
 ROUTINE pose__get_lpos(grp_no : INTEGER) : XYZWPR FROM pose
 declare_function(prog_name,get_jpos,prog_name_alias,getjpos)
 ROUTINE pose__get_jpos(grp_no : INTEGER) : JOINTPOS FROM pose
-declare_function(prog_name,get_posreg,prog_name_alias,getpr)
-ROUTINE pose__get_posreg(reg_no, grp_no : INTEGER) : POSEDATA FROM pose
+declare_function(prog_name,get_posreg_xyz,prog_name_alias,gtprxyz)
+ROUTINE pose__get_posreg_xyz(reg_no, grp_no : INTEGER) : XYZWPR FROM pose
+declare_function(prog_name,get_posreg_joint,prog_name_alias,gtprjnt)
+ROUTINE pose__get_posreg_joint(reg_no, grp_no : INTEGER) : JOINTPOS FROM pose
 declare_function(prog_name,get_ok,prog_name_alias,getok)
 ROUTINE pose__get_ok : BOOLEAN FROM pose
 
@@ -58,5 +69,9 @@ declare_function(prog_name,jpos_to_jpos6,prog_name_alias,cnvjps6)
 ROUTINE pose__jpos_to_jpos6(pose : JOINTPOS) : JOINTPOS6 FROM pose
 declare_function(prog_name,matrix_to_cart,prog_name_alias,mat2xyz)
 ROUTINE pose__matrix_to_cart(reg_no : INTEGER; grp_no : INTEGER) FROM pose
+
+-- operations
+declare_function(prog_name,add_jpos,prog_name_alias,addjpos)
+ROUTINE pose__add_jpos(pose1, pose2 : JOINTPOS; out_jpos : JOINTPOS) FROM pose
 
 %endif --pose_h

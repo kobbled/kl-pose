@@ -8,8 +8,9 @@ PROGRAM pose
 %include pose.klt
 %include errors.klt
 
-%from errors.klh %import CHK_STAT
-%from strings.klh %import s_to_joint, i_to_s
+%from errors.klh %import karelError, CHK_STAT
+%from strings.klh %import s_to_joint, s_to_xyzwpr, i_to_s
+%include matrix.klh
 %include pose.klh
 
 BEGIN
@@ -228,6 +229,12 @@ ROUTINE pose__set_jointpos
   END pose__set_jointpos
 
 
+ROUTINE pose__set_jointpos_str
+  BEGIN
+    RETURN(s_to_joint(pose_in, ','))
+  END pose__set_jointpos_str
+
+
 ROUTINE pose__set_xyzwpr
 -- -----------
 -- in: pose_in (ARRAY[6] OF REAL), conf_str (STRING[25])
@@ -255,6 +262,22 @@ ROUTINE pose__set_xyzwpr
       RETURN(pose)
       
   END pose__set_xyzwpr
+
+ROUTINE pose__set_xyzwpr_str
+  VAR
+    pose : XYZWPR
+    status : INTEGER
+  BEGIN
+    pose = s_to_xyzwpr(pose_in, ',')
+    CNV_STR_CONF(conf_str, pose.config_data, status)
+    CHK_STAT(STATUS)
+    IF (STATUS <> 0) THEN
+        ok = FALSE
+    ENDIF
+
+    RETURN(pose)
+
+  END pose__set_xyzwpr_str
 
 
 ROUTINE pose__set_posreg_xyz
@@ -430,19 +453,18 @@ ROUTINE pose__get_jpos
   END pose__get_jpos
 
 
-ROUTINE pose__get_posreg
+ROUTINE pose__get_posreg_xyz
 -- -----------
 -- in: reg_no, grp_no
--- return: POSEDATA
+-- return: XYZWPR
 -- desc: get posreg of group, grp_no, and return
 -- it in a struct of POSEDATA.
 -- -----------
   VAR
       pos_type : INTEGER
       num_axes  : INTEGER
-      pose : POSEDATA
+      pose : XYZWPR
       STATUS : INTEGER
-      frame, tool : XYZWPR
   BEGIN
       -- reset ok
       ok = TRUE
@@ -453,43 +475,71 @@ ROUTINE pose__get_posreg
       CHK_STAT(STATUS)
       IF (STATUS <> 0) THEN
           ok = FALSE
-          RETURN(pose)
+          karelError(POS_TYPE_MISMATCH,'pose type not set', ER_ABORT)
       ENDIF
 
       SELECT pos_type OF
           -- cartesian rep
           CASE (CC_POSITION,CC_XYZWPR,CC_EXT) :
               -- store cartesian representation
-              pose.xyz = GET_POS_REG(reg_no, STATUS, grp_no)
+              pose = GET_POS_REG(reg_no, STATUS, grp_no)
               CHK_STAT(STATUS)
               IF STATUS <> 0 THEN
                   ok = FALSE
-                  RETURN(pose)
+                  karelError(POS_REG_NOT_SET,'PR' + i_to_s(reg_no) + ' not set', ER_ABORT)
               ENDIF
-              -- current frame and tool must already be set
-              frame = pose__get_userframe(grp_no)
-              tool = pose__get_toolframe(grp_no)
-              -- store joint represenation of pose in 'pose.joint'
-              pose.joint = pose__solveIK(pose.xyz,grp_no) -- run IK
               
               RETURN(pose)
           -- joint rep
           CASE (CC_JOINT) :
+              ok = FALSE
+              karelError(POS_TYPE_MISMATCH,'PR' + i_to_s(reg_no) + 'is joint type. Use joint routine variant.', ER_ABORT)
+      ENDSELECT
+  END pose__get_posreg_xyz
+
+ROUTINE pose__get_posreg_joint
+-- -----------
+-- in: reg_no, grp_no
+-- return: JOINTPOS
+-- desc: get posreg of group, grp_no, and return
+-- it in a struct of POSEDATA.
+-- -----------
+  VAR
+      pos_type : INTEGER
+      num_axes  : INTEGER
+      pose : JOINTPOS
+      STATUS : INTEGER
+  BEGIN
+      -- reset ok
+      ok = TRUE
+      -- see which representation the posreg is in
+      POS_REG_TYPE(reg_no, grp_no, pos_type, num_axes, STATUS)
+      
+      -- abort out if something is wrong
+      CHK_STAT(STATUS)
+      IF (STATUS <> 0) THEN
+          ok = FALSE
+          karelError(POS_TYPE_MISMATCH,'pose type not set', ER_ABORT)
+      ENDIF
+
+      SELECT pos_type OF
+          -- cartesian rep
+          CASE (CC_POSITION,CC_XYZWPR,CC_EXT) :
+              ok = FALSE
+              karelError(POS_TYPE_MISMATCH,'PR' + i_to_s(reg_no) + 'is cartesian type. Use XYZ routine variant.', ER_ABORT)
+          -- joint rep
+          CASE (CC_JOINT) :
               -- get joint represenation of posreg
-              pose.joint = GET_JPOS_REG(reg_no, STATUS, grp_no)
+              pose = GET_JPOS_REG(reg_no, STATUS, grp_no)
               -- abort out if something is wrong
               CHK_STAT(STATUS)
               IF STATUS <> 0 THEN
                   ok = FALSE
                   RETURN(pose)
               ENDIF
-              -- use current uframe and utool. Convert to  
-              frame = pose__get_userframe(grp_no)
-              tool = pose__get_toolframe(grp_no)
-              pose.xyz = pose__solveK(pose.joint, grp_no)
               RETURN(pose)
       ENDSELECT
-  END pose__get_posreg
+  END pose__get_posreg_joint
 
 ROUTINE pose__get_ok
   BEGIN
@@ -549,7 +599,7 @@ ROUTINE pose__jpos_to_jpos2
   ROUTINE pose__matrix_to_cart
     VAR
       STATUS : INTEGER
-      pose_in : POSEDATA
+      pose_in : XYZWPR
       pos_type, num_axes  : INTEGER
     BEGIN
       ok = TRUE
@@ -563,14 +613,31 @@ ROUTINE pose__jpos_to_jpos2
           ok = FALSE
       ELSE
           --get matrix pos reg
-          pose_in = pose__get_posreg(reg_no, grp_no)
+          pose_in = pose__get_posreg_xyz(reg_no, grp_no)
           --convert to XYZWPR representation
-          SET_POS_REG(reg_no, (pose_in.xyz), STATUS, grp_no)
+          SET_POS_REG(reg_no, (pose_in), STATUS, grp_no)
           CHK_STAT(STATUS)
           IF (STATUS <> 0) THEN
               ok = FALSE
           ENDIF
       ENDIF
     END pose__matrix_to_cart
+
+--math operations
+ROUTINE pose__add_jpos
+  VAR
+    arr1 : ARRAY[9] OF REAL
+    arr2 : ARRAY[9] OF REAL
+    out_arr : ARRAY[9] OF REAL
+    status : INTEGER
+  BEGIN
+    CNV_JPOS_REL(pose1, arr1, status)
+    CNV_JPOS_REL(pose2, arr2, status)
+    matrix__add_1D(arr1, arr2, out_arr)
+
+    CNV_REL_JPOS(out_arr, out_jpos, status)
+    CHK_STAT(status)
+
+  END pose__add_jpos
 
 

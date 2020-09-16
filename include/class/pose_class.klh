@@ -1,0 +1,14 @@
+--header
+%include header_guard.m
+--oop
+%include namespace.m
+
+--start header file
+header_if -- ifndef class
+header_def -- define class
+
+--getters
+declare_member(class_name,get_posreg,class_name,getpr)
+ROUTINE get_posreg(reg_no, grp_no : INTEGER) : t_node FROM class_name
+
+%endif --end header

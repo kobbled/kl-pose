@@ -13,12 +13,14 @@
     "test/test_pos_mat.ls"
   ],
   "includes" : [
-    "include"
+    "include",
+    "include/class"
   ],
   "depends" : [
     "errors",
     "Strings",
     "TPElib",
+    "matrix",
     "KUnit",
     "ktransw-macros"
   ],
