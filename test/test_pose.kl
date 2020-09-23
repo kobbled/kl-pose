@@ -14,7 +14,8 @@ path_type_define(kinpos)
 %undef path_type_define
 
 %include pose.klh
-%from strings.klh %import i_to_s
+%include math.klh
+%from strings.klh %import i_to_s, s_to_vec
 %include kunit.klh
 
 --template for full kinematic model poses 
@@ -39,7 +40,7 @@ ROUTINE t_set_uf : BOOLEAN
     --get current frame number
     GET_VAR(entry, '*SYSTEM*', '$MNUFRAMENUM[1]', expect, status)
 
-    RETURN(b AND kunit_eq_int(expect, frame_no))
+    RETURN(kunit_assert(b) AND kunit_eq_int(expect, frame_no))
   END t_set_uf
 
 ROUTINE t_set_uf_grp : BOOLEAN
@@ -59,7 +60,7 @@ ROUTINE t_set_uf_grp : BOOLEAN
     --get current frame number
     GET_VAR(entry, '*SYSTEM*', '$MNUFRAMENUM['+i_to_s(group_no)+']', expect, status)
 
-    RETURN(b AND kunit_eq_int(expect, frame_no))
+    RETURN(kunit_assert(b) AND kunit_eq_int(expect, frame_no))
   END t_set_uf_grp
 
 ROUTINE t_set_ut : BOOLEAN
@@ -79,7 +80,7 @@ ROUTINE t_set_ut : BOOLEAN
     --get current frame number
     GET_VAR(entry, '*SYSTEM*', '$MNUTOOLNUM[1]', expect, status)
 
-    RETURN(b AND kunit_eq_int(expect, frame_no))
+    RETURN(kunit_assert(b) AND kunit_eq_int(expect, frame_no))
   END t_set_ut
 
 ROUTINE t_set_ut_grp : BOOLEAN
@@ -99,7 +100,7 @@ ROUTINE t_set_ut_grp : BOOLEAN
     --get current frame number
     GET_VAR(entry, '*SYSTEM*', '$MNUTOOLNUM['+i_to_s(group_no)+']', expect, status)
 
-    RETURN(b AND kunit_eq_int(frame_no, expect))
+    RETURN(kunit_assert(b) AND kunit_eq_int(frame_no, expect))
   END t_set_ut_grp
 
 -- get uframe
@@ -126,7 +127,7 @@ ROUTINE t_get_uf : BOOLEAN
     b[2] = pose__get_ok
     actual = $MNUFRAME[group_no, frame_no]
 
-    RETURN(b[1] AND b[2] AND kunit_eq_pos(actual, frame))
+    RETURN(kunit_assert(b[1]) AND kunit_assert(b[2]) AND kunit_eq_pos(actual, frame))
   END t_get_uf
 
 -- get utool
@@ -157,7 +158,7 @@ ROUTINE t_get_ut : BOOLEAN
     ENDIF
     actual = $MNUTOOL[group_no, tool_no]
 
-    RETURN(b[1] AND b[2] AND kunit_eq_pos(actual, tool))
+    RETURN(kunit_assert(b[1]) AND kunit_assert(b[2]) AND kunit_eq_pos(actual, tool))
   END t_get_ut
 
 ROUTINE t_set_joint : BOOLEAN
@@ -188,7 +189,7 @@ ROUTINE t_set_joint : BOOLEAN
     -- check positions
     CNV_JPOS_REL(pose, actual, status)
 
-    RETURN(b AND kunit_eq_arr(expected, actual))
+    RETURN(kunit_assert(b) AND kunit_eq_arr(expected, actual))
   END t_set_joint
 
 ROUTINE t_set_xyz : BOOLEAN
@@ -229,7 +230,7 @@ ROUTINE t_set_xyz : BOOLEAN
     actual = pose__set_xyzwpr(arr, conf_str)
     b = pose__get_ok
 
-    RETURN(b AND kunit_eq_pos(expected, actual))
+    RETURN(kunit_assert(b) AND kunit_eq_pos(expected, actual))
   END t_set_xyz
 
 ROUTINE t_set_prc : BOOLEAN
@@ -272,7 +273,7 @@ ROUTINE t_set_prc : BOOLEAN
       RETURN(FALSE)
     ENDIF
 
-    RETURN(b AND kunit_eq_pos(expected, actual))
+    RETURN(kunit_assert(b) AND kunit_eq_pos(expected, actual))
 
   END t_set_prc
 
@@ -308,22 +309,23 @@ ROUTINE t_set_prj : BOOLEAN
       RETURN(FALSE)
     ENDIF
 
-    RETURN(b AND kunit_eq_jnt(jpos_exp, jpos_act))
+    RETURN(kunit_assert(b) AND kunit_eq_jnt(jpos_exp, jpos_act))
 
   END t_set_prj
 
 BEGIN
-  kunit_test('set_uframe()', t_set_uf)
-  kunit_test('set_uframe_group()', t_set_uf_grp)
-  kunit_test('set_utool()', t_set_ut)
-  kunit_test('set_utool_group()', t_set_ut_grp)
-  kunit_test('get_uframe()', t_get_uf)
-  kunit_test('get_utool()', t_get_ut)
+  --asserts 26
+  kunit_test('set_uframe()', t_set_uf) --assert 2
+  kunit_test('set_uframe_group()', t_set_uf_grp) -- assert 2
+  kunit_test('set_utool()', t_set_ut) -- assert 2
+  kunit_test('set_utool_group()', t_set_ut_grp) --assert 2
+  kunit_test('get_uframe()', t_get_uf) --assert 3
+  kunit_test('get_utool()', t_get_ut) --assert 3
 
-  kunit_test('set_joint()', t_set_joint)
-  kunit_test('set_xyz()', t_set_xyz)
-  kunit_test('set_pr_xyz()', t_set_prc)
-  kunit_test('set_pr_joint()', t_set_prj)
+  kunit_test('set_joint()', t_set_joint) --assert 2
+  kunit_test('set_xyz()', t_set_xyz) --assert 2
+  kunit_test('set_pr_xyz()', t_set_prc) -- assert 2
+  kunit_test('set_pr_joint()', t_set_prj) --assert 2
 
   kunit_done
 END test_pose

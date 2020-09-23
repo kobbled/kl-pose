@@ -10,6 +10,7 @@ PROGRAM pose
 
 %from errors.klh %import karelError, CHK_STAT
 %from strings.klh %import s_to_joint, s_to_xyzwpr, i_to_s
+%include math.klh
 %include matrix.klh
 %include pose.klh
 
@@ -199,6 +200,22 @@ ROUTINE pose__update_utool
       pose__set_toolframe(frm_no, grp_no)
   END pose__update_utool
 
+
+ROUTINE pose__set_config
+  VAR
+    cnfg : CONFIG
+    STATUS : INTEGER
+  BEGIN
+    CNV_STR_CONF(conf_str, cnfg, STATUS)
+    CHK_STAT(STATUS)
+    IF (STATUS <> 0) THEN
+        ok = FALSE
+    ENDIF
+
+    RETURN(cnfg)
+  END pose__set_config
+
+
 ROUTINE pose__set_jointpos
   VAR
       joint_pose : JOINTPOS9
@@ -242,7 +259,6 @@ ROUTINE pose__set_xyzwpr
 -- -----------
   VAR
       pose : XYZWPR
-      STATUS : INTEGER
   BEGIN
       ok = TRUE
       --store array into xyzwpr data type
@@ -253,11 +269,7 @@ ROUTINE pose__set_xyzwpr
       pose.p = arr[5]
       pose.r = arr[6]
       -- convert config string into config type
-      CNV_STR_CONF(conf_str, pose.config_data, STATUS)
-      CHK_STAT(STATUS)
-      IF (STATUS <> 0) THEN
-          ok = FALSE
-      ENDIF
+      pose.config_data = pose__set_config(conf_str)
 
       RETURN(pose)
       
@@ -269,11 +281,7 @@ ROUTINE pose__set_xyzwpr_str
     status : INTEGER
   BEGIN
     pose = s_to_xyzwpr(pose_in, ',')
-    CNV_STR_CONF(conf_str, pose.config_data, status)
-    CHK_STAT(STATUS)
-    IF (STATUS <> 0) THEN
-        ok = FALSE
-    ENDIF
+    pose.config_data = pose__set_config(conf_str)
 
     RETURN(pose)
 
@@ -622,6 +630,25 @@ ROUTINE pose__jpos_to_jpos2
           ENDIF
       ENDIF
     END pose__matrix_to_cart
+
+
+ROUTINE pose__pose_to_vector
+  VAR
+    v : VECTOR
+  BEGIN
+    v.x = pose.x ; v.y = pose.y ; v.z = pose.z
+    RETURN(v)
+  END pose__pose_to_vector
+
+
+ROUTINE pose__cylindrical_to_cartesian
+  VAR
+    v : VECTOR
+  BEGIN
+    v.x = 0 ; v.y=radius ; v.z=height ;
+    RETURN(math__translate(math__rotz((origin), angle), v ))
+  END pose__cylindrical_to_cartesian
+
 
 --math operations
 ROUTINE pose__add_jpos

@@ -20,7 +20,9 @@
     "errors",
     "Strings",
     "TPElib",
+    "math",
     "matrix",
+    "systemlib",
     "KUnit",
     "ktransw-macros"
   ],

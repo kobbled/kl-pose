@@ -24,6 +24,8 @@ declare_function(prog_name,update_utool,prog_name_alias,updtUT)
 ROUTINE pose__update_utool(frame : XYZWPR; frm_no, grp_no : INTEGER) FROM pose
 
 -- setters
+declare_function(prog_name,set_config,prog_name_alias,setcfg)
+ROUTINE pose__set_config(conf_str : STRING) : CONFIG FROM pose
 -- use array
 declare_function(prog_name,set_jointpos,prog_name_alias,setjnt)
 ROUTINE pose__set_jointpos(arr: ARRAY[*] OF REAL) : JOINTPOS FROM pose
@@ -69,8 +71,12 @@ declare_function(prog_name,jpos_to_jpos6,prog_name_alias,cnvjps6)
 ROUTINE pose__jpos_to_jpos6(pose : JOINTPOS) : JOINTPOS6 FROM pose
 declare_function(prog_name,matrix_to_cart,prog_name_alias,mat2xyz)
 ROUTINE pose__matrix_to_cart(reg_no : INTEGER; grp_no : INTEGER) FROM pose
+declare_function(prog_name,pose_to_vector,prog_name_alias,pos2vec)
+ROUTINE pose__pose_to_vector(pose : XYZWPR) : VECTOR FROM pose
+declare_member(prog_name,cylindrical_to_cartesian,prog_name,cyl2crt)
+ROUTINE pose__cylindrical_to_cartesian(origin : XYZWPR;  angle : REAL; radius : REAL; height : REAL) : XYZWPR FROM pose
 
--- operations
+-- pose operations
 declare_function(prog_name,add_jpos,prog_name_alias,addjpos)
 ROUTINE pose__add_jpos(pose1, pose2 : JOINTPOS; out_jpos : JOINTPOS) FROM pose
 
