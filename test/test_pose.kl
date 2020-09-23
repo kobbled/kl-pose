@@ -13,6 +13,7 @@ VAR
 path_type_define(kinpos)
 %undef path_type_define
 
+%include pose_structs.klt
 %include common_poses.klt
 
 %include pose.klh
@@ -315,6 +316,47 @@ ROUTINE t_set_prj : BOOLEAN
 
   END t_set_prj
 
+ROUTINE t_circum : BOOLEAN
+  VAR
+    circ, circ2 : T_CIRCLE
+    expected, expected2 : T_CIRCLE
+    p1,p2,p3 : VECTOR
+    pose : XYZWPR
+  BEGIN
+    --simple case
+
+    expected.radius = 300
+    expected.center = s_to_vec('300,0,0',',')
+    -- points at 0deg 135deg and 225deg
+    p1 = s_to_vec('300,0,300',',')
+    p2 = s_to_vec('300,212.130,-212.130',',')
+    p3 = s_to_vec('300,-212.130,-212,130',',')
+
+    circ = pose__find_circumcenter(p1, p2, p3)
+    circ.radius = math__round(circ.radius)
+
+    --complex case
+
+    expected2.radius = 300
+    -- center is pos(600,0,0,0,-45,0)
+    -- world vec(424.264,0,424.264)
+    pose = ZEROPOS
+    pose = math__translate(math__roty((pose),-45), s_to_vec('600,0,0',','))
+    expected2.center = pose__pose_to_vector(pose)
+    
+    -- points at 0deg 90deg and -90deg
+    p1 = s_to_vec('212.132,0,636.396',',')
+    p2 = s_to_vec('424.264,300.000,424.264',',')
+    p3 = s_to_vec('424.264,-300.000,424.264',',')
+
+    circ2 = pose__find_circumcenter(p1, p2, p3)
+    circ2.radius = math__round(circ2.radius)
+
+    RETURN(kunit_eq_r(expected.radius, circ.radius) AND kunit_eq_vrl(expected.center, circ.center, 0.2) AND &
+           kunit_eq_r(expected2.radius, circ2.radius) AND kunit_eq_vrl(expected2.center, circ2.center, 0.2))
+
+  END t_circum
+
 BEGIN
   --asserts 26
   kunit_test('set_uframe()', t_set_uf) --assert 2
@@ -328,6 +370,7 @@ BEGIN
   kunit_test('set_xyz()', t_set_xyz) --assert 2
   kunit_test('set_pr_xyz()', t_set_prc) -- assert 2
   kunit_test('set_pr_joint()', t_set_prj) --assert 2
+  kunit_test('find circumcenter', t_circum) --assert 4
 
   kunit_done
 END test_pose

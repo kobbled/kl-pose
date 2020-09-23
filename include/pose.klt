@@ -1,6 +1,7 @@
 %ifndef pose_t
 %define pose_t
 
+%include pose_structs.klt
 %include pose.const.klt
 
 VAR

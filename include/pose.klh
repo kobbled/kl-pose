@@ -80,4 +80,12 @@ ROUTINE pose__cylindrical_to_cartesian(origin : XYZWPR;  angle : REAL; radius : 
 declare_function(prog_name,add_jpos,prog_name_alias,addjpos)
 ROUTINE pose__add_jpos(pose1, pose2 : JOINTPOS; out_jpos : JOINTPOS) FROM pose
 
+--vector calculations
+declare_function(prog_name,find_circle_center,prog_name_alias,circtr)
+ROUTINE pose__find_circle_center(points : ARRAY[*] OF VECTOR) : VECTOR FROM pose
+%ifdef CIRC_STRUCT
+declare_function(prog_name,find_circumcenter,prog_name_alias,circum)
+ROUTINE pose__find_circumcenter(p1, p2, p3 : VECTOR) : T_CIRCLE FROM pose
+%endif
+
 %endif --pose_h

@@ -1,0 +1,11 @@
+%ifndef pose_structs_t
+%define pose_structs_t
+
+%define CIRC_STRUCT
+TYPE
+  T_CIRCLE FROM pose = STRUCTURE
+		radius : REAL
+    center : VECTOR
+	ENDSTRUCTURE
+
+%endif

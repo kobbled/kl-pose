@@ -667,4 +667,33 @@ ROUTINE pose__add_jpos
 
   END pose__add_jpos
 
+ROUTINE pose__find_circle_center
+  VAR
+    circ : T_CIRCLE
+  BEGIN
+    IF ARRAY_LEN(points) = 3 THEN
+      circ = pose__find_circumcenter(points[1], points[2], points[3])
+      RETURN(circ.center)
+    ELSE
+      karelError(INVALID_TYPE_CODE, 'Solving circle center is not yet implemented for ' + i_to_s(ARRAY_LEN(points)) + ' points.', ER_ABORT)
+    ENDIF
+  END pose__find_circle_center
+
+ROUTINE pose__find_circumcenter
+  VAR
+    c : T_CIRCLE
+    alpha, beta, gamma : REAL
+  BEGIN
+    -- (ref: https://en.wikipedia.org/wiki/Circumscribed_circle#Circumcenter_coordinates) 
+    -- calculate radius
+    c.radius = (math__norm(p1-p2)*math__norm(p2-p3)*math__norm(p3-p1))/(2*math__norm((p1-p2)#(p2-p3)))
+    -- calculate center
+    alpha = (math__pow(math_norm(p2-p3), 2)*((p1-p2)@(p1-p3)))/(2*math_pow(math_norm((p1-p2)#(p2-p3)), 2))
+    beta = (math__pow(math_norm(p1-p3), 2)*((p2-p1)@(p2-p3)))/(2*math_pow(math_norm((p1-p2)#(p2-p3)), 2))
+    gamma = (math__pow(math_norm(p1-p2), 2)*((p3-p1)@(p3-p2)))/(2*math_pow(math_norm((p1-p2)#(p2-p3)), 2))
+
+    c.center = alpha*p1 + beta*p2 + gamma*p3
+
+    RETURN(c)
+  END pose__find_circumcenter
 
