@@ -1,0 +1,10 @@
+%ifndef common_poses_t
+%define common_poses_t
+
+%include systemvars.klt
+
+%defeval POS_VERTICAL_UP ZEROPOS
+%define POS_VERTICAL_DOWN POS(0,0,0,180,0,0, ZEROPOS.Config_data)
+
+
+%endif --common_poses_t

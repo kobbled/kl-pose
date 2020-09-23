@@ -13,6 +13,8 @@ VAR
 path_type_define(kinpos)
 %undef path_type_define
 
+%include common_poses.klt
+
 %include pose.klh
 %include math.klh
 %from strings.klh %import i_to_s, s_to_vec
