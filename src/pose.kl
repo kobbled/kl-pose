@@ -687,6 +687,45 @@ ROUTINE pose__add_jpos
 
   END pose__add_jpos
 
+ROUTINE pose__distance
+  BEGIN
+    RETURN( math__norm(pose__pose_to_vector(pose2)-pose__pose_to_vector(pose1)) )
+  END pose__distance
+
+ROUTINE pose__calc_normal_vector
+  VAR
+    normal : VECTOR
+    av : VECTOR
+  BEGIN
+    av = (approach-origin)
+    --assume vector parallel to normal vector
+    normal.x = math__norm(av)
+    normal.y = 0
+    -- calculate z by solving approach@normal = 0
+    normal.z = (-1*(av.x*normal.x + av.y*normal.y)/av.z)
+
+    normal = origin + normal
+
+    RETURN(normal)
+
+  END pose__calc_normal_vector
+
+ROUTINE pose__frame_from_approach_vector
+  VAR
+    n,o : VECTOR
+    orientation : VECTOR
+  BEGIN
+    --calculate normal vector
+    n = pose__calc_normal_vector(origin, approach)
+    --get orient vector
+    o = (approach-origin)#n
+
+    -- w,p,r = vec(0,0,0)
+    orientation = s_to_vec('0,0,0',',')
+
+    RETURN( FRAME(pose__vector_to_pose(origin, orientation, (ZEROPOS(1).config_data)), pose__vector_to_pose(n, orientation, (ZEROPOS(1).config_data)), pose__vector_to_pose(o, orientation, (ZEROPOS(1).config_data))) )
+  END pose__frame_from_approach_vector
+
 ROUTINE pose__find_circle_center
   VAR
     circ : T_CIRCLE

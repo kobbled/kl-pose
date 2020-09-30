@@ -340,7 +340,7 @@ ROUTINE t_circum : BOOLEAN
     expected2.radius = 300
     -- center is pos(600,0,0,0,-45,0)
     -- world vec(424.264,0,424.264)
-    pose = ZEROPOS
+    pose = ZEROPOS(1)
     pose = math__translate(math__roty((pose),-45), s_to_vec('600,0,0',','))
     expected2.center = pose__pose_to_vector(pose)
     
@@ -357,6 +357,51 @@ ROUTINE t_circum : BOOLEAN
 
   END t_circum
 
+
+ROUTINE t_dist : BOOLEAN
+  VAR
+    pose: XYZWPR
+    frm1, frm2: XYZWPR
+  BEGIN
+    --set up test pose
+    pose = pose__set_xyzwpr_str('0,0,300,0,0,0', 'N D B, 0, 0, 0')
+    -- frame 1
+    frm1 = pose__set_xyzwpr_str('150,90,300,-25,15,0', 'N D B, 0, 0, 0')
+    -- frame 2
+    frm2 = pose__set_xyzwpr_str('150,90,300,0,0,0', 'N D B, 0, 0, 0')
+
+    RETURN( kunit_eq_r(149.7437, pose__distance(frm1:pose, frm2:pose)) )
+
+  END t_dist
+
+ROUTINE t_frm_apr : BOOLEAN
+  VAR
+    origin, apr, apr2: VECTOR
+    p1, p2: VECTOR
+    actual, expected : XYZWPR
+    actual2, expected2 : XYZWPR
+    actual3, expected3 : XYZWPR
+  BEGIN
+    origin = s_to_vec('0,0,0',',')
+
+    apr = s_to_vec('334,-300,398.048',',')
+    actual = pose__frame_from_approach_vector(origin, apr)
+    expected = pose__set_xyzwpr_str('0,0,0,30,40,0','N B D, 0, 0, 0')
+
+    apr2 = s_to_vec('696.364,707.107,122.788',',')
+    actual2 = pose__frame_from_approach_vector(origin, apr2)
+    expected2 = pose__set_xyzwpr_str('0,0,0,-45,80,0','N B D, 0, 0, 0')
+
+    p1 = s_to_vec('150,90,300',',')
+    p2 = s_to_vec('337.656,428.095,1000.341',',')
+    actual3 = pose__frame_from_approach_vector(p1, p2)
+    expected3 = pose__set_xyzwpr_str('150,90,300,-25,15,0','N B D, 0, 0, 0')
+  
+
+    RETURN( kunit_eq_pos(expected, actual) AND kunit_eq_pos(expected2, actual2) AND &
+            kunit_eq_pos(expected3, actual3) )
+  END t_frm_apr
+
 BEGIN
   --asserts 26
   kunit_test('set_uframe()', t_set_uf) --assert 2
@@ -371,6 +416,8 @@ BEGIN
   kunit_test('set_pr_xyz()', t_set_prc) -- assert 2
   kunit_test('set_pr_joint()', t_set_prj) --assert 2
   kunit_test('find circumcenter', t_circum) --assert 4
+  kunit_test('euclidean norm', t_dist)
+  kunit_test('Calc frame from approach', t_frm_apr) -- assert 3
 
   kunit_done
 END test_pose
