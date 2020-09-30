@@ -1,0 +1,30 @@
+%ifndef posetp_h
+%define posetp_h
+
+%include namespace.m
+
+%define prog_name posetp
+%define prog_name_alias postp
+
+
+-- needed for TP interfaces for reading and writing to PR groups
+declare_function(prog_name,get_group_xyz,prog_name_alias,prgxyz)
+ROUTINE posetp__get_group_xyz(pr_num: INTEGER; grp_no : INTEGER) : XYZWPR FROM prog_name
+declare_function(prog_name,get_group_joint,prog_name_alias,prgjnt)
+ROUTINE posetp__get_group_joint(pr_num: INTEGER; grp_no : INTEGER) : JOINTPOS FROM prog_name
+
+--public
+declare_function(prog_name,clrpr,prog_name_alias,clrpr)
+ROUTINE posetp__clrpr(pr_num: INTEGER) FROM prog_name
+declare_function(prog_name,matmul,prog_name_alias,matmul)
+ROUTINE posetp__matmul(p1 : XYZWPR; p2 : XYZWPR) : XYZWPR FROM prog_name
+declare_function(prog_name,inv,prog_name_alias,inv)
+ROUTINE posetp__inv(p1 : XYZWPR) : XYZWPR FROM prog_name
+declare_function(prog_name,dot,prog_name_alias,dot)
+ROUTINE posetp__dot(p1 : XYZWPR; p2 : XYZWPR) : REAL FROM prog_name
+declare_function(prog_name,cross,prog_name_alias,cross)
+ROUTINE posetp__cross(p1 : XYZWPR; p2 : XYZWPR) : XYZWPR FROM prog_name
+declare_function(prog_name,frame,prog_name_alias,frame)
+ROUTINE posetp__frame(p1 : XYZWPR; p2 : XYZWPR; p3 : XYZWPR) : XYZWPR FROM prog_name
+
+%endif --posetp_h

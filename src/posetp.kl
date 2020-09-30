@@ -1,0 +1,90 @@
+PROGRAM posetp
+%NOBUSYLAMP
+%COMMENT = 'breakout TP functions'
+%UNINITVARS
+%NOLOCKGROUP
+%NOPAUSE = COMMAND + TPENABLE + ERROR
+
+
+%include systemvars.klt
+%include pose_type.klt
+--cell position type
+path_type_define(kinpos)
+%undef path_type_define
+
+%include pose.klh
+%include posetp.klh
+-- create template for kinematics
+%class kinpos('pose.klc','pose_class.klh','pose_type.klt')
+
+
+--Routines needed for TP interfaces
+ROUTINE posetp__get_group_xyz
+  VAR
+    pose : t_node
+  BEGIN
+    pose = kinpos__get_posreg(pr_num, grp_no)
+    RETURN(pose.t_xyz)
+  END posetp__get_group_xyz
+
+ROUTINE posetp__get_group_joint
+  VAR
+    pose : t_node
+  BEGIN
+    pose = kinpos__get_posreg(pr_num, grp_no)
+    RETURN(pose.t_joint)
+  END posetp__get_group_joint
+
+
+
+ROUTINE posetp__clrpr
+  VAR
+    pose : XYZWPR
+    i : INTEGER
+  BEGIN
+    FOR i=1 TO TOTAL_GROUPS DO
+      pose = ZEROPOS(i)
+      pose__set_posreg_xyz(pose, pr_num, i)
+    ENDFOR
+  END posetp__clrpr
+
+ROUTINE posetp__matmul
+  BEGIN
+    RETURN(p1:p2)
+  END posetp__matmul
+
+ROUTINE posetp__inv
+  BEGIN
+    RETURN((INV(p1)))
+  END posetp__inv
+
+ROUTINE posetp__dot
+  VAR
+    v1, v2 : VECTOR
+  BEGIN
+    v1 = pose__pose_to_vector(p1)
+    v2 = pose__pose_to_vector(p2)
+
+    RETURN(v1@v2)
+  END posetp__dot
+
+ROUTINE posetp__cross
+  VAR
+    v1, v2 : VECTOR
+    pose : XYZWPR
+  BEGIN
+    v1 = pose__pose_to_vector(p1)
+    v2 = pose__pose_to_vector(p2)
+
+    pose = pose__vector_to_pose(v1#v2, pose__get_orientation((ZEROPOS(1))), (ZEROPOS(1).config_data))
+    RETURN(pose)
+  END posetp__cross
+
+ROUTINE posetp__frame
+  BEGIN
+    RETURN( FRAME((p1),(p2),(p3)) )
+  END posetp__frame
+
+BEGIN
+END posetp
+

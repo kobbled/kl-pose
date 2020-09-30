@@ -1,4 +1,4 @@
-PROGRAM pose_cnvcart
+PROGRAM tp_cnvcart
 %NOBUSYLAMP
 %NOLOCKGROUP
 
@@ -12,4 +12,4 @@ BEGIN
 	reg_no = tpe__get_int_arg(1)
 	grp_no = tpe__get_int_arg(2)
 	pose__matrix_to_cart(reg_no,grp_no)
-END pose_cnvcart
+END tp_cnvcart

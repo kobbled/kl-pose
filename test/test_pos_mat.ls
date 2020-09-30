@@ -24,5 +24,5 @@ DEFAULT_GROUP = 1,1,1,*,*;
  : ! representation ;
  : PR[85:pos]=UTOOL[1] ;
  : ! convert to cartesian format ;
- : CALL POSE_CNVCART(85,1) ;
+ : CALL TP_CNVCART(85,1) ;
 /END
