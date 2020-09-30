@@ -5,11 +5,12 @@ PROGRAM pose
 %NOLOCKGROUP
 %NOPAUSE = COMMAND + TPENABLE + ERROR
 
+%include systemvars.klt
 %include pose.klt
 %include errors.klt
 
 %from errors.klh %import karelError, CHK_STAT
-%from strings.klh %import s_to_joint, s_to_xyzwpr, i_to_s
+%from strings.klh %import s_to_joint, s_to_xyzwpr, i_to_s, s_to_vec
 %include math.klh
 %include matrix.klh
 %include pose.klh
@@ -554,6 +555,14 @@ ROUTINE pose__get_ok
     RETURN(ok)
   END pose__get_ok
 
+ROUTINE pose__get_orientation
+  VAR
+    v : VECTOR
+  BEGIN
+    v.x = pose.w; v.y = pose.p; v.z = pose.r
+    RETURN(v)
+  END pose__get_orientation
+
 
 ROUTINE pose__jpos_to_jpos2
   VAR
@@ -639,6 +648,17 @@ ROUTINE pose__pose_to_vector
     v.x = pose.x ; v.y = pose.y ; v.z = pose.z
     RETURN(v)
   END pose__pose_to_vector
+
+ROUTINE pose__vector_to_pose
+  VAR
+    p : XYZWPR
+  BEGIN
+    p.x = v.x ; p.y = v.y; p.z = v.z;
+    p.w = orient.x ; p.p = orient.y ; p.r = orient.z;
+    p.config_data = cnf
+
+    RETURN(p)
+  END  pose__vector_to_pose
 
 
 ROUTINE pose__cylindrical_to_cartesian
