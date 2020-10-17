@@ -402,8 +402,25 @@ ROUTINE t_frm_apr : BOOLEAN
             kunit_eq_pos(expected3, actual3) )
   END t_frm_apr
 
+ROUTINE t_cylind : BOOLEAN
+  VAR
+    origin : XYZWPR
+    actual1, actual2 : XYZWPR
+    expected1 : XYZWPR
+  BEGIN
+    origin = $MOR_GRP[1].$NILPOS
+    expected1 = pose__set_xyzwpr_str('34.202,-93.969,210,0,0,-160', 'N D B, 0, 0, 0')
+    actual1 = pose__cylindrical_to_cartesian(origin, 200, 100, 210)
+
+    actual2 = pose__cylinder_surf_to_origin(expected1, 200, 100, 210)
+
+    RETURN( kunit_eq_pos(expected1, actual1) AND kunit_eq_pos(origin, actual2) )
+
+  END t_cylind
+
+
 BEGIN
-  --asserts 26
+  --asserts 32
   kunit_test('set_uframe()', t_set_uf) --assert 2
   kunit_test('set_uframe_group()', t_set_uf_grp) -- assert 2
   kunit_test('set_utool()', t_set_ut) -- assert 2
@@ -416,8 +433,9 @@ BEGIN
   kunit_test('set_pr_xyz()', t_set_prc) -- assert 2
   kunit_test('set_pr_joint()', t_set_prj) --assert 2
   kunit_test('find circumcenter', t_circum) --assert 4
-  kunit_test('euclidean norm', t_dist)
+  kunit_test('euclidean norm', t_dist) -- assert 1
   kunit_test('Calc frame from approach', t_frm_apr) -- assert 3
+  kunit_test('cylindrial conversions', t_cylind) -- assert 2
 
   kunit_done
 END test_pose

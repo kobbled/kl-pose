@@ -670,12 +670,22 @@ ROUTINE pose__cylindrical_to_cartesian
   END pose__cylindrical_to_cartesian
 
 
+ROUTINE pose__cylinder_surf_to_origin
+  VAR
+    v : VECTOR
+  BEGIN
+    v.x = 0 ; v.y=-1*radius ; v.z=-1*height ;
+    RETURN(math__rotz(math__translate(pos, v), -1*angle) )
+  END pose__cylinder_surf_to_origin
+
+
 --math operations
 ROUTINE pose__add_jpos
   VAR
     arr1 : ARRAY[9] OF REAL
     arr2 : ARRAY[9] OF REAL
     out_arr : ARRAY[9] OF REAL
+    out_jpos : JOINTPOS
     status : INTEGER
   BEGIN
     CNV_JPOS_REL(pose1, arr1, status)
@@ -684,6 +694,8 @@ ROUTINE pose__add_jpos
 
     CNV_REL_JPOS(out_arr, out_jpos, status)
     CHK_STAT(status)
+
+    RETURN(out_jpos)
 
   END pose__add_jpos
 
