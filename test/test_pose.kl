@@ -3,6 +3,10 @@ PROGRAM test_pose
 %COMMENT = ''
 %NOLOCKGROUP
 
+--change to zero tool frame
+--will change from system to system
+%define EOAT_FRAME_NO 6
+
 VAR
   entry : INTEGER
   status : INTEGER
@@ -105,6 +109,48 @@ ROUTINE t_set_ut_grp : BOOLEAN
 
     RETURN(kunit_assert(b) AND kunit_eq_int(frame_no, expect))
   END t_set_ut_grp
+
+ROUTINE t_IK : BOOLEAN
+  VAR
+    pos1, pos2 : XYZWPR
+    actual1, actual2 : JOINTPOS6
+    expected1, expected2 : JOINTPOS6
+  BEGIN
+    pose__set_userframe(1, 0)
+    pose__set_toolframe(EOAT_FRAME_NO, 0)
+
+    pos1 = pose__set_xyzwpr_str('-214.806,1335.678,330.26,115.919,-89.833,65.080','F U T, 0, 0, 0')
+    actual1 = pose__solveIK(pos1, 1)
+    expected1 = pose__set_jointpos_str('106.304,11.256,-42.688,-100.565,101.138,46.420')
+
+    pos2 = pose__set_xyzwpr_str('998.627,0,928.845,180,-90,0','N U T, 0, 0, 0')
+    actual2 = pose__solveIK(pos2, 1)
+    expected2 = pose__set_jointpos_str('0,-36,0,0,0,0')
+
+    RETURN(kunit_eq_jnt(expected1, actual1) AND kunit_eq_jnt(expected2, actual2) )
+
+  END t_IK
+
+ROUTINE t_Kinematics : BOOLEAN
+  VAR
+    pos1, pos2 : JOINTPOS
+    actual1, actual2 : XYZWPR
+    expected1, expected2 : XYZWPR
+  BEGIN
+    pose__set_userframe(1, 0)
+    pose__set_toolframe(EOAT_FRAME_NO, 0)
+
+    pos1 = pose__set_jointpos_str('106.304,11.256,-42.688,-100.565,101.138,46.420')
+    actual1 = pose__solveK(pos1, 1)
+    expected1 = pose__set_xyzwpr_str('-214.806,1335.678,330.26,115.919,-89.833,65.080','F U T, 0, 0, 0')
+
+    pos2 = pose__set_jointpos_str('0,-36,0,0,0,0')
+    actual2 = pose__solveK(pos2, 1)
+    expected2 = pose__set_xyzwpr_str('998.627,0,928.845,180,-90,0','N U T, 0, 0, 0')
+
+    RETURN( kunit_eq_pos(expected2, actual2) AND kunit_eq_pos(expected1, actual1))
+
+  END t_Kinematics
 
 -- get uframe
 ROUTINE t_get_uf : BOOLEAN
@@ -420,7 +466,7 @@ ROUTINE t_cylind : BOOLEAN
 
 
 BEGIN
-  --asserts 32
+  --asserts 36
   kunit_test('set_uframe()', t_set_uf) --assert 2
   kunit_test('set_uframe_group()', t_set_uf_grp) -- assert 2
   kunit_test('set_utool()', t_set_ut) -- assert 2
@@ -436,6 +482,8 @@ BEGIN
   kunit_test('euclidean norm', t_dist) -- assert 1
   kunit_test('Calc frame from approach', t_frm_apr) -- assert 3
   kunit_test('cylindrial conversions', t_cylind) -- assert 2
+  kunit_test('test IK', t_IK) -- assert 2
+  kunit_test('test Kinematics', t_Kinematics) -- assert 2
 
   kunit_done
 END test_pose
