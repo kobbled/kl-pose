@@ -1,4 +1,4 @@
-PROGRAM tp_clrpr
+PROGRAM pos_clrpr
 %NOBUSYLAMP
 %NOLOCKGROUP
 
@@ -10,4 +10,4 @@ VAR
 BEGIN
 	pr_num = tpe__get_int_arg(1)
 	posetp__clrpr(pr_num)
-END tp_clrpr
+END pos_clrpr

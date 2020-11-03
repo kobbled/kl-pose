@@ -1,4 +1,4 @@
-PROGRAM tp_frame
+PROGRAM pos_frame
 %NOBUSYLAMP
 %NOLOCKGROUP
 
@@ -25,4 +25,4 @@ BEGIN
 	p3 = pose__get_posreg_xyz(pr_num3, 1)
 	out_reg = tpe__get_int_arg(4)
 	pose__set_posreg_xyz(posetp__frame(p1,p2,p3), out_reg, 1)
-END tp_frame
+END pos_frame

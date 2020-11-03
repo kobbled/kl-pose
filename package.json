@@ -27,12 +27,14 @@
     "ktransw-macros"
   ],
   "tp-interfaces" : [
-    {"routine" : "pose__matrix_to_cart", "program_name" : "tp_cnvcart"},
-    {"routine" : "posetp__clrpr", "program_name" : "tp_clrpr"},
-    {"routine" : "posetp__matmul", "program_name" : "tp_mult"},
-    {"routine" : "posetp__inv", "program_name" : "tp_inv"},
-    {"routine" : "posetp__dot", "program_name" : "tp_dot"},
-    {"routine" : "posetp__cross", "program_name" : "tp_cross"},
-    {"routine" : "posetp__frame", "program_name" : "tp_frame"}
+    {"routine" : "pose__matrix_to_cart", "program_name" : "pos_cnvcart"},
+    {"routine" : "pose__solveIK", "program_name" : "pos_ik"},
+    {"routine" : "pose__solveK", "program_name" : "pos_kin"},
+    {"routine" : "posetp__clrpr", "program_name" : "pos_clrpr"},
+    {"routine" : "posetp__matmul", "program_name" : "pos_mult"},
+    {"routine" : "posetp__inv", "program_name" : "pos_inv"},
+    {"routine" : "posetp__dot", "program_name" : "pos_dot"},
+    {"routine" : "posetp__cross", "program_name" : "pos_cross"},
+    {"routine" : "posetp__frame", "program_name" : "pos_frame"}
   ]
 }
