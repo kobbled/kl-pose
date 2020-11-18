@@ -3,8 +3,8 @@
 
 %include systemvars.klt
 
-%defeval POS_VERTICAL_UP ZEROPOS
-%define POS_VERTICAL_DOWN POS(0,0,0,180,0,0, ZEROPOS.Config_data)
+%defeval POS_VERTICAL_UP ZEROPOS(1)
+%define POS_VERTICAL_DOWN POS(0,0,0,180,0,0, ZEROPOS(1).Config_data)
 
 
 %endif --common_poses_t

@@ -14,7 +14,7 @@ VAR
 %include pose.klt
 %include pose_type.klt
 --cell position type
-path_type_define(kinpos)
+path_type_define(t_node, kinpos)
 %undef path_type_define
 
 %include pose_structs.klt

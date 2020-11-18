@@ -3,9 +3,9 @@
 
 %mode push
 %mode string QQQ "`" "`" "\\"
-%define path_type_define(object_name) `TYPE
+%define path_type_define(type_name, object_name) `TYPE
   -- 85 bytes
-  POSEDATA FROM object_name = STRUCTURE
+  type_name FROM object_name = STRUCTURE
 		t_xyz : XYZWPR
     t_joint : JOINTPOS
 	ENDSTRUCTURE`
