@@ -1,0 +1,22 @@
+PROGRAM pos_scldiv
+%NOBUSYLAMP
+%NOLOCKGROUP
+
+VAR
+	out_reg : INTEGER
+	out_grp : INTEGER
+	pr_num1 : INTEGER
+	p1 : XYZWPR
+	value : REAL
+%from tpe.klh %import get_xyzwpr_arg,get_real_arg,get_int_arg
+%from registers.klh %import set_xyzwpr
+%from pose.klh %import get_posreg_xyz, get_posreg_joint, set_posreg_xyz, set_posreg_joint
+%from posetp.klh %import scalar_divide
+
+BEGIN
+	pr_num1 = tpe__get_int_arg(1)
+	value = tpe__get_real_arg(2)
+	p1 = pose__get_posreg_xyz(pr_num1, 1)
+	out_reg = tpe__get_int_arg(3)
+	pose__set_posreg_xyz(posetp__scalar_divide(p1,value), out_reg, 1)
+END pos_scldiv

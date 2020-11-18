@@ -6,7 +6,8 @@
   "license" : "Apache 2.0",
   "author" : "kobbled",
   "source" : [
-    "src/pose.kl"
+    "src/pose.kl",
+    "src/posetp.kl"
   ],
   "tests" : [
     "test/test_pose.kl",
@@ -32,6 +33,8 @@
     {"routine" : "pose__solveK", "program_name" : "pos_kin"},
     {"routine" : "posetp__clrpr", "program_name" : "pos_clrpr"},
     {"routine" : "posetp__matmul", "program_name" : "pos_mult"},
+    {"routine" : "posetp__scalar_mult", "program_name" : "pos_sclmult"},
+    {"routine" : "posetp__scalar_divide", "program_name" : "pos_scldiv"},
     {"routine" : "posetp__inv", "program_name" : "pos_inv"},
     {"routine" : "posetp__dot", "program_name" : "pos_dot"},
     {"routine" : "posetp__cross", "program_name" : "pos_cross"},

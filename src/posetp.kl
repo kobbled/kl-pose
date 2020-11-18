@@ -53,9 +53,53 @@ ROUTINE posetp__matmul
     RETURN(p1:p2)
   END posetp__matmul
 
+ROUTINE posetp__scalar_mult
+  VAR
+    out_p : XYZWPR
+  BEGIN
+    out_p.x = value*p1.x ; out_p.y = value*p1.y ; out_p.z = value*p1.z
+    out_p.w = value*p1.w ; out_p.p = value*p1.p ; out_p.r = value*p1.r 
+    out_p.config_data = p1.config_data
+
+    RETURN(out_p)
+  END posetp__scalar_mult
+
+ROUTINE posetp__scalar_divide
+  VAR
+    out_p : XYZWPR
+  BEGIN
+    out_p.x = p1.x/value ; out_p.y = p1.y/value ; out_p.z = p1.z/value
+    out_p.w = p1.w/value ; out_p.p = p1.p/value ; out_p.r = p1.r/value 
+    out_p.config_data = p1.config_data
+
+    RETURN(out_p)
+  END posetp__scalar_divide
+
+ROUTINE posetp__scalar_add
+  VAR
+    out_p : XYZWPR
+  BEGIN
+    out_p.x = value+p1.x ; out_p.y = value+p1.y ; out_p.z = value+p1.z
+    out_p.w = value+p1.w ; out_p.p = value+p1.p ; out_p.r = value+p1.r 
+    out_p.config_data = p1.config_data
+
+    RETURN(out_p)
+  END posetp__scalar_add
+
+ROUTINE posetp__scalar_subtract
+  VAR
+    out_p : XYZWPR
+  BEGIN
+    out_p.x = p1.x-value ; out_p.y = p1.y-value ; out_p.z = p1.z-value
+    out_p.w = p1.w-value ; out_p.p = p1.p-value ; out_p.r = p1.r-value 
+    out_p.config_data = p1.config_data
+
+    RETURN(out_p)
+  END posetp__scalar_subtract
+
 ROUTINE posetp__inv
   BEGIN
-    RETURN((INV(p1)))
+    RETURN(INV((p1)))
   END posetp__inv
 
 ROUTINE posetp__dot

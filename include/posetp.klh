@@ -18,6 +18,14 @@ declare_function(prog_name,clrpr,prog_name_alias,clrpr)
 ROUTINE posetp__clrpr(pr_num: INTEGER) FROM prog_name
 declare_function(prog_name,matmul,prog_name_alias,matmul)
 ROUTINE posetp__matmul(p1 : XYZWPR; p2 : XYZWPR) : XYZWPR FROM prog_name
+declare_function(prog_name,scalar_mult,prog_name_alias,scmult)
+ROUTINE posetp__scalar_mult(p1 : XYZWPR ; value : REAL) : XYZWPR FROM prog_name
+declare_function(prog_name,scalar_divide,prog_name_alias,scdiv)
+ROUTINE posetp__scalar_divide(p1 : XYZWPR ; value : REAL) : XYZWPR FROM prog_name
+declare_function(prog_name,scalar_add,prog_name_alias,scadd)
+ROUTINE posetp__scalar_add(p1 : XYZWPR ; value : REAL) : XYZWPR FROM prog_name
+declare_function(prog_name,scalar_subtract,prog_name_alias,scsub)
+ROUTINE posetp__scalar_subtract(p1 : XYZWPR ; value : REAL) : XYZWPR FROM prog_name
 declare_function(prog_name,inv,prog_name_alias,inv)
 ROUTINE posetp__inv(p1 : XYZWPR) : XYZWPR FROM prog_name
 declare_function(prog_name,dot,prog_name_alias,dot)
