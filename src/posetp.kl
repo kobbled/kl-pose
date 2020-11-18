@@ -40,11 +40,17 @@ ROUTINE posetp__get_group_joint
 ROUTINE posetp__clrpr
   VAR
     pose : XYZWPR
+    pose_j : JOINTPOS
     i : INTEGER
   BEGIN
     FOR i=1 TO TOTAL_GROUPS DO
-      pose = ZEROPOS(i)
-      pose__set_posreg_xyz(pose, pr_num, i)
+      IF (GROUP_KINEMATICS(i) > 1) THEN
+        pose = ZEROPOS(i)
+        pose__set_posreg_xyz(pose, pr_num, i)
+      ELSE
+        pose_j = pose__set_jointpos_str('0,0,0,0,0,0')
+        pose__set_posreg_joint(pose_j, pr_num, i)
+      ENDIF
     ENDFOR
   END posetp__clrpr
 
