@@ -427,6 +427,7 @@ ROUTINE t_frm_apr : BOOLEAN
     actual, expected : XYZWPR
     actual2, expected2 : XYZWPR
     actual3, expected3 : XYZWPR
+    actual4, expected4 : XYZWPR
   BEGIN
     origin = s_to_vec('0,0,0',',')
 
@@ -442,10 +443,15 @@ ROUTINE t_frm_apr : BOOLEAN
     p2 = s_to_vec('337.656,428.095,1000.341',',')
     actual3 = pose__frame_from_approach_vector(p1, p2)
     expected3 = pose__set_xyzwpr_str('150,90,300,-25,15,0','N B D, 0, 0, 0')
+
+    p1 = s_to_vec('337.656,428.095,1000.341',',')
+    p2 = s_to_vec('150,90,300',',')
+    actual4 = pose__frame_from_approach_vector(p1, p2)
+    expected4 = pose__set_xyzwpr_str('337.656,428.095,1000.341,-155,-15,180','N B D, 0, 0, 0')
   
 
     RETURN( kunit_eq_pos(expected, actual) AND kunit_eq_pos(expected2, actual2) AND &
-            kunit_eq_pos(expected3, actual3) )
+            kunit_eq_pos(expected3, actual3) AND kunit_eq_pos(expected4, actual4) )
   END t_frm_apr
 
 ROUTINE t_cylind : BOOLEAN
@@ -482,8 +488,8 @@ BEGIN
   kunit_test('euclidean norm', t_dist) -- assert 1
   kunit_test('Calc frame from approach', t_frm_apr) -- assert 3
   kunit_test('cylindrial conversions', t_cylind) -- assert 2
-  kunit_test('test IK', t_IK) -- assert 2
-  kunit_test('test Kinematics', t_Kinematics) -- assert 2
+  -- kunit_test('test IK', t_IK) -- assert 2
+  -- kunit_test('test Kinematics', t_Kinematics) -- assert 2
 
   kunit_done
 END test_pose

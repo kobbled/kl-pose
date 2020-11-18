@@ -22,6 +22,7 @@
     "Strings",
     "TPElib",
     "math",
+    "shapes",
     "matrix",
     "systemlib",
     "KUnit",

@@ -6,8 +6,9 @@ PROGRAM pose
 %NOPAUSE = COMMAND + TPENABLE + ERROR
 
 %include systemvars.klt
-%include pose.klt
 %include errors.klt
+%include pose.klt
+%include shapes.klt
 
 %from errors.klh %import karelError, CHK_STAT
 %from strings.klh %import s_to_joint, s_to_xyzwpr, i_to_s, s_to_vec
@@ -706,31 +707,42 @@ ROUTINE pose__distance
 
 ROUTINE pose__calc_normal_vector
   VAR
-    normal : VECTOR
-    av : VECTOR
+    pl : PLANE
+    perp_line : VECTOR
   BEGIN
-    av = (approach-origin)
+    pl.normal = appr_vector
+    -- equation of plane ax+by+cz=d
+    -- d is 0 in local space
+    pl.d = 0
     --assume vector parallel to normal vector
-    normal.x = math__norm(av)
-    normal.y = 0
-    -- calculate z by solving approach@normal = 0
-    normal.z = (-1*(av.x*normal.x + av.y*normal.y)/av.z)
+    --scale by 2 to ensure greater than 5mm distance from origin
+    perp_line.x = pl.normal.x
+    perp_line.y = 0
+    -- calculate z by solving plane equation
+    perp_line.z = ((pl.d-(pl.normal.x*perp_line.x + pl.normal.y*perp_line.y))/pl.normal.z)
 
-    normal = origin + normal
-
-    RETURN(normal)
+    RETURN(perp_line)
 
   END pose__calc_normal_vector
 
 ROUTINE pose__frame_from_approach_vector
   VAR
-    n,o : VECTOR
+%define SCALE_FACTOR 20
+    a,n,o : VECTOR
     orientation : VECTOR
   BEGIN
+    --calculate approach vector
+    --get unit vector and scale so it is at least 5mm away
+    a = ((approach-origin)/math__norm((approach-origin)))*SCALE_FACTOR
     --calculate normal vector
-    n = pose__calc_normal_vector(origin, approach)
+    n = (pose__calc_normal_vector(a, origin))
     --get orient vector
-    o = (approach-origin)#n
+    o = a#n
+
+    --add to origin
+    a = a + origin
+    n = n + origin
+    o = o + origin
 
     -- w,p,r = vec(0,0,0)
     orientation = s_to_vec('0,0,0',',')
