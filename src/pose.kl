@@ -719,8 +719,9 @@ ROUTINE pose__cylindrical_to_cartesian
   VAR
     v : VECTOR
   BEGIN
-    v.x = 0 ; v.y=radius ; v.z=height ;
-    RETURN(math__translate(math__rotz((origin), angle), v ))
+    --n_pol = (theta,r,z)
+    v.x = 0 ; v.y=n_pol.y ; v.z=n_pol.z ;
+    RETURN(math__translate(math__rotz((origin), n_pol.x), v ))
   END pose__cylindrical_to_cartesian
 
 
@@ -728,8 +729,9 @@ ROUTINE pose__cylinder_surf_to_origin
   VAR
     v : VECTOR
   BEGIN
-    v.x = 0 ; v.y=-1*radius ; v.z=-1*height ;
-    RETURN(math__rotz(math__translate(pos, v), -1*angle) )
+    --n_pol = (theta,r,z)
+    v.x = 0 ; v.y=-1*n_pol.y ; v.z=-1*n_pol.z ;
+    RETURN(math__rotz(math__translate(pos, v), -1*n_pol.x) )
   END pose__cylinder_surf_to_origin
 
 
@@ -760,7 +762,7 @@ ROUTINE pose__distance
 
 ROUTINE pose__calc_normal_vector
   VAR
-    pl : PLANE
+    pl : t_PLANE
     perp_line : VECTOR
   BEGIN
     pl.normal = appr_vector

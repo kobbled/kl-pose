@@ -84,10 +84,11 @@ declare_function(prog_name,pose_to_vector,prog_name_alias,pos2vec)
 ROUTINE pose__pose_to_vector(pose : XYZWPR) : VECTOR FROM pose
 declare_function(prog_name,vector_to_pose,prog_name_alias,vec2pos)
 ROUTINE pose__vector_to_pose(v : VECTOR ; orient : VECTOR; cnf : CONFIG) : XYZWPR FROM pose
+--n_pol is the cylindrical coordinate (theta,r,z)
 declare_member(prog_name,cylindrical_to_cartesian,prog_name,cyl2crt)
-ROUTINE pose__cylindrical_to_cartesian(origin : XYZWPR;  angle : REAL; radius : REAL; height : REAL) : XYZWPR FROM pose
+ROUTINE pose__cylindrical_to_cartesian(origin : XYZWPR;  n_pol : VECTOR) : XYZWPR FROM pose
 declare_member(prog_name,cylinder_surf_to_origin,prog_name,csrforg)
-ROUTINE pose__cylinder_surf_to_origin(pos : XYZWPR;  angle : REAL; radius : REAL; height : REAL) : XYZWPR FROM pose
+ROUTINE pose__cylinder_surf_to_origin(pos : XYZWPR;  n_pol : VECTOR) : XYZWPR FROM pose
 
 -- pose operations
 declare_function(prog_name,add_jpos,prog_name_alias,addjpos)
