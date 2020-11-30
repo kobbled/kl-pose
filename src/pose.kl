@@ -622,6 +622,51 @@ ROUTINE pose__jpos_to_jpos2
       RETURN(out_arr)
     END pose__jpos_to_jpos6
 
+  ROUTINE jpos_opt(opt : INTEGER; J1 : JOINTPOS; J2 : JOINTPOS) : JOINTPOS
+    VAR
+      arr1 : ARRAY[9] OF REAL
+      arr2 : ARRAY[9] OF REAL
+      joint_pos : JOINTPOS
+      i : INTEGER
+      status : INTEGER
+    BEGIN
+      CNV_JPOS_REL(J1, arr1, status)
+      CHK_STAT(status)
+      CNV_JPOS_REL(J2, arr2, status)
+      CHK_STAT(status)
+
+      FOR i=1 TO ARRAY_LEN(arr1) DO
+        IF UNINIT(arr1[i]) THEN arr1[i] = arr2[i];
+        ELSE IF UNINIT(arr2[i]) THEN arr1[i] = arr1[i]; 
+        ELSE
+          SELECT opt OF
+          CASE(1):
+            arr1[i] = arr1[i] + arr2[i];
+          CASE(2):
+            arr1[i] = arr2[i] - arr1[i];
+          ELSE:
+          ENDSELECT
+        ENDIF
+        ENDIF
+      ENDFOR
+
+      CNV_REL_JPOS(arr1, joint_pos, status)
+      CHK_STAT(status)
+
+      RETURN(joint_pos)
+
+    END jpos_opt
+  
+  ROUTINE pose__jpos_add
+    BEGIN
+      RETURN(jpos_opt(1, J1, J2))
+    END pose__jpos_add
+
+  ROUTINE pose__jpos_sub
+    BEGIN
+      RETURN(jpos_opt(2, J1, J2))
+    END pose__jpos_sub
+
   ROUTINE pose__matrix_to_cart
     VAR
       STATUS : INTEGER
