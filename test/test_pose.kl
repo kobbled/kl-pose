@@ -22,7 +22,8 @@ path_type_define(t_node, kinpos)
 
 %include pose.klh
 %include math.klh
-%from strings.klh %import i_to_s, s_to_vec
+%from strings.klh %import i_to_s
+%from systemlib.klh %import VEC
 %include kunit.klh
 
 --template for full kinematic model poses 
@@ -125,9 +126,9 @@ ROUTINE t_IK : BOOLEAN
 
     pos2 = pose__set_xyzwpr_str('998.627,0,928.845,180,-90,0','N U T, 0, 0, 0')
     actual2 = pose__solveIK(pos2, 1)
-    expected2 = pose__set_jointpos_str('0,-36,0,0,0,0')
+    expected2 = pose__set_jointpos_str('0,0,0,0,0,0')
 
-    RETURN(kunit_eq_jnt(expected1, actual1) AND kunit_eq_jnt(expected2, actual2) )
+    RETURN(kunit_eq_jnt((expected1), (actual1)) AND kunit_eq_jnt((expected2), (actual2)) )
 
   END t_IK
 
@@ -240,6 +241,42 @@ ROUTINE t_set_joint : BOOLEAN
 
     RETURN(kunit_assert(b) AND kunit_eq_arr(expected, actual))
   END t_set_joint
+
+ROUTINE t_set_joint2 : BOOLEAN
+  VAR
+    origin : ARRAY[6] OF REAL
+    origin_jnt : JOINTPOS
+    angle : REAL
+    actual : JOINTPOS
+    expected_arr : ARRAY[6] OF REAL
+    expected : JOINTPOS
+  BEGIN
+    -- set jointpos type
+    origin[1] = 90.0
+    origin[2] = 0.0
+    origin[3] = 0.0
+    origin[4] = 0.0
+    origin[5] = 0.0
+    origin[6] = 0.0
+    origin_jnt = pose__set_jointpos(origin)
+
+    --add -15 deg to J2
+    angle = -15
+    actual = pose__set_jointpos_axis(2,angle)
+    actual = pose__jpos_add(origin_jnt, actual)
+
+    --expected
+    expected_arr[1] = 90
+    expected_arr[2] = -15
+    expected_arr[3] = 0
+    expected_arr[4] = 0
+    expected_arr[5] = 0
+    expected_arr[6] = 0
+    expected = pose__set_jointpos(expected_arr)
+
+    RETURN(kunit_eq_jnt((expected), (actual) ) )
+  END t_set_joint2
+
 
 ROUTINE t_set_xyz : BOOLEAN
   VAR
@@ -372,11 +409,11 @@ ROUTINE t_circum : BOOLEAN
     --simple case
 
     expected.radius = 300
-    expected.center = s_to_vec('300,0,0',',')
+    expected.center = VEC(300,0,0)
     -- points at 0deg 135deg and 225deg
-    p1 = s_to_vec('300,0,300',',')
-    p2 = s_to_vec('300,212.130,-212.130',',')
-    p3 = s_to_vec('300,-212.130,-212,130',',')
+    p1 = VEC(300,0,300)
+    p2 = VEC(300,212.130,-212.130)
+    p3 = VEC(300,-212.130,-212.130)
 
     circ = pose__find_circumcenter(p1, p2, p3)
     circ.radius = math__round(circ.radius)
@@ -387,13 +424,13 @@ ROUTINE t_circum : BOOLEAN
     -- center is pos(600,0,0,0,-45,0)
     -- world vec(424.264,0,424.264)
     pose = ZEROPOS(1)
-    pose = math__translate(math__roty((pose),-45), s_to_vec('600,0,0',','))
+    pose = math__translate(math__roty((pose),-45), VEC(600,0,0))
     expected2.center = pose__pose_to_vector(pose)
     
     -- points at 0deg 90deg and -90deg
-    p1 = s_to_vec('212.132,0,636.396',',')
-    p2 = s_to_vec('424.264,300.000,424.264',',')
-    p3 = s_to_vec('424.264,-300.000,424.264',',')
+    p1 = VEC(212.132,0,636.396)
+    p2 = VEC(424.264,300.000,424.264)
+    p3 = VEC(424.264,-300.000,424.264)
 
     circ2 = pose__find_circumcenter(p1, p2, p3)
     circ2.radius = math__round(circ2.radius)
@@ -429,23 +466,23 @@ ROUTINE t_frm_apr : BOOLEAN
     actual3, expected3 : XYZWPR
     actual4, expected4 : XYZWPR
   BEGIN
-    origin = s_to_vec('0,0,0',',')
+    origin = VEC(0,0,0)
 
-    apr = s_to_vec('334,-300,398.048',',')
+    apr = VEC(334,-300,398.048)
     actual = pose__frame_from_approach_vector(origin, apr)
     expected = pose__set_xyzwpr_str('0,0,0,30,40,0','N B D, 0, 0, 0')
 
-    apr2 = s_to_vec('696.364,707.107,122.788',',')
+    apr2 = VEC(696.364,707.107,122.788)
     actual2 = pose__frame_from_approach_vector(origin, apr2)
     expected2 = pose__set_xyzwpr_str('0,0,0,-45,80,0','N B D, 0, 0, 0')
 
-    p1 = s_to_vec('150,90,300',',')
-    p2 = s_to_vec('337.656,428.095,1000.341',',')
+    p1 = VEC(150,90,300)
+    p2 = VEC(337.656,428.095,1000.341)
     actual3 = pose__frame_from_approach_vector(p1, p2)
     expected3 = pose__set_xyzwpr_str('150,90,300,-25,15,0','N B D, 0, 0, 0')
 
-    p1 = s_to_vec('337.656,428.095,1000.341',',')
-    p2 = s_to_vec('150,90,300',',')
+    p1 = VEC(337.656,428.095,1000.341)
+    p2 = VEC(150,90,300)
     actual4 = pose__frame_from_approach_vector(p1, p2)
     expected4 = pose__set_xyzwpr_str('337.656,428.095,1000.341,-155,-15,180','N B D, 0, 0, 0')
   
@@ -459,12 +496,14 @@ ROUTINE t_cylind : BOOLEAN
     origin : XYZWPR
     actual1, actual2 : XYZWPR
     expected1 : XYZWPR
+    v : VECTOR
   BEGIN
     origin = $MOR_GRP[1].$NILPOS
     expected1 = pose__set_xyzwpr_str('34.202,-93.969,210,0,0,-160', 'N D B, 0, 0, 0')
-    actual1 = pose__cylindrical_to_cartesian(origin, 200, 100, 210)
+    v = VEC(200.0,100.0,210.0)
+    actual1 = pose__cylindrical_to_cartesian(origin, v)
 
-    actual2 = pose__cylinder_surf_to_origin(expected1, 200, 100, 210)
+    actual2 = pose__cylinder_surf_to_origin(expected1, v)
 
     RETURN( kunit_eq_pos(expected1, actual1) AND kunit_eq_pos(origin, actual2) )
 
@@ -481,6 +520,7 @@ BEGIN
   kunit_test('get_utool()', t_get_ut) --assert 3
 
   kunit_test('set_joint()', t_set_joint) --assert 2
+  kunit_test('set single axis', t_set_joint2) --assert 1
   kunit_test('set_xyz()', t_set_xyz) --assert 2
   kunit_test('set_pr_xyz()', t_set_prc) -- assert 2
   kunit_test('set_pr_joint()', t_set_prj) --assert 2
@@ -488,8 +528,8 @@ BEGIN
   kunit_test('euclidean norm', t_dist) -- assert 1
   kunit_test('Calc frame from approach', t_frm_apr) -- assert 3
   kunit_test('cylindrial conversions', t_cylind) -- assert 2
-  -- kunit_test('test IK', t_IK) -- assert 2
-  -- kunit_test('test Kinematics', t_Kinematics) -- assert 2
+  kunit_test('test IK', t_IK) -- assert 2
+  kunit_test('test Kinematics', t_Kinematics) -- assert 2
 
   kunit_done
 END test_pose

@@ -220,33 +220,41 @@ ROUTINE pose__set_config
 
 ROUTINE pose__set_jointpos
   VAR
-      joint_pose : JOINTPOS9
-      STATUS : INTEGER
-      i : INTEGER
-      r_joints : ARRAY[9] OF REAL
+    joint_pose : JOINTPOS
+    STATUS : INTEGER
+    i : INTEGER
+    r_joints : ARRAY[9] OF REAL
   BEGIN
-      ok = TRUE
+    ok = TRUE
 
-      FOR i=1 TO ARRAY_LEN(r_joints) DO
-          IF i > ARRAY_LEN(arr) THEN
-            r_joints[i] = 0
-          ELSE IF UNINIT(arr[i]) THEN
-            r_joints[i] = 0
-          ELSE
-            r_joints[i] = arr[i]
-          ENDIF
-          ENDIF
-      ENDFOR
+    r_joints = (ZEROARR)
 
-      CNV_REL_JPOS(r_joints, joint_pose, STATUS)
-      CHK_STAT(STATUS)
-      IF STATUS <> 0 THEN
-          ok = FALSE
-      ENDIF
+    FOR i=1 TO ARRAY_LEN(arr) DO
+      r_joints[i] = arr[i]
+    ENDFOR
 
-      RETURN(joint_pose)
+    CNV_REL_JPOS(r_joints, joint_pose, STATUS)
+    CHK_STAT(STATUS)
+    IF STATUS <> 0 THEN
+        ok = FALSE
+    ENDIF
+
+    RETURN(joint_pose)
   END pose__set_jointpos
 
+ROUTINE pose__set_jointpos_axis
+  VAR
+    joint_pose : JOINTPOS
+    arr: ARRAY[9] OF REAL
+    STATUS : INTEGER
+  BEGIN
+    arr = (ZEROARR)
+    arr[axs] = ang
+    CNV_REL_JPOS(arr, joint_pose, STATUS)
+    CHK_STAT(status)
+
+    RETURN(joint_pose)
+  END pose__set_jointpos_axis
 
 ROUTINE pose__set_jointpos_str
   BEGIN
