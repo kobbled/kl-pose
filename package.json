@@ -20,13 +20,14 @@
   "depends" : [
     "errors",
     "Strings",
-    "TPElib",
     "math",
     "shapes",
     "matrix",
     "systemlib",
-    "KUnit",
     "ktransw-macros"
+  ],
+  "tests-depends" : [
+    "KUnit"
   ],
   "tp-interfaces" : [
     {"routine" : "pose__matrix_to_cart", "program_name" : "pos_cnvcart"},
@@ -40,5 +41,8 @@
     {"routine" : "posetp__dot", "program_name" : "pos_dot"},
     {"routine" : "posetp__cross", "program_name" : "pos_cross"},
     {"routine" : "posetp__frame", "program_name" : "pos_frame"}
+  ],
+  "interface-depends" : [
+    "TPElib"
   ]
 }
