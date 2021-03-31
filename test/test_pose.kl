@@ -500,8 +500,9 @@ ROUTINE t_cylind : BOOLEAN
   BEGIN
     origin = $MOR_GRP[1].$NILPOS
     expected1 = pose__set_xyzwpr_str('34.202,-93.969,210,0,0,-160', 'N D B, 0, 0, 0')
-    v = VEC(200.0,100.0,210.0)
-    actual1 = pose__cylindrical_to_cartesian(origin, v)
+    --order : Theta, z, r
+    v = VEC(200,210,100)
+    actual1 = pose__cylindrical_to_cartesian(origin, pose__vector_to_pose(v, VEC(0,0,0), origin.config_data))
 
     actual2 = pose__cylinder_surf_to_origin(expected1, v)
 

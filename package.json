@@ -31,8 +31,6 @@
   ],
   "tp-interfaces" : [
     {"routine" : "pose__matrix_to_cart", "program_name" : "pos_cnvcart"},
-    {"routine" : "pose__solveIK", "program_name" : "pos_ik"},
-    {"routine" : "pose__solveK", "program_name" : "pos_kin"},
     {"routine" : "posetp__clrpr", "program_name" : "pos_clrpr"},
     {"routine" : "posetp__matmul", "program_name" : "pos_mult"},
     {"routine" : "posetp__scalar_mult", "program_name" : "pos_sclmult"},

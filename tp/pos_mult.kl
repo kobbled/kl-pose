@@ -9,7 +9,7 @@ VAR
 	p1 : XYZWPR
 	pr_num2 : INTEGER
 	p2 : XYZWPR
-%from tpe.klh %import get_xyzwpr_arg,get_int_arg
+%from tpe.klh %import get_int_arg,get_xyzwpr_arg
 %from registers.klh %import set_xyzwpr
 %from pose.klh %import get_posreg_xyz, get_posreg_joint, set_posreg_xyz, set_posreg_joint
 %from posetp.klh %import matmul
