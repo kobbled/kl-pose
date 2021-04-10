@@ -752,13 +752,13 @@ ROUTINE pose__polar_to_cartesian
     SELECT z_axis OF
       CASE(1):
         v.x = 0 ; v.y= 0 ; v.z=pol_pose.z ;
-        o = math__translate(math__rotz(math__rotx((origin), pol_pose.x), pol_pose.y), v )
+        o = math__translate(math__roty(math__rotz((origin), pol_pose.x), pol_pose.y), v )
       CASE(2):
         v.x = 0 ; v.y= 0 ; v.z=pol_pose.z ;
-        o = math__translate(math__rotz(math__roty((origin), pol_pose.x), pol_pose.y), v )
+        o = math__translate(math__rotx(math__rotz((origin), pol_pose.x + 180), pol_pose.y), v )
       CASE(3):
         v.x = 0 ; v.y=pol_pose.z ; v.z=0 ;
-        o = math__translate(math__rotx(math__rotz((origin), pol_pose.x), pol_pose.y), v )
+        o = math__translate(math__rotx(math__roty((origin), pol_pose.x), pol_pose.y), v )
     ENDSELECT
 
     --add cylindrical orientation
