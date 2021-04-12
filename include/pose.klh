@@ -87,6 +87,8 @@ ROUTINE pose__vector_to_pose(v : VECTOR ; orient : VECTOR; cnf : CONFIG) : XYZWP
 declare_member(prog_name,cylindrical_to_cartesian,prog_name,cyl2crt)
 --cyl_pose is the cylindrical coordinates (theta,z,r)
 ROUTINE pose__cylindrical_to_cartesian(origin : XYZWPR;  cyl_pose : XYZWPR; z_axis : INTEGER) : XYZWPR FROM pose
+declare_member(prog_name,cartesian_to_cylindrical,prog_name,crt2cyl)
+ROUTINE pose__cartesian_to_cylindrical(origin : XYZWPR;  cart_pose : XYZWPR; z_axis : INTEGER) : XYZWPR FROM pose
 declare_member(prog_name,polar_to_cartesian,prog_name,pol2crt)
 --pol_pose is the polar coordinates (theta,rho,r)
 ROUTINE pose__polar_to_cartesian(origin : XYZWPR;  pol_pose : XYZWPR; z_axis : INTEGER) : XYZWPR FROM pose
