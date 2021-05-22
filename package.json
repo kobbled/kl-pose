@@ -38,7 +38,8 @@
     {"routine" : "posetp__inv", "program_name" : "pos_inv"},
     {"routine" : "posetp__dot", "program_name" : "pos_dot"},
     {"routine" : "posetp__cross", "program_name" : "pos_cross"},
-    {"routine" : "posetp__frame", "program_name" : "pos_frame"}
+    {"routine" : "posetp__frame", "program_name" : "pos_frame"},
+    {"routine" : "posetp__find_center", "program_name" : "pos_center"}
   ],
   "interface-depends" : [
     "TPElib"

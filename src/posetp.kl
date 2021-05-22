@@ -8,6 +8,7 @@ PROGRAM posetp
 
 %include systemvars.klt
 %include pose_type.klt
+%include pose_structs.klt
 --cell position type
 path_type_define(t_node, kinpos)
 %undef path_type_define
@@ -134,6 +135,20 @@ ROUTINE posetp__frame
   BEGIN
     RETURN( FRAME((p1),(p2),(p3)) )
   END posetp__frame
+
+ROUTINE posetp__find_center
+  VAR
+    v1, v2, v3 : VECTOR
+    c : T_CIRCLE
+  BEGIN
+    v1 = pose__pose_to_vector(p1)
+    v2 = pose__pose_to_vector(p2)
+    v3 = pose__pose_to_vector(p3)
+
+    c = pose__find_circumcenter(v1, v2, v3)
+
+    RETURN(pose__vector_to_pose(c.center, pose__get_orientation((ZEROPOS(1))), (ZEROPOS(1).config_data)))
+  END posetp__find_center
 
 BEGIN
 END posetp
