@@ -136,6 +136,11 @@ ROUTINE posetp__frame
     RETURN( FRAME((p1),(p2),(p3)) )
   END posetp__frame
 
+ROUTINE posetp__frame4
+  BEGIN
+    RETURN( FRAME((p1),(p2),(p3),(p4)) )
+  END posetp__frame4
+
 ROUTINE posetp__find_center
   VAR
     v1, v2, v3 : VECTOR
