@@ -637,7 +637,7 @@ ROUTINE pose__jpos_to_jpos2
       CHK_STAT(status)
 
       FOR i=1 TO ARRAY_LEN(arr1) DO
-        IF UNINIT(arr1[i]) THEN arr1[i] = arr2[i];
+        IF UNINIT(arr1[i]) THEN arr1[i] = 0;
         ELSE IF UNINIT(arr2[i]) THEN arr1[i] = arr1[i]; 
         ELSE
           SELECT opt OF
