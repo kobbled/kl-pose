@@ -1,0 +1,17 @@
+PROGRAM pos_setcfg
+%NOBUSYLAMP
+%NOLOCKGROUP
+
+VAR
+	conf_str : STRING[32]
+	pr_num : INTEGER
+	grp_no : INTEGER
+%from tpe.klh %import get_int_arg,get_string_arg
+%from posetp.klh %import set_pr_config
+
+BEGIN
+	conf_str = tpe__get_string_arg(1)
+	pr_num = tpe__get_int_arg(2)
+	grp_no = tpe__get_int_arg(3)
+	posetp__set_pr_config(conf_str,pr_num,grp_no)
+END pos_setcfg

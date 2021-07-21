@@ -31,6 +31,7 @@
   ],
   "tp-interfaces" : [
     {"routine" : "pose__matrix_to_cart", "program_name" : "pos_cnvcart"},
+    {"routine" : "pose__jpos_add", "program_name" : "pos_addjoint"},
     {"routine" : "posetp__clrpr", "program_name" : "pos_clrpr"},
     {"routine" : "posetp__matmul", "program_name" : "pos_mult"},
     {"routine" : "posetp__scalar_mult", "program_name" : "pos_sclmult"},
@@ -40,7 +41,12 @@
     {"routine" : "posetp__cross", "program_name" : "pos_cross"},
     {"routine" : "posetp__frame", "program_name" : "pos_frame"},
     {"routine" : "posetp__frame4", "program_name" : "pos_frame4"},
-    {"routine" : "posetp__find_center", "program_name" : "pos_center"}
+    {"routine" : "posetp__find_center", "program_name" : "pos_center"},
+    {"routine" : "posetp__set_pr_xyz", "program_name" : "pos_setxyz"},
+    {"routine" : "posetp__set_pr_config", "program_name" : "pos_setcfg"},
+    {"routine" : "posetp__set_pr_jpos6", "program_name" : "pos_setjnt6"},
+    {"routine" : "posetp__set_pr_jpos3", "program_name" : "pos_setjnt3"},
+    {"routine" : "posetp__set_pr_jpos2", "program_name" : "pos_setjnt2"}
   ],
   "interface-depends" : [
     "TPElib"

@@ -1,0 +1,24 @@
+PROGRAM pos_addjoint
+%NOBUSYLAMP
+%NOLOCKGROUP
+
+VAR
+	out_reg : INTEGER
+	out_grp : INTEGER
+	pr_num1 : INTEGER
+	J1 : JOINTPOS
+	pr_num2 : INTEGER
+	J2 : JOINTPOS
+%from tpe.klh %import get_int_arg,get_jointpos_arg
+%from registers.klh %import set_jointpos
+%from pose.klh %import get_posreg_xyz, get_posreg_joint, set_posreg_xyz, set_posreg_joint
+%from pose.klh %import jpos_add
+
+BEGIN
+	pr_num1 = tpe__get_int_arg(1)
+	pr_num2 = tpe__get_int_arg(2)
+	J1 = pose__get_posreg_joint(pr_num1, 1)
+	J2 = pose__get_posreg_joint(pr_num2, 1)
+	out_reg = tpe__get_int_arg(3)
+	pose__set_posreg_joint(pose__jpos_add(J1,J2), out_reg, 1)
+END pos_addjoint

@@ -1,0 +1,27 @@
+PROGRAM pos_setxyz
+%NOBUSYLAMP
+%NOLOCKGROUP
+
+VAR
+	x : REAL
+	y : REAL
+	z : REAL
+	w : REAL
+	p : REAL
+	r : REAL
+	pr_num : INTEGER
+	grp_no : INTEGER
+%from tpe.klh %import get_int_arg,get_real_arg
+%from posetp.klh %import set_pr_xyz
+
+BEGIN
+	x = tpe__get_real_arg(1)
+	y = tpe__get_real_arg(2)
+	z = tpe__get_real_arg(3)
+	w = tpe__get_real_arg(4)
+	p = tpe__get_real_arg(5)
+	r = tpe__get_real_arg(6)
+	pr_num = tpe__get_int_arg(7)
+	grp_no = tpe__get_int_arg(8)
+	posetp__set_pr_xyz(x,y,z,w,p,r,pr_num,grp_no)
+END pos_setxyz

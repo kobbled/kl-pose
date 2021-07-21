@@ -1,0 +1,21 @@
+PROGRAM pos_setjnt3
+%NOBUSYLAMP
+%NOLOCKGROUP
+
+VAR
+	j1 : REAL
+	j2 : REAL
+	j3 : REAL
+	pr_num : INTEGER
+	grp_no : INTEGER
+%from tpe.klh %import get_int_arg,get_real_arg
+%from posetp.klh %import set_pr_jpos3
+
+BEGIN
+	j1 = tpe__get_real_arg(1)
+	j2 = tpe__get_real_arg(2)
+	j3 = tpe__get_real_arg(3)
+	pr_num = tpe__get_int_arg(4)
+	grp_no = tpe__get_int_arg(5)
+	posetp__set_pr_jpos3(j1,j2,j3,pr_num,grp_no)
+END pos_setjnt3
