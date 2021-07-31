@@ -7,7 +7,7 @@ VAR
 	j2 : REAL
 	pr_num : INTEGER
 	grp_no : INTEGER
-%from tpe.klh %import get_int_arg,get_real_arg
+%from tpe.klh %import get_real_arg,get_int_arg
 %from posetp.klh %import set_pr_jpos2
 
 BEGIN

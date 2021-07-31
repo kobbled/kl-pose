@@ -46,7 +46,11 @@
     {"routine" : "posetp__set_pr_config", "program_name" : "pos_setcfg"},
     {"routine" : "posetp__set_pr_jpos6", "program_name" : "pos_setjnt6"},
     {"routine" : "posetp__set_pr_jpos3", "program_name" : "pos_setjnt3"},
-    {"routine" : "posetp__set_pr_jpos2", "program_name" : "pos_setjnt2"}
+    {"routine" : "posetp__set_pr_jpos2", "program_name" : "pos_setjnt2"},
+    {"routine" : "posetp__groups_length", "program_name" : "pos_grplen"},
+    {"routine" : "posetp__posreg_type", "program_name" : "pos_prtype"},
+    {"routine" : "posetp__num_of_axes", "program_name" : "pos_axescnt"}
+
   ],
   "interface-depends" : [
     "TPElib"

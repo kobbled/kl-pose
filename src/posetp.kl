@@ -20,6 +20,31 @@ path_type_define(t_node, kinpos)
 
 
 --Routines needed for TP interfaces
+ROUTINE posetp__groups_length
+  BEGIN
+    RETURN(TOTAL_GROUPS)
+  END posetp__groups_length
+
+ROUTINE posetp__posreg_type
+  VAR
+    pos_type : INTEGER
+    num_axes  : INTEGER
+    STATUS : INTEGER
+  BEGIN
+    POS_REG_TYPE(reg_no, grp_no, pos_type, num_axes, STATUS)
+    RETURN(pos_type)
+  END posetp__posreg_type
+
+ROUTINE posetp__num_of_axes
+  VAR
+    pos_type : INTEGER
+    num_axes  : INTEGER
+    STATUS : INTEGER
+  BEGIN
+    POS_REG_TYPE(reg_no, grp_no, pos_type, num_axes, STATUS)
+    RETURN(num_axes)
+  END posetp__num_of_axes
+
 ROUTINE posetp__get_group_xyz
   VAR
     pose : t_node
