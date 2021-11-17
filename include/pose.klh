@@ -47,6 +47,11 @@ ROUTINE pose__set_posreg_xyz(pose_in : XYZWPR ; reg_no, grp_no : INTEGER) FROM p
 declare_function(prog_name,set_posreg_joint,prog_name_alias,setprj)
 ROUTINE pose__set_posreg_joint(pose_in : JOINTPOS ; reg_no, grp_no : INTEGER) FROM pose
 
+declare_function(prog_name,mask_posreg_xyz,prog_name_alias,mskprx)
+ROUTINE pose__mask_posreg_xyz(x : REAL; y : REAL; z : REAL ; reg_no : INTEGER ; grp_no : INTEGER) FROM pose
+declare_function(prog_name,mask_posreg_orient,prog_name_alias,mskpro)
+ROUTINE pose__mask_posreg_orient(w : REAL; p : REAL; r : REAL ; reg_no : INTEGER ; grp_no : INTEGER) FROM pose
+
 -- getters
 declare_function(prog_name,get_userframe,prog_name_alias,getUF)
 ROUTINE pose__get_userframe(grp_no : INTEGER) : XYZWPR FROM pose

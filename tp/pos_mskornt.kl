@@ -1,0 +1,21 @@
+PROGRAM pos_mskornt
+%NOBUSYLAMP
+%NOLOCKGROUP
+
+VAR
+	w : REAL
+	p : REAL
+	r : REAL
+	reg_no : INTEGER
+	grp_no : INTEGER
+%from tpe.klh %import get_real_arg,get_int_arg
+%from pose.klh %import mask_posreg_orient
+
+BEGIN
+	w = tpe__get_real_arg(1)
+	p = tpe__get_real_arg(2)
+	r = tpe__get_real_arg(3)
+	reg_no = tpe__get_int_arg(4)
+	grp_no = tpe__get_int_arg(5)
+	pose__mask_posreg_orient(w,p,r,reg_no,grp_no)
+END pos_mskornt

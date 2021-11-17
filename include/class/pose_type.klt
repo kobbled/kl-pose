@@ -12,3 +12,14 @@
 %mode pop
 
 %defeval t_node POSEDATA
+
+%mode push
+%mode string QQQ "`" "`" "\\"
+%define rot_type_define(object_name) `TYPE
+  t_ROT_CNFG FROM object_name = STRUCTURE
+		grp : BYTE
+    drive_axis : BYTE
+    tot_axes : BYTE
+    direction : BOOLEAN
+	ENDSTRUCTURE`
+%mode pop

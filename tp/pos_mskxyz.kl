@@ -1,0 +1,21 @@
+PROGRAM pos_mskxyz
+%NOBUSYLAMP
+%NOLOCKGROUP
+
+VAR
+	x : REAL
+	y : REAL
+	z : REAL
+	reg_no : INTEGER
+	grp_no : INTEGER
+%from tpe.klh %import get_real_arg,get_int_arg
+%from pose.klh %import mask_posreg_xyz
+
+BEGIN
+	x = tpe__get_real_arg(1)
+	y = tpe__get_real_arg(2)
+	z = tpe__get_real_arg(3)
+	reg_no = tpe__get_int_arg(4)
+	grp_no = tpe__get_int_arg(5)
+	pose__mask_posreg_xyz(x,y,z,reg_no,grp_no)
+END pos_mskxyz

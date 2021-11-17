@@ -329,6 +329,82 @@ ROUTINE pose__set_posreg_xyz
       ENDIF
   END pose__set_posreg_xyz
 
+ROUTINE pose__mask_posreg_orient
+-- -----------
+-- in: pose_in (XYZWPREXT), reg_no, grp_no
+-- out:
+-- desc: set posreg 'reg_no' for group 'grp_no'
+--       if no group is set, sets posreg for group 1.
+--       wrapper for SET_POS_REG built-in. 
+--       independant of pose class.
+-- -----------
+  VAR
+      STATUS : INTEGER
+      pose : XYZWPR
+  BEGIN
+      ok = TRUE
+      --default to 1 if group number is not set
+      IF (grp_no = 0) OR UNINIT(grp_no) THEN
+          grp_no = 1
+      ENDIF
+
+      IF (reg_no <= 0) THEN
+          WRITE TPERROR (CR, 'position register must be > 0')
+          ok = FALSE
+      ELSE
+          -- get posreg
+          pose = GET_POS_REG(reg_no, STATUS, grp_no)
+          --mask in orientation
+          pose.w = w
+          pose.p = p
+          pose.r = r
+          --set position with mask
+          SET_POS_REG(reg_no, (pose), STATUS, grp_no)
+          CHK_STAT(STATUS)
+          IF (STATUS <> 0) THEN
+              ok = FALSE
+          ENDIF
+      ENDIF
+  END pose__mask_posreg_orient
+
+ROUTINE pose__mask_posreg_xyz
+-- -----------
+-- in: pose_in (XYZWPREXT), reg_no, grp_no
+-- out:
+-- desc: set posreg 'reg_no' for group 'grp_no'
+--       if no group is set, sets posreg for group 1.
+--       wrapper for SET_POS_REG built-in. 
+--       independant of pose class.
+-- -----------
+  VAR
+      STATUS : INTEGER
+      pose : XYZWPR
+  BEGIN
+      ok = TRUE
+      --default to 1 if group number is not set
+      IF (grp_no = 0) OR UNINIT(grp_no) THEN
+          grp_no = 1
+      ENDIF
+
+      IF (reg_no <= 0) THEN
+          WRITE TPERROR (CR, 'position register must be > 0')
+          ok = FALSE
+      ELSE
+          -- get posreg
+          pose = GET_POS_REG(reg_no, STATUS, grp_no)
+          --mask in orientation
+          pose.x = x
+          pose.y = y
+          pose.z = z
+          --set position with mask
+          SET_POS_REG(reg_no, (pose), STATUS, grp_no)
+          CHK_STAT(STATUS)
+          IF (STATUS <> 0) THEN
+              ok = FALSE
+          ENDIF
+      ENDIF
+  END pose__mask_posreg_xyz
+
 
 ROUTINE pose__set_posreg_joint
 -- -----------
