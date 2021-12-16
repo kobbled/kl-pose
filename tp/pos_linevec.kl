@@ -1,4 +1,4 @@
-PROGRAM pos_mult
+PROGRAM pos_linevec
 %NOBUSYLAMP
 %NOLOCKGROUP
 
@@ -6,19 +6,19 @@ VAR
 	out_reg : INTEGER
 	out_grp : INTEGER
 	pr_num1 : INTEGER
-	p1 : XYZWPR
+	start_point : XYZWPR
 	pr_num2 : INTEGER
-	p2 : XYZWPR
+	end_point : XYZWPR
 %from tpe.klh %import get_xyzwpr_arg,get_int_arg
 %from registers.klh %import set_xyzwpr
 %from pose.klh %import get_posreg_xyz, get_posreg_joint, set_posreg_xyz, set_posreg_joint
-%from posetp.klh %import matmul
+%from posetp.klh %import get_line_vector
 
 BEGIN
 	pr_num1 = tpe__get_int_arg(1)
 	pr_num2 = tpe__get_int_arg(2)
-	p1 = pose__get_posreg_xyz(pr_num1, 1)
-	p2 = pose__get_posreg_xyz(pr_num2, 1)
+	start_point = pose__get_posreg_xyz(pr_num1, 1)
+	end_point = pose__get_posreg_xyz(pr_num2, 1)
 	out_reg = tpe__get_int_arg(3)
-	pose__set_posreg_xyz(posetp__matmul(p1,p2), out_reg, 1)
-END pos_mult
+	pose__set_posreg_xyz(posetp__get_line_vector(start_point,end_point), out_reg, 1)
+END pos_linevec

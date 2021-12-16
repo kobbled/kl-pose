@@ -110,9 +110,10 @@ ROUTINE pose__distance(pose1 : XYZWPR ; pose2 : XYZWPR) : REAL FROM pose
 declare_function(prog_name,calc_normal_vector,prog_name_alias,nvec)
 ROUTINE pose__calc_normal_vector(appr_vector : VECTOR; origin : VECTOR) : VECTOR FROM pose
 declare_function(prog_name,frame_from_approach_vector,prog_name_alias,frmapr)
-ROUTINE pose__frame_from_approach_vector(origin, approach : VECTOR) : XYZWPR FROM pose
+ROUTINE pose__frame_from_approach_vector(origin: VECTOR; approach : VECTOR) : XYZWPR FROM pose
 
 --vector calculations
+--CIRC_STRUCT needed so header can be used in files without T_CIRCLE
 %ifdef CIRC_STRUCT
 declare_function(prog_name,find_circle_center,prog_name_alias,circtr)
 ROUTINE pose__find_circle_center(points : ARRAY[*] OF VECTOR) : VECTOR FROM pose

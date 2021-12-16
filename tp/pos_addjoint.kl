@@ -9,7 +9,7 @@ VAR
 	J1 : JOINTPOS
 	pr_num2 : INTEGER
 	J2 : JOINTPOS
-%from tpe.klh %import get_int_arg,get_jointpos_arg
+%from tpe.klh %import get_jointpos_arg,get_int_arg
 %from registers.klh %import set_jointpos
 %from pose.klh %import get_posreg_xyz, get_posreg_joint, set_posreg_xyz, set_posreg_joint
 %from pose.klh %import jpos_add

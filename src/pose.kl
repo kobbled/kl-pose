@@ -988,4 +988,3 @@ ROUTINE pose__find_circumcenter
 
     RETURN(c)
   END pose__find_circumcenter
-
