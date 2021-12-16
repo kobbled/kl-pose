@@ -35,6 +35,10 @@ declare_function(prog_name,clrpr,prog_name_alias,clrpr)
 ROUTINE posetp__clrpr(pr_num: INTEGER) FROM prog_name
 declare_function(prog_name,matmul,prog_name_alias,matmul)
 ROUTINE posetp__matmul(p1 : XYZWPR; p2 : XYZWPR) : XYZWPR FROM prog_name
+declare_function(prog_name,add,prog_name_alias,add)
+ROUTINE posetp__add(p1 : XYZWPR; p2 : XYZWPR) : XYZWPR FROM prog_name
+declare_function(prog_name,sub,prog_name_alias,sub)
+ROUTINE posetp__sub(p1 : XYZWPR; p2 : XYZWPR) : XYZWPR FROM prog_name
 declare_function(prog_name,scalar_mult,prog_name_alias,scmult)
 ROUTINE posetp__scalar_mult(p1 : XYZWPR ; value : REAL) : XYZWPR FROM prog_name
 declare_function(prog_name,scalar_divide,prog_name_alias,scdiv)
@@ -55,5 +59,8 @@ declare_function(prog_name,frame4,prog_name_alias,frme4)
 ROUTINE posetp__frame4(p1 : XYZWPR; p2 : XYZWPR; p3 : XYZWPR; p4 : XYZWPR) : XYZWPR FROM prog_name
 declare_function(prog_name,find_center,prog_name_alias,fcent)
 ROUTINE posetp__find_center(p1 : XYZWPR; p2 : XYZWPR; p3 : XYZWPR) : XYZWPR FROM prog_name
+declare_function(prog_name,get_line_vector,prog_name_alias,lnvec)
+ROUTINE posetp__get_line_vector(start_point : XYZWPR; end_point : XYZWPR) : XYZWPR FROM prog_name
+
 
 %endif --posetp_h

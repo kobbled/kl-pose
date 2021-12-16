@@ -34,6 +34,8 @@
     {"routine" : "pose__jpos_add", "program_name" : "pos_addjoint"},
     {"routine" : "posetp__clrpr", "program_name" : "pos_clrpr"},
     {"routine" : "posetp__matmul", "program_name" : "pos_mult"},
+    {"routine" : "posetp__add", "program_name" : "pos_add"},
+    {"routine" : "posetp__sub", "program_name" : "pos_sub"},
     {"routine" : "posetp__scalar_mult", "program_name" : "pos_sclmult"},
     {"routine" : "posetp__scalar_divide", "program_name" : "pos_scldiv"},
     {"routine" : "posetp__inv", "program_name" : "pos_inv"},

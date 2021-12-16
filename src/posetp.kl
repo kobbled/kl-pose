@@ -126,6 +126,28 @@ ROUTINE posetp__matmul
     RETURN(p1:p2)
   END posetp__matmul
 
+ROUTINE posetp__add
+  VAR
+    out_p : XYZWPR
+  BEGIN
+    out_p.x = p1.x+p2.x ; out_p.y = p1.y+p2.y ; out_p.z = p1.z+p2.z
+    out_p.w = p1.w+p2.w ; out_p.p = p1.p+p2.p ; out_p.r = p1.r+p2.r
+    out_p.config_data = p1.config_data
+
+    RETURN(out_p)
+  END posetp__add
+
+ROUTINE posetp__sub
+  VAR
+    out_p : XYZWPR
+  BEGIN
+    out_p.x = p1.x-p2.x ; out_p.y = p1.y-p2.y ; out_p.z = p1.z-p2.z
+    out_p.w = p1.w-p2.w ; out_p.p = p1.p-p2.p ; out_p.r = p1.r-p2.r
+    out_p.config_data = p1.config_data
+
+    RETURN(out_p)
+  END posetp__sub
+
 ROUTINE posetp__scalar_mult
   VAR
     out_p : XYZWPR
@@ -220,6 +242,15 @@ ROUTINE posetp__find_center
 
     RETURN(pose__vector_to_pose(c.center, pose__get_orientation((ZEROPOS(1))), (ZEROPOS(1).config_data)))
   END posetp__find_center
+
+ROUTINE posetp__get_line_vector
+  VAR
+    v1, v2 : VECTOR
+  BEGIN
+    v1 = pose__pose_to_vector(start_point)
+    v2 = pose__pose_to_vector(end_point)
+    RETURN(pose__frame_from_approach_vector(v1, v2))
+  END posetp__get_line_vector
 
 BEGIN
 END posetp
