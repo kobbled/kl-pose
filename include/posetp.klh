@@ -61,6 +61,7 @@ declare_function(prog_name,find_center,prog_name_alias,fcent)
 ROUTINE posetp__find_center(p1 : XYZWPR; p2 : XYZWPR; p3 : XYZWPR) : XYZWPR FROM prog_name
 declare_function(prog_name,get_line_vector,prog_name_alias,lnvec)
 ROUTINE posetp__get_line_vector(start_point : XYZWPR; end_point : XYZWPR) : XYZWPR FROM prog_name
-
+declare_function(prog_name,line_increment,prog_name_alias,lninc)
+ROUTINE posetp__line_increment(start_point : XYZWPR; end_point : XYZWPR; fraction : REAL) : XYZWPR FROM prog_name
 
 %endif --posetp_h

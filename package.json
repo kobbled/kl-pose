@@ -54,8 +54,8 @@
     {"routine" : "posetp__groups_length", "program_name" : "pos_grplen"},
     {"routine" : "posetp__posreg_type", "program_name" : "pos_prtype"},
     {"routine" : "posetp__num_of_axes", "program_name" : "pos_axescnt"},
-    {"routine" : "posetp__get_line_vector", "program_name" : "pos_linevec"}
-
+    {"routine" : "posetp__get_line_vector", "program_name" : "pos_linevec"},
+    {"routine" : "posetp__line_increment", "program_name" : "pos_lineinc"}
   ],
   "interface-depends" : [
     "TPElib"

@@ -252,6 +252,15 @@ ROUTINE posetp__get_line_vector
     RETURN(pose__frame_from_approach_vector(v1, v2))
   END posetp__get_line_vector
 
+ROUTINE posetp__line_increment
+  VAR
+    v1, v2 : VECTOR
+  BEGIN
+    v1 = pose__pose_to_vector(start_point)
+    v2 = pose__pose_to_vector(end_point)
+    RETURN(pose__vector_to_pose(pose__line_increment(v1,v2,fraction), pose__get_orientation(start_point), start_point.config_data))
+  END posetp__line_increment
+
 BEGIN
 END posetp
 

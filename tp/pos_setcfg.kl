@@ -6,7 +6,7 @@ VAR
 	conf_str : STRING[32]
 	pr_num : INTEGER
 	grp_no : INTEGER
-%from tpe.klh %import get_string_arg,get_int_arg
+%from tpe.klh %import get_int_arg,get_string_arg
 %from posetp.klh %import set_pr_config
 
 BEGIN

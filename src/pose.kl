@@ -988,3 +988,8 @@ ROUTINE pose__find_circumcenter
 
     RETURN(c)
   END pose__find_circumcenter
+
+ROUTINE pose__line_increment
+  BEGIN
+    RETURN(p1 + (p2-p1)*fraction)
+  END pose__line_increment
