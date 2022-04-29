@@ -55,13 +55,16 @@ declare_function(prog_name,cross,prog_name_alias,cross)
 ROUTINE posetp__cross(p1 : XYZWPR; p2 : XYZWPR) : XYZWPR FROM prog_name
 declare_function(prog_name,frame,prog_name_alias,frame)
 ROUTINE posetp__frame(p1 : XYZWPR; p2 : XYZWPR; p3 : XYZWPR) : XYZWPR FROM prog_name
+declare_function(prog_name,framevec,prog_name_alias,frmv)
+ROUTINE posetp__framevec(v1 : VECTOR; v2 : VECTOR; v3 : VECTOR) : XYZWPR FROM prog_name
 declare_function(prog_name,frame4,prog_name_alias,frme4)
 ROUTINE posetp__frame4(p1 : XYZWPR; p2 : XYZWPR; p3 : XYZWPR; p4 : XYZWPR) : XYZWPR FROM prog_name
+declare_function(prog_name,frame4vec,prog_name_alias,frm4v)
+ROUTINE posetp__frame4vec(v1 : VECTOR; v2 : VECTOR; v3 : VECTOR; v4 : VECTOR) : XYZWPR FROM prog_name
 declare_function(prog_name,find_center,prog_name_alias,fcent)
 ROUTINE posetp__find_center(p1 : XYZWPR; p2 : XYZWPR; p3 : XYZWPR) : XYZWPR FROM prog_name
-declare_function(prog_name,get_line_vector,prog_name_alias,lnvec)
-ROUTINE posetp__get_line_vector(start_point : XYZWPR; end_point : XYZWPR) : XYZWPR FROM prog_name
+declare_function(prog_name,create_frame_from_normal,prog_name_alias,lnvec)
+ROUTINE posetp__create_frame_from_normal(start_point : XYZWPR; end_point : XYZWPR; parentfrm : XYZWPR) : XYZWPR FROM prog_name
 declare_function(prog_name,line_increment,prog_name_alias,lninc)
 ROUTINE posetp__line_increment(start_point : XYZWPR; end_point : XYZWPR; fraction : REAL) : XYZWPR FROM prog_name
-
 %endif --posetp_h

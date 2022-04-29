@@ -10,11 +10,12 @@ PROGRAM posetp
 %include pose_type.klt
 %include pose_structs.klt
 --cell position type
-path_type_define(t_node, kinpos)
+path_type_define(t_node,kinpos)
 %undef path_type_define
 
 %include pose.klh
 %include posetp.klh
+%from systemlib.klh %import VEC
 -- create template for kinematics
 %class kinpos('pose.klc','pose_class.klh','pose_type.klt')
 
@@ -224,10 +225,27 @@ ROUTINE posetp__frame
     RETURN( FRAME((p1),(p2),(p3)) )
   END posetp__frame
 
+ROUTINE posetp__framevec
+%define DEFAULT_ORIENTATION VEC(0,0,0)
+  BEGIN
+    RETURN( FRAME(pose__vector_to_pose(v1, DEFAULT_ORIENTATION, (ZEROPOS(1).config_data)), 
+                  pose__vector_to_pose(v2, DEFAULT_ORIENTATION, (ZEROPOS(1).config_data)), 
+                  pose__vector_to_pose(v3, DEFAULT_ORIENTATION, (ZEROPOS(1).config_data)) ) )
+  END posetp__framevec
+
 ROUTINE posetp__frame4
   BEGIN
     RETURN( FRAME((p1),(p2),(p3),(p4)) )
   END posetp__frame4
+
+ROUTINE posetp__frame4vec
+%define DEFAULT_ORIENTATION VEC(0,0,0)
+  BEGIN
+    RETURN( FRAME(pose__vector_to_pose(v1, DEFAULT_ORIENTATION, (ZEROPOS(1).config_data)), 
+                  pose__vector_to_pose(v2, DEFAULT_ORIENTATION, (ZEROPOS(1).config_data)), 
+                  pose__vector_to_pose(v3, DEFAULT_ORIENTATION, (ZEROPOS(1).config_data)), 
+                  pose__vector_to_pose(v4, DEFAULT_ORIENTATION, (ZEROPOS(1).config_data)) ) )
+  END posetp__frame4vec
 
 ROUTINE posetp__find_center
   VAR
@@ -240,17 +258,17 @@ ROUTINE posetp__find_center
 
     c = pose__find_circumcenter(v1, v2, v3)
 
-    RETURN(pose__vector_to_pose(c.center, pose__get_orientation((ZEROPOS(1))), (ZEROPOS(1).config_data)))
+    RETURN(pose__vector_to_pose(c.center, pose__get_orientation(p1), (p1.config_data)))
   END posetp__find_center
 
-ROUTINE posetp__get_line_vector
+ROUTINE posetp__create_frame_from_normal
   VAR
     v1, v2 : VECTOR
   BEGIN
     v1 = pose__pose_to_vector(start_point)
     v2 = pose__pose_to_vector(end_point)
-    RETURN(pose__frame_from_approach_vector(v1, v2))
-  END posetp__get_line_vector
+    RETURN(pose__create_frame_from_normal(v1, v2, parentfrm))
+  END posetp__create_frame_from_normal
 
 ROUTINE posetp__line_increment
   VAR
