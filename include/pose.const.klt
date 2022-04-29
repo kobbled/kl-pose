@@ -10,4 +10,10 @@ CONST
   CC_EXT = 6
 	CC_JOINT = 9
 
+CONST
+  X_AXES = 1
+  Y_AXES = 2
+  Z_AXES = 3
+  VERT_AXES = 4
+
 %endif --pose_const_t

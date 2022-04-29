@@ -820,17 +820,21 @@ ROUTINE pose__cylindrical_to_cartesian
     o : XYZWPR
   BEGIN
     --cyl_pose = (theta, r, z, theta_rot, r_rot, z_rot)
-    --z_axis = 1:x , 2:y , 3:z
+    --z_axis = 1:x , 2:y , 3:z, 4:vertical
     SELECT z_axis OF
-      CASE(1):
+      CASE(X_AXES):
         v.x = cyl_pose.y ; v.y= 0 ; v.z=cyl_pose.z ;
         o = math__translate(math__rotx((origin), cyl_pose.x), v )
         o.w = o.w + cyl_pose.w ; o.p = o.p + cyl_pose.p ; o.r = o.r + cyl_pose.r ;
-      CASE(2):
+      CASE(Y_AXES):
         v.x = 0 ; v.y= cyl_pose.y ; v.z=cyl_pose.z ;
         o = math__translate(math__roty((origin), cyl_pose.x), v )
         o.w = o.w + cyl_pose.w ; o.p = o.p + cyl_pose.p ; o.r = o.r + cyl_pose.r ;
-      CASE(3):
+      CASE(Z_AXES):
+        v.x = 0 ; v.y=cyl_pose.y ; v.z=cyl_pose.z ;
+        o = math__translate(math__rotz((origin), cyl_pose.x), v )
+        o.w = o.w + cyl_pose.w ; o.p = o.p + cyl_pose.p ; o.r = o.r + cyl_pose.r ;
+      CASE(VERT_AXES):
         v.x = 0 ; v.y=cyl_pose.z ; v.z=cyl_pose.y ;
         o = math__translate(math__rotz((origin), cyl_pose.x), v )
         o.w = o.w + cyl_pose.w - 90 ; o.p = o.p + cyl_pose.p ; o.r = o.r + cyl_pose.r ;
@@ -883,13 +887,13 @@ ROUTINE pose__polar_to_cartesian
     --pol_pose = (theta, rho, z, theta_rot, rho_rot, z_rot)
     --z_axis = 1:x , 2:y , 3:z
     SELECT z_axis OF
-      CASE(1):
+      CASE(X_AXES):
         v.x = 0 ; v.y= 0 ; v.z=pol_pose.z ;
         o = math__translate(math__roty(math__rotz((origin), pol_pose.x), pol_pose.y), v )
-      CASE(2):
+      CASE(Y_AXES):
         v.x = 0 ; v.y= 0 ; v.z=pol_pose.z ;
         o = math__translate(math__rotx(math__rotz((origin), pol_pose.x + 180), pol_pose.y), v )
-      CASE(3):
+      CASE(Z_AXES):
         v.x = 0 ; v.y=pol_pose.z ; v.z=0 ;
         o = math__translate(math__rotx(math__roty((origin), pol_pose.x), pol_pose.y), v )
     ENDSELECT
