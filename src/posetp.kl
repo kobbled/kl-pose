@@ -64,8 +64,13 @@ ROUTINE posetp__get_group_joint
 
 ROUTINE posetp__set_pr_xyz
   BEGIN
-    pose__set_posreg_xyz(POS(x,y,z,w,p,r, (ZEROPOS(1).config_data)), pr_num, grp_no)
+    pose__set_posreg_xyz(POS(x,y,z,w,p,r, (ZEROPOS(1).config_data)), pr_num, 1)
   END posetp__set_pr_xyz
+
+ROUTINE posetp__set_pr_xyz_group
+  BEGIN
+    pose__set_posreg_xyz(POS(x,y,z,w,p,r, (ZEROPOS(1).config_data)), pr_num, grp_no)
+  END posetp__set_pr_xyz_group
 
 ROUTINE posetp__set_pr_config
   VAR
@@ -104,6 +109,11 @@ ROUTINE posetp__set_pr_jpos2
     
     pose__set_posreg_joint(pose__set_jointpos(pose), pr_num, grp_no)
   END posetp__set_pr_jpos2
+
+ROUTINE posetp__set_pr_jpos
+  BEGIN
+    pose__set_posreg_joint(pose__set_jointpos_axis(1, j1), pr_num, grp_no)
+  END posetp__set_pr_jpos
 
 ROUTINE posetp__clrpr
   VAR

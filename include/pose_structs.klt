@@ -7,4 +7,10 @@ TYPE
     center : VECTOR
 	ENDSTRUCTURE
 
+  t_AXES_FRAME FROM pose = STRUCTURE
+    orient : VECTOR
+    approach : VECTOR
+    normal : VECTOR
+  ENDSTRUCTURE
+
 %endif
