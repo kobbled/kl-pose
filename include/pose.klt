@@ -4,11 +4,4 @@
 %include pose_structs.klt
 %include pose.const.klt
 
-VAR
-    ok : BOOLEAN
-    cur_ufnum : INTEGER
-    cur_utnum : INTEGER
-    prev_ufnum : INTEGER
-    prev_utnum : INTEGER
-
 %endif --pose_t

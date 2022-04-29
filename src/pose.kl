@@ -11,11 +11,33 @@ PROGRAM pose
 %include shapes.klt
 %include math.klt
 
+%ifdef DEBUG_BUILD
+%include display.c.klt
+%endif
+
+VAR
+    ok : BOOLEAN
+    cur_ufnum : INTEGER
+    cur_utnum : INTEGER
+    prev_ufnum : INTEGER
+    prev_utnum : INTEGER
+
 %from errors.klh %import karelError, CHK_STAT
-%from strings.klh %import s_to_joint, s_to_xyzwpr, i_to_s, s_to_vec
+%from systemlib.klh %import VEC
+%include strings.klh
 %include math.klh
 %include matrix.klh
+%include shapes.klh
+%include posetp.klh
 %include pose.klh
+
+%ifdef DEBUG_BUILD
+%from display.klh %import clear, show
+
+-- user display log
+%class usrdis('dispclass.klc','dispclass.klh')
+
+%endif
 
 BEGIN
 END pose
@@ -824,7 +846,7 @@ ROUTINE pose__cartesian_to_cylindrical
     o : XYZWPR
   BEGIN
     --put position into center frame
-    p = INV(origin):cart_pose
+    p = INV((origin)):cart_pose
 
     --conversion should be (theta, height, radius) as x,y,z
     --width radius as z height
@@ -914,50 +936,63 @@ ROUTINE pose__distance
     RETURN( math__norm(pose__pose_to_vector(pose2)-pose__pose_to_vector(pose1)) )
   END pose__distance
 
-ROUTINE pose__calc_normal_vector
+ROUTINE pose__create_frame_from_normal
   VAR
-    pl : t_PLANE
-    perp_line : VECTOR
+%define AXIS_LENGTH 10
+%define SCALE_FACTOR 6
+    approach,normal,orient : VECTOR
+    orient_unit : VECTOR
+    orientation : XYZWPR
+    plane : T_PLANE
   BEGIN
-    pl.normal = appr_vector
-    -- equation of plane ax+by+cz=d
-    -- d is 0 in local space
-    pl.d = 0
-    --assume vector parallel to normal vector
-    --scale by 2 to ensure greater than 5mm distance from origin
-    perp_line.x = pl.normal.x
-    perp_line.y = 0
-    -- calculate z by solving plane equation
-    perp_line.z = ((pl.d-(pl.normal.x*perp_line.x + pl.normal.y*perp_line.y))/pl.normal.z)
+    --normal vector
+    normal = (p2-p1)
 
-    RETURN(perp_line)
+    --create perpendicular plane with p1 as the origin
+    shapes__create_plane(p1, normal, plane)
 
-  END pose__calc_normal_vector
+    --make x-axis on plane
+    orientation = pose__vector_to_pose(VEC(AXIS_LENGTH, 0, 0), VEC(0,0,0), (ZEROPOS(1).config_data))
+%ifdef DEBUG_BUILD
+    usrdis__print(DEBUG,'x-axis orientation:')
+    usrdis__print(DEBUG,pose_to_s(orientation, ','))
+%endif
 
-ROUTINE pose__frame_from_approach_vector
-  VAR
-%define SCALE_FACTOR 20
-    a,n,o : VECTOR
-    orientation : VECTOR
-  BEGIN
-    --calculate approach vector
-    --get unit vector and scale so it is at least 5mm away
-    a = ((approach-origin)/math__norm((approach-origin)))*SCALE_FACTOR
-    --calculate normal vector
-    n = (pose__calc_normal_vector(a, origin))
-    --get orient vector
-    o = a#n
+    --x-axis should be colinear with the x-axis of the parent frame
+    orient = shapes__project_point_on_plane(pose__pose_to_vector(orientation), plane)
+    --convert to unit vector to avoid real overflow errors
+    orient_unit = (orient-p1)/math__norm((orient-p1))
 
-    --add to origin
-    a = a + origin
-    n = n + origin
-    o = o + origin
+    --get y-axis vector
 
-    -- w,p,r = vec(0,0,0)
-    orientation = s_to_vec('0,0,0',',')
+    --scale up unit vector so that vector is over AXIS_LENGTH in length
+    -- minimum is 5mm in length
+    IF (math__norm((plane.normal#orient_unit)) < AXIS_LENGTH) THEN
+%ifdef DEBUG_BUILD
+      usrdis__print(DEBUG,'Approach is scaled!')
+%endif
+      approach = p1 + SCALE_FACTOR*(plane.normal#orient_unit)
+    ELSE
+      approach = p1 + (plane.normal#orient_unit)
+    ENDIF
 
-    RETURN( FRAME(pose__vector_to_pose(origin, orientation, (ZEROPOS(1).config_data)), pose__vector_to_pose(n, orientation, (ZEROPOS(1).config_data)), pose__vector_to_pose(o, orientation, (ZEROPOS(1).config_data))) )
-  END pose__frame_from_approach_vector
+%ifdef DEBUG_BUILD
+    usrdis__print(DEBUG,'Origin Point:')
+    usrdis__print(DEBUG,vec_to_s(p1, ','))
+    usrdis__print(DEBUG,'Normal Point:')
+    usrdis__print(DEBUG,vec_to_s(p2, ','))
+    usrdis__print(DEBUG,'Normal:')
+    usrdis__print(DEBUG,vec_to_s(plane.normal, ','))
+    usrdis__print(DEBUG,'Orient:')
+    usrdis__print(DEBUG,vec_to_s(orient, ','))
+    usrdis__print(DEBUG,'Approach:')
+    usrdis__print(DEBUG,vec_to_s(approach, ','))
+%endif
+
+    --Create a frame with builtin FRAME(origin,orient[x-axis],approach[xy-plane])
+    --convert vectors to positions
+    RETURN( parentfrm:posetp__framevec(p1, orient, approach) )
+  END pose__create_frame_from_normal
 
 ROUTINE pose__find_circle_center
   VAR
