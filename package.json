@@ -10,8 +10,7 @@
     "src/posetp.kl"
   ],
   "tests" : [
-    "test/test_pose.kl",
-    "test/test_pos_mat.ls"
+    "test/test_pose.kl"
   ],
   "includes" : [
     "include",

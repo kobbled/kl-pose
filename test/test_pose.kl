@@ -3,9 +3,20 @@ PROGRAM test_pose
 %COMMENT = ''
 %NOLOCKGROUP
 
+--use to test kinematic function
+--must verify robot utool number
+--as well as confirm assertions in 
+-- t_Kinematics & t_IK
+%define TEST_ROBOT_KINEMATICS FALSE
+
+
+%ifeq TEST_ROBOT_KINEMATICS TRUE
 --change to zero tool frame
 --will change from system to system
 %define EOAT_FRAME_NO 6
+%endif
+
+%define LOG_NAME 'RD:tpose_debug.DT'
 
 VAR
   entry : INTEGER
@@ -14,17 +25,29 @@ VAR
 %include pose.klt
 %include pose_type.klt
 --cell position type
-path_type_define(t_node, kinpos)
+path_type_define(t_node,kinpos)
 %undef path_type_define
+
+%ifdef DEBUG_BUILD
+%include display.c.klt
+%endif
 
 %include pose_structs.klt
 %include common_poses.klt
 
 %include pose.klh
 %include math.klh
-%from strings.klh %import i_to_s
+%include strings.klh
 %from systemlib.klh %import VEC
 %include kunit.klh
+
+%ifdef DEBUG_BUILD
+%from display.klh %import clear, show
+
+-- user display log
+%class usrdis('dispclass.klc','dispclass.klh')
+
+%endif
 
 --template for full kinematic model poses 
 %class kinpos('pose.klc','pose_class.klh','pose_type.klt')
@@ -111,6 +134,7 @@ ROUTINE t_set_ut_grp : BOOLEAN
     RETURN(kunit_assert(b) AND kunit_eq_int(frame_no, expect))
   END t_set_ut_grp
 
+%ifeq TEST_ROBOT_KINEMATICS TRUE
 ROUTINE t_IK : BOOLEAN
   VAR
     pos1, pos2 : XYZWPR
@@ -131,7 +155,9 @@ ROUTINE t_IK : BOOLEAN
     RETURN(kunit_eq_jnt((expected1), (actual1)) AND kunit_eq_jnt((expected2), (actual2)) )
 
   END t_IK
+%endif
 
+%ifeq TEST_ROBOT_KINEMATICS TRUE
 ROUTINE t_Kinematics : BOOLEAN
   VAR
     pos1, pos2 : JOINTPOS
@@ -152,6 +178,7 @@ ROUTINE t_Kinematics : BOOLEAN
     RETURN( kunit_eq_pos(expected2, actual2) AND kunit_eq_pos(expected1, actual1))
 
   END t_Kinematics
+%endif
 
 -- get uframe
 ROUTINE t_get_uf : BOOLEAN
@@ -382,7 +409,7 @@ ROUTINE t_set_prj : BOOLEAN
     -- convert into jointpos form
     jpos_exp = pose__set_jointpos(expected)
     -- push jointpos to pr
-    pose__set_posreg_joint(jpos_exp, pr_num, 0)
+    pose__set_posreg_joint((jpos_exp), pr_num, 0)
     -- check that functions completed
     b = pose__get_ok
     IF NOT b THEN
@@ -395,7 +422,7 @@ ROUTINE t_set_prj : BOOLEAN
       RETURN(FALSE)
     ENDIF
 
-    RETURN(kunit_assert(b) AND kunit_eq_jnt(jpos_exp, jpos_act))
+    RETURN(kunit_assert(b) AND kunit_eq_jnt((jpos_exp), (jpos_act)))
 
   END t_set_prj
 
@@ -457,39 +484,95 @@ ROUTINE t_dist : BOOLEAN
 
   END t_dist
 
-ROUTINE t_frm_apr : BOOLEAN
+ROUTINE t_frm_nrml : BOOLEAN
   VAR
-    origin, apr, apr2: VECTOR
+    origin_frame : XYZWPR
     p1, p2: VECTOR
     actual, expected : XYZWPR
     actual2, expected2 : XYZWPR
     actual3, expected3 : XYZWPR
     actual4, expected4 : XYZWPR
+    actual5, expected5 : XYZWPR
   BEGIN
-    origin = VEC(0,0,0)
 
-    apr = VEC(334,-300,398.048)
-    actual = pose__frame_from_approach_vector(origin, apr)
-    expected = pose__set_xyzwpr_str('0,0,0,30,40,0','N B D, 0, 0, 0')
+    origin_frame = ZEROPOS(1)
 
-    apr2 = VEC(696.364,707.107,122.788)
-    actual2 = pose__frame_from_approach_vector(origin, apr2)
-    expected2 = pose__set_xyzwpr_str('0,0,0,-45,80,0','N B D, 0, 0, 0')
+    p1 = VEC(0,0,0)
+%ifdef DEBUG_BUILD
+    usrdis__print(INFO,'test normal frame 1')
+%endif
+    p2 = VEC(334,-300,398.048)
+    actual = pose__create_frame_from_normal(p1, p2, origin_frame)
+    expected = pose__set_xyzwpr_str('0.0,0.0,0.0,42.2,26.4,22.0','N B D, 0, 0, 0')
 
+%ifdef DEBUG_BUILD
+    usrdis__print(DEBUG,'frame1:' + pose_to_s(actual, ',') )
+    usrdis__print(INFO,'test normal frame 2')
+%endif
+    p2 = VEC(696.364,707.107,122.788)
+    actual2 = pose__create_frame_from_normal(p1, p2, origin_frame)
+    expected2 = pose__set_xyzwpr_str('0.0,0.0,0.0,-82.9,6.8,-43.7','N B D, 0, 0, 0')
+
+%ifdef DEBUG_BUILD
+    usrdis__print(DEBUG,'frame2:' + pose_to_s(actual2, ',') )
+    usrdis__print(INFO,'test normal frame 3')
+%endif
     p1 = VEC(150,90,300)
     p2 = VEC(337.656,428.095,1000.341)
-    actual3 = pose__frame_from_approach_vector(p1, p2)
-    expected3 = pose__set_xyzwpr_str('150,90,300,-25,15,0','N B D, 0, 0, 0')
+    actual3 = pose__create_frame_from_normal(p1, p2, origin_frame)
+    expected3 = pose__set_xyzwpr_str('150.0,90.0,300.0,28.4,5.7,140.5','N B D, 0, 0, 0')
 
+%ifdef DEBUG_BUILD
+    usrdis__print(DEBUG,'frame3:' + pose_to_s(actual3, ',') )
+    usrdis__print(INFO,'test normal frame 4')
+%endif
     p1 = VEC(337.656,428.095,1000.341)
     p2 = VEC(150,90,300)
-    actual4 = pose__frame_from_approach_vector(p1, p2)
-    expected4 = pose__set_xyzwpr_str('337.656,428.095,1000.341,-155,-15,180','N B D, 0, 0, 0')
-  
+    actual4 = pose__create_frame_from_normal(p1, p2, origin_frame)
+    expected4 = pose__set_xyzwpr_str('337.7,428.1,1000.3,-151.6,5.7,140.5','N B D, 0, 0, 0')
+
+%ifdef DEBUG_BUILD
+    usrdis__print(DEBUG,'frame4:' + pose_to_s(actual4, ',') )
+    usrdis__print(INFO,'test normal frame 5')
+%endif
+    p1 = VEC(0.0,0.0,477.005)
+    p2 = VEC(0.351,-0.779,-555.0)
+    actual5 = pose__create_frame_from_normal(p1, p2, origin_frame)
+    expected5 = pose__set_xyzwpr_str('0.0,0.0,477.0,180.0,-0.0,2.1','N B D, 0, 0, 0')
+
+%ifdef DEBUG_BUILD
+    usrdis__print(DEBUG,'frame5:' + pose_to_s(actual5, ',') )
+%endif
 
     RETURN( kunit_eq_pos(expected, actual) AND kunit_eq_pos(expected2, actual2) AND &
-            kunit_eq_pos(expected3, actual3) AND kunit_eq_pos(expected4, actual4) )
-  END t_frm_apr
+            kunit_eq_pos(expected3, actual3) AND kunit_eq_pos(expected4, actual4) AND & 
+            kunit_eq_pos(expected5, actual5))
+  END t_frm_nrml
+
+ROUTINE t_frm_nrml2 : BOOLEAN
+  VAR
+    origin_frame : XYZWPR
+    p1, p2: VECTOR
+    actual, expected : XYZWPR
+  BEGIN
+
+    origin_frame = POS(230.5, -268.4, 259.1, -37.34, 33.83, -23.01, (ZEROPOS(1).config_data))
+
+    p1 = VEC(49.678, 82.492, 257.812)
+%ifdef DEBUG_BUILD
+    usrdis__print(INFO,'test normal frame 1 relative to')
+    usrdis__print(DEBUG,'parent:' + pose_to_s(origin_frame, ',') )
+%endif
+    p2 = VEC(-101.875, -126.890, 890.539)
+    actual = pose__create_frame_from_normal(p1, p2, origin_frame)
+    expected = pose__set_xyzwpr_str('434.6,  -113.9, 360.1, -16.343, 22.026, -16.931','N B D, 0, 0, 0')
+
+%ifdef DEBUG_BUILD
+    usrdis__print(DEBUG,'frame1:' + pose_to_s(actual, ',') )
+%endif
+
+    RETURN( kunit_eq_pos(expected, actual))
+  END t_frm_nrml2
 
 ROUTINE t_cylind : BOOLEAN
   VAR
@@ -500,9 +583,9 @@ ROUTINE t_cylind : BOOLEAN
   BEGIN
     origin = $MOR_GRP[1].$NILPOS
     expected1 = pose__set_xyzwpr_str('34.202,-93.969,210,0,0,-160', 'N D B, 0, 0, 0')
-    --order : Theta, z, r
-    v = VEC(200,210,100)
-    actual1 = pose__cylindrical_to_cartesian(origin, pose__vector_to_pose(v, VEC(0,0,0), origin.config_data))
+    --order : Theta, r, z
+    v = VEC(200,100,210)
+    actual1 = pose__cylindrical_to_cartesian(origin, pose__vector_to_pose(v, VEC(0,0,0), origin.config_data), Z_AXES)
 
     actual2 = pose__cylinder_surf_to_origin(expected1, v)
 
@@ -512,6 +595,12 @@ ROUTINE t_cylind : BOOLEAN
 
 
 BEGIN
+%ifdef DEBUG_BUILD
+  --(log_filename, show_date, show_debug, show_info)
+  usrdis__new(LOG_NAME, FALSE, TRUE, TRUE)
+  usrdis__clear_file
+%endif
+
   --asserts 36
   kunit_test('set_uframe()', t_set_uf) --assert 2
   kunit_test('set_uframe_group()', t_set_uf_grp) -- assert 2
@@ -527,10 +616,17 @@ BEGIN
   kunit_test('set_pr_joint()', t_set_prj) --assert 2
   kunit_test('find circumcenter', t_circum) --assert 4
   kunit_test('euclidean norm', t_dist) -- assert 1
-  kunit_test('Calc frame from approach', t_frm_apr) -- assert 3
+  kunit_test('Calc frames from normal vectors', t_frm_nrml) -- assert 5
+  kunit_test('Calc normal frame relative to parent frame', t_frm_nrml2) -- assert 1
   kunit_test('cylindrial conversions', t_cylind) -- assert 2
+%ifeq TEST_ROBOT_KINEMATICS TRUE
   kunit_test('test IK', t_IK) -- assert 2
   kunit_test('test Kinematics', t_Kinematics) -- assert 2
+%endif
 
   kunit_done
+
+%ifdef DEBUG_BUILD
+  usrdis__delete
+%endif
 END test_pose
