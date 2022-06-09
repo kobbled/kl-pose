@@ -29,9 +29,11 @@ ROUTINE pose__set_config(conf_str : STRING) : CONFIG FROM pose
 -- use array
 declare_function(prog_name,set_jointpos,prog_name_alias,setjnt)
 ROUTINE pose__set_jointpos(arr: ARRAY[*] OF REAL) : JOINTPOS FROM pose
+declare_function(prog_name,zero_jointpos,prog_name_alias,zrojnt)
+ROUTINE pose__zero_jointpos : JOINTPOS FROM pose
 -- update single axis
 declare_function(prog_name,set_jointpos_axis,prog_name_alias,setajnt)
-ROUTINE pose__set_jointpos_axis(axs : INTEGER; ang : REAL) : JOINTPOS FROM pose
+ROUTINE pose__set_jointpos_axis(pose : JOINTPOS; axs : INTEGER; ang : REAL) : JOINTPOS FROM pose
 --use string instead of array
 declare_function(prog_name,set_jointpos_str,prog_name_alias,setsjnt)
 ROUTINE pose__set_jointpos_str(pose_in : STRING) : JOINTPOS FROM pose

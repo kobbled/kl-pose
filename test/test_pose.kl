@@ -289,7 +289,7 @@ ROUTINE t_set_joint2 : BOOLEAN
 
     --add -15 deg to J2
     angle = -15
-    actual = pose__set_jointpos_axis(2,angle)
+    actual = pose__set_jointpos_axis(actual,2,angle)
     actual = pose__jpos_add(origin_jnt, actual)
 
     --expected
@@ -565,7 +565,7 @@ ROUTINE t_frm_nrml2 : BOOLEAN
 %endif
     p2 = VEC(-101.875, -126.890, 890.539)
     actual = pose__create_frame_from_normal(p1, p2, origin_frame)
-    expected = pose__set_xyzwpr_str('434.6,  -113.9, 360.1, -16.343, 22.026, -16.931','N B D, 0, 0, 0')
+    expected = pose__set_xyzwpr_str('434.6,-113.9,360.1,-12.3,-24.5,-131.3','N B D, 0, 0, 0')
 
 %ifdef DEBUG_BUILD
     usrdis__print(DEBUG,'frame1:' + pose_to_s(actual, ',') )

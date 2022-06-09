@@ -111,8 +111,10 @@ ROUTINE posetp__set_pr_jpos2
   END posetp__set_pr_jpos2
 
 ROUTINE posetp__set_pr_jpos
+  VAR
+    pose : JOINTPOS
   BEGIN
-    pose__set_posreg_joint(pose__set_jointpos_axis(1, j1), pr_num, grp_no)
+    pose__set_posreg_joint(pose__set_jointpos_axis(pose, 1, j1), pr_num, grp_no)
   END posetp__set_pr_jpos
 
 ROUTINE posetp__clrpr

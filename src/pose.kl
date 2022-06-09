@@ -265,15 +265,44 @@ ROUTINE pose__set_jointpos
     RETURN(joint_pose)
   END pose__set_jointpos
 
+ROUTINE pose__zero_jointpos
+  VAR
+    joint_pose : JOINTPOS
+    arr: ARRAY[9] OF REAL
+    i, status : INTEGER
+  BEGIN
+    FOR i=1 TO ARRAY_LEN(arr) DO
+      arr[i] = 0
+    ENDFOR
+
+    CNV_REL_JPOS(arr, joint_pose, status)
+
+    RETURN(joint_pose)
+  END pose__zero_jointpos
+
 ROUTINE pose__set_jointpos_axis
   VAR
     joint_pose : JOINTPOS
     arr: ARRAY[9] OF REAL
-    STATUS : INTEGER
+    i : INTEGER
+    status : INTEGER
   BEGIN
-    arr = (ZEROARR)
+    IF UNINIT(pose) THEN
+      pose = pose__zero_jointpos
+      CNV_JPOS_REL(pose, arr, status)
+      CHK_STAT(status)
+    ELSE
+      CNV_JPOS_REL(pose, arr, status)
+      CHK_STAT(status)
+      FOR i=1 TO ARRAY_LEN(arr) DO
+        IF UNINIT(arr[i]) THEN
+          arr[i] = 0
+        ENDIF
+      ENDFOR
+    ENDIF
+
     arr[axs] = ang
-    CNV_REL_JPOS(arr, joint_pose, STATUS)
+    CNV_REL_JPOS(arr, joint_pose, status)
     CHK_STAT(status)
 
     RETURN(joint_pose)
