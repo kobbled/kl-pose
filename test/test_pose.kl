@@ -593,6 +593,35 @@ ROUTINE t_cylind : BOOLEAN
 
   END t_cylind
 
+ROUTINE t_veceul : BOOLEAN
+  VAR
+    act_ang : ARRAY[8] OF VECTOR
+    exp_ang : ARRAY[8] OF VECTOR
+  BEGIN
+    act_ang[1] = pose__vector_to_euler(1,0,0,X_AXES)
+    act_ang[2] = pose__vector_to_euler(0,0,1,X_AXES)
+    act_ang[3] = pose__vector_to_euler(1,1,0,X_AXES)
+    act_ang[4] = pose__vector_to_euler(-0.75,0.38,-0.55,X_AXES)
+    act_ang[5] = pose__vector_to_euler(-0.16,0.41,0.9,X_AXES)
+
+    act_ang[6] = pose__vector_to_euler(0,-1,1,Z_AXES)
+    act_ang[7] = pose__vector_to_euler(0.707,0.707,1,Z_AXES)
+    act_ang[8] = pose__vector_to_euler(0.7,0,-0.71,Z_AXES)
+
+    exp_ang[1] = VEC(0,0,0)
+    exp_ang[2] = VEC(0,-90,0)
+    exp_ang[3] = VEC(0,0,45)
+    exp_ang[4] = VEC(0,33.09,153.13)
+    exp_ang[5] = VEC(0,-63.94,111.32)
+
+    exp_ang[6] = VEC(0,45,-90)
+    exp_ang[7] = VEC(0,45,45)
+    exp_ang[8] = VEC(180,44.51,-180)
+
+    RETURN( kunit_eq_arv(exp_ang, act_ang, 0.2) )
+
+  END t_veceul
+
 
 BEGIN
 %ifdef DEBUG_BUILD
@@ -619,6 +648,7 @@ BEGIN
   kunit_test('Calc frames from normal vectors', t_frm_nrml) -- assert 5
   kunit_test('Calc normal frame relative to parent frame', t_frm_nrml2) -- assert 1
   kunit_test('cylindrial conversions', t_cylind) -- assert 2
+  kunit_test('vector to euler angles', t_veceul)
 %ifeq TEST_ROBOT_KINEMATICS TRUE
   kunit_test('test IK', t_IK) -- assert 2
   kunit_test('test Kinematics', t_Kinematics) -- assert 2

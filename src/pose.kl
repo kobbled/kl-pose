@@ -831,6 +831,14 @@ ROUTINE pose__pose_to_vector
     RETURN(v)
   END pose__pose_to_vector
 
+ROUTINE pose__pose_to_orient
+  VAR
+    v : VECTOR
+  BEGIN
+    v.x = pose.w ; v.y = pose.p ; v.z = pose.r
+    RETURN(v)
+  END pose__pose_to_orient
+
 ROUTINE pose__vector_to_pose
   VAR
     p : XYZWPR
@@ -1061,3 +1069,47 @@ ROUTINE pose__line_increment
   BEGIN
     RETURN(p1 + (p2-p1)*fraction)
   END pose__line_increment
+
+
+ROUTINE pose__vector_to_euler
+  VAR
+    rad : REAL
+    out : VECTOR
+  BEGIN
+    --convert into spherical coordinates to obtain the theta and phi angles.
+    --..note:: third angle is not computed here, as it is the rotation around
+    --         the vector (i.e doesn't change the vector)
+    rad = vi*vi+vj*vj+vk*vk
+
+    IF rad <> 1 THEN
+      rad = SQRT(rad)
+    ENDIF
+    
+    -- default assume vector is along x'-axis (X_AXES)
+    out.x = 0
+    IF (vk/rad > 1) OR (vk/rad < -1) THEN
+      karelError(VAL_OUT_OF_RNG, 'ACOS is out of range in pose__vector_to_euler : ' + r_to_s(vk/rad), ER_ABORT)
+    ENDIF
+    out.y = -90 + ACOS(vk/rad)
+    IF (vi = 0) AND (vj = 0) THEN
+      out.z = 0
+    ELSE
+      out.z = ATAN2(vi,vj)
+    ENDIF
+
+    SELECT vectorAxis OF
+      CASE(X_AXES):
+        --no need to rotate
+      CASE(Y_AXES):
+        --rotate frame so y is along previous x-axis
+%define YROT_ALIGN_EULER POS(0,0,0,0,0,-90,(ZEROPOS(1).config_data))
+        out = pose__pose_to_orient(pose__vector_to_pose(VEC(0,0,0),(out),(ZEROPOS(1).config_data)):YROT_ALIGN_EULER)
+      CASE(Z_AXES):
+        --rotate frame so z is along previous x-axis
+%define ZROT_ALIGN_EULER POS(0,0,0,0,90,0,(ZEROPOS(1).config_data))
+        out = pose__pose_to_orient(pose__vector_to_pose(VEC(0,0,0),(out),(ZEROPOS(1).config_data)):ZROT_ALIGN_EULER)
+    ENDSELECT
+
+    RETURN(out)
+
+  END pose__vector_to_euler

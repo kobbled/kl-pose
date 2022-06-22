@@ -89,6 +89,8 @@ declare_function(prog_name,matrix_to_cart,prog_name_alias,mat2xyz)
 ROUTINE pose__matrix_to_cart(reg_no : INTEGER; grp_no : INTEGER) FROM pose
 declare_function(prog_name,pose_to_vector,prog_name_alias,pos2vec)
 ROUTINE pose__pose_to_vector(pose : XYZWPR) : VECTOR FROM pose
+declare_function(prog_name,pose_to_orient,prog_name_alias,pos2orn)
+ROUTINE pose__pose_to_orient(pose : XYZWPR) : VECTOR FROM pose
 declare_function(prog_name,vector_to_pose,prog_name_alias,vec2pos)
 ROUTINE pose__vector_to_pose(v : VECTOR ; orient : VECTOR; cnf : CONFIG) : XYZWPR FROM pose
 declare_member(prog_name,cylindrical_to_cartesian,prog_name,cyl2crt)
@@ -123,5 +125,7 @@ ROUTINE pose__find_circumcenter(p1, p2, p3 : VECTOR) : T_CIRCLE FROM pose
 %endif
 declare_function(prog_name,line_increment,prog_name_alias,lninc)
 ROUTINE pose__line_increment(p1, p2 : VECTOR; fraction : REAL) : VECTOR FROM pose
+declare_function(prog_name,vector_to_euler,prog_name_alias,veceul)
+ROUTINE pose__vector_to_euler(vi : REAL; vj : REAL; vk : REAL; vectorAxis : INTEGER) : VECTOR FROM pose
 
 %endif --pose_h
