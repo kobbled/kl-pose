@@ -881,6 +881,30 @@ ROUTINE pose__cylindrical_to_cartesian
   
   END pose__cylindrical_to_cartesian
 
+
+ROUTINE pose__cylindrical_to_cartesian_vector
+  -- Takes a vector for cylindrical space (theta^^, radius^^, z^^), and converts it into
+  -- a vector in cartesian space (i, j, k). Conversion depends on theta angle.
+  VAR
+    out : VECTOR
+  BEGIN
+    SELECT vecAxis OF
+      CASE(X_AXES):
+        out.x = SIN(theta)*rad_hat+COS(theta)*theta_hat
+        out.y = COS(theta)*rad_hat-SIN(theta)*theta_hat
+        out.z = z_hat
+      CASE(Y_AXES):
+        out.x = COS(theta)*rad_hat-SIN(theta)*theta_hat
+        out.y = SIN(theta)*rad_hat+COS(theta)*theta_hat
+        out.z = z_hat
+      ELSE:
+        karelError(INVALID_TYPE_CODE, 'cylindrical_to_cartesian_vector not implemented for vector axis ' + i_to_s(vecAxis), ER_ABORT)
+    ENDSELECT
+
+    RETURN (out)
+  END pose__cylindrical_to_cartesian_vector
+
+
 ROUTINE pose__cartesian_to_cylindrical
   VAR
     p : XYZWPR
