@@ -622,6 +622,63 @@ ROUTINE t_veceul : BOOLEAN
 
   END t_veceul
 
+ROUTINE t_cylvec : BOOLEAN
+  VAR
+    theta : REAL
+    tangent : VECTOR
+    normal : VECTOR
+    act_orient : ARRAY[9] OF VECTOR
+    exp_orient : ARRAY[9] OF VECTOR
+  BEGIN
+
+    --colinear to theta axis (0 Deg)
+    tangent = VEC(1,0,0)
+
+    theta = 0
+    act_orient[1] = pose__vector_to_euler_cylindrical(tangent, theta)
+    exp_orient[1] = VEC(90,0,0)
+
+    theta = 45
+    act_orient[2] = pose__vector_to_euler_cylindrical(tangent, theta)
+    exp_orient[2] = VEC(90,0,-45)
+
+    theta = 90
+    act_orient[3] = pose__vector_to_euler_cylindrical(tangent, theta)
+    exp_orient[3] = VEC(90,0,-90)
+
+    --45 deg to theta axis
+    tangent = VEC(1,1,0)
+
+    theta = 0
+    act_orient[4] = pose__vector_to_euler_cylindrical(tangent, theta)
+    exp_orient[4] = VEC(90,-45,0)
+
+    theta = 90
+    act_orient[5] = pose__vector_to_euler_cylindrical(tangent, theta)
+    exp_orient[5] = VEC(90,-45,-90)
+
+    theta = 135
+    act_orient[6] = pose__vector_to_euler_cylindrical(tangent, theta)
+    exp_orient[6] = VEC(90,-45,-135)
+
+    --perpendicular to theta axis (90 deg)
+    tangent = VEC(0,1,0)
+
+    theta = 45
+    act_orient[7] = pose__vector_to_euler_cylindrical(tangent, theta)
+    exp_orient[7] = VEC(45,-90,0)
+
+    theta = 90
+    act_orient[8] = pose__vector_to_euler_cylindrical(tangent, theta)
+    exp_orient[8] = VEC(0,-90,0)
+
+    theta = 135
+    act_orient[9] = pose__vector_to_euler_cylindrical(tangent, theta)
+    exp_orient[9] = VEC(-45,-90,0)
+
+    RETURN( kunit_eq_arv(exp_orient, act_orient, 0.2) )
+  END t_cylvec
+
 
 BEGIN
 %ifdef DEBUG_BUILD
@@ -649,6 +706,7 @@ BEGIN
   kunit_test('Calc normal frame relative to parent frame', t_frm_nrml2) -- assert 1
   kunit_test('cylindrial conversions', t_cylind) -- assert 2
   kunit_test('vector to euler angles', t_veceul)
+  kunit_test('cylindrical vector test', t_cylvec)
 %ifeq TEST_ROBOT_KINEMATICS TRUE
   kunit_test('test IK', t_IK) -- assert 2
   kunit_test('test Kinematics', t_Kinematics) -- assert 2

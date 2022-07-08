@@ -1139,3 +1139,66 @@ ROUTINE pose__vector_to_euler
     RETURN(out)
 
   END pose__vector_to_euler
+
+
+ROUTINE pose__vector_to_euler_cylindrical
+  VAR
+    out : VECTOR
+    normal : VECTOR
+    vecang : VECTOR
+    torient : VECTOR
+    norient : VECTOR
+  BEGIN
+
+    --assume normal is perpendicular to the cylindrical surface
+    -- or along radius vector
+    normal = tangent#VEC(0,0,-1)
+
+    --convert cylindrical UV vector into cartesian space
+    torient = pose__cylindrical_to_cartesian_vector(theta, tangent.x, tangent.z, tangent.y, X_AXES)
+    norient = pose__cylindrical_to_cartesian_vector(theta, normal.x, normal.z, normal.y, X_AXES)
+
+%ifdef DEBUG_BUILD
+    usrdis__print(DEBUG,'----')
+    usrdis__print(DEBUG,'cyl uvector:' + vec_to_s(tangent, ','))
+    usrdis__print(DEBUG,'angle:' + r_to_s(theta))
+    usrdis__print(DEBUG,'----')
+    usrdis__print(DEBUG,'tangent vector:' + vec_to_s(torient, ','))
+    usrdis__print(DEBUG,'normal vector:' + vec_to_s(norient, ','))
+%endif
+
+    --get angle of tangent vector
+    vecang = pose__vector_to_euler(tangent.x, tangent.y, tangent.z, X_AXES)
+
+    --select unit circle quadrant
+    --and transform pose so z is pointing to the origin of the circle
+
+    IF (vecang.z >= 0) AND (vecang.z < 90) THEN
+      out = pose__vector_to_euler(torient.x, torient.y, torient.z, X_AXES)
+
+%define XCYL_ALIGN_EULER POS(0,0,0,90,0,0,(ZEROPOS(1).config_data))
+      out = pose__pose_to_orient(pose__vector_to_pose(VEC(0,0,0),(out),(ZEROPOS(1).config_data)):XCYL_ALIGN_EULER)
+
+      RETURN(out)
+    ENDIF
+
+    IF (vecang.z >= 90) AND (vecang.z < 180) THEN
+      out = pose__vector_to_euler(norient.x, norient.y, norient.z, X_AXES)
+
+%define YCYL_ALIGN_EULER POS(0,0,0,0,-90,-90,(ZEROPOS(1).config_data))
+      out = pose__pose_to_orient(pose__vector_to_pose(VEC(0,0,0),(out),(ZEROPOS(1).config_data)):YCYL_ALIGN_EULER)
+
+      RETURN(out)
+    ENDIF
+
+    IF (vecang.z >= -180) AND (vecang.z < -90) THEN
+      karelError(VAL_OUT_OF_RNG,'theta ' + r_to_s(theta) + ' not implemented for vector_to_euler_cylindrical', ER_ABORT)
+    ENDIF
+
+    IF (vecang.z >= -90) AND (vecang.z < 0) THEN
+      karelError(VAL_OUT_OF_RNG,'theta ' + r_to_s(theta) + ' not implemented for vector_to_euler_cylindrical', ER_ABORT)
+    ENDIF
+
+    RETURN(out)
+
+  END pose__vector_to_euler_cylindrical
