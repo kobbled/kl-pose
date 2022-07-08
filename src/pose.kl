@@ -15,6 +15,8 @@ PROGRAM pose
 %include display.c.klt
 %endif
 
+%define EPSILON 0.01
+
 VAR
     ok : BOOLEAN
     cur_ufnum : INTEGER
@@ -1115,7 +1117,7 @@ ROUTINE pose__vector_to_euler
       karelError(VAL_OUT_OF_RNG, 'ACOS is out of range in pose__vector_to_euler : ' + r_to_s(vk/rad), ER_ABORT)
     ENDIF
     out.y = -90 + ACOS(vk/rad)
-    IF (vi = 0) AND (vj = 0) THEN
+    IF (vi < EPSILON) AND (vi > -EPSILON) AND (vj < EPSILON) AND (vj > -EPSILON) THEN
       out.z = 0
     ELSE
       out.z = ATAN2(vi,vj)
@@ -1123,11 +1125,11 @@ ROUTINE pose__vector_to_euler
 
     SELECT vectorAxis OF
       CASE(X_AXES):
-        --no need to rotate
+      -- no transformation needed
       CASE(Y_AXES):
-        --rotate frame so y is along previous x-axis
+         --rotate frame so y is along previous x-axis
 %define YROT_ALIGN_EULER POS(0,0,0,0,0,-90,(ZEROPOS(1).config_data))
-        out = pose__pose_to_orient(pose__vector_to_pose(VEC(0,0,0),(out),(ZEROPOS(1).config_data)):YROT_ALIGN_EULER)
+        out = pose__pose_to_orient(pose__vector_to_pose(VEC(0,0,0),(out),(ZEROPOS(1).config_data)):YROT_ALIGN_EULER)   
       CASE(Z_AXES):
         --rotate frame so z is along previous x-axis
 %define ZROT_ALIGN_EULER POS(0,0,0,0,90,0,(ZEROPOS(1).config_data))
