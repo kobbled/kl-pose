@@ -627,54 +627,97 @@ ROUTINE t_cylvec : BOOLEAN
     theta : REAL
     tangent : VECTOR
     normal : VECTOR
-    act_orient : ARRAY[9] OF VECTOR
-    exp_orient : ARRAY[9] OF VECTOR
+    act_orient : ARRAY[17] OF VECTOR
+    exp_orient : ARRAY[17] OF VECTOR
   BEGIN
 
     --colinear to theta axis (0 Deg)
     tangent = VEC(1,0,0)
 
     theta = 0
-    act_orient[1] = pose__vector_to_euler_cylindrical(tangent, theta)
+    act_orient[1] = pose__vector_to_euler_cylindrical((tangent), (theta))
     exp_orient[1] = VEC(90,0,0)
 
     theta = 45
-    act_orient[2] = pose__vector_to_euler_cylindrical(tangent, theta)
+    act_orient[2] = pose__vector_to_euler_cylindrical((tangent), (theta))
     exp_orient[2] = VEC(90,0,-45)
 
     theta = 90
-    act_orient[3] = pose__vector_to_euler_cylindrical(tangent, theta)
+    act_orient[3] = pose__vector_to_euler_cylindrical((tangent), (theta))
     exp_orient[3] = VEC(90,0,-90)
 
     --45 deg to theta axis
     tangent = VEC(1,1,0)
 
     theta = 0
-    act_orient[4] = pose__vector_to_euler_cylindrical(tangent, theta)
+    act_orient[4] = pose__vector_to_euler_cylindrical((tangent), (theta))
     exp_orient[4] = VEC(90,-45,0)
 
     theta = 90
-    act_orient[5] = pose__vector_to_euler_cylindrical(tangent, theta)
+    act_orient[5] = pose__vector_to_euler_cylindrical((tangent), (theta))
     exp_orient[5] = VEC(90,-45,-90)
 
     theta = 135
-    act_orient[6] = pose__vector_to_euler_cylindrical(tangent, theta)
+    act_orient[6] = pose__vector_to_euler_cylindrical((tangent), (theta))
     exp_orient[6] = VEC(90,-45,-135)
 
     --perpendicular to theta axis (90 deg)
     tangent = VEC(0,1,0)
 
     theta = 45
-    act_orient[7] = pose__vector_to_euler_cylindrical(tangent, theta)
+    act_orient[7] = pose__vector_to_euler_cylindrical((tangent), (theta))
     exp_orient[7] = VEC(45,-90,0)
 
     theta = 90
-    act_orient[8] = pose__vector_to_euler_cylindrical(tangent, theta)
+    act_orient[8] = pose__vector_to_euler_cylindrical((tangent), (theta))
     exp_orient[8] = VEC(0,-90,0)
 
     theta = 135
-    act_orient[9] = pose__vector_to_euler_cylindrical(tangent, theta)
+    act_orient[9] = pose__vector_to_euler_cylindrical((tangent), (theta))
     exp_orient[9] = VEC(-45,-90,0)
+
+    theta = 180
+    act_orient[10] = pose__vector_to_euler_cylindrical((tangent), (theta))
+    exp_orient[10] = VEC(-90,-90,0)
+
+    theta = 200
+    act_orient[11] = pose__vector_to_euler_cylindrical((tangent), (theta))
+    exp_orient[11] = VEC(-110,-90,0)
+
+    theta = 225
+    act_orient[12] = pose__vector_to_euler_cylindrical((tangent), (theta))
+    exp_orient[12] = VEC(-135.0,-90.0,0)
+
+    --perpendicular to theta axis (135 deg)
+    tangent = VEC(-1,1,0)
+
+    theta = 0
+    act_orient[13] = pose__vector_to_euler_cylindrical((tangent), (theta))
+    exp_orient[13] = VEC(-90.0,-45.0,-180.0)
+
+    --perpendicular to theta axis (180 deg)
+    tangent = VEC(-1,0,0)
+
+    theta = 0
+    act_orient[14] = pose__vector_to_euler_cylindrical((tangent), (theta))
+    exp_orient[14] = VEC(-90, 0, -180)
+
+    --perpendicular to theta axis (225 deg)
+    tangent = VEC(-1,-1,0)
+
+    theta = 0
+    act_orient[15] = pose__vector_to_euler_cylindrical((tangent), (theta))
+    exp_orient[15] = VEC(-90, 45, -180)
+
+    --perpendicular to theta axis (270 deg)
+    tangent = VEC(0,-1,0)
+    act_orient[16] = pose__vector_to_euler_cylindrical((tangent), (theta))
+    exp_orient[16] = VEC(90, 90, 0)
+
+    --perpendicular to theta axis (315 deg)
+    tangent = VEC(1,-1,0)
+    act_orient[17] = pose__vector_to_euler_cylindrical((tangent), (theta))
+    exp_orient[17] = VEC(90, 45, 0)
 
     RETURN( kunit_eq_arv(exp_orient, act_orient, 0.2) )
   END t_cylvec
