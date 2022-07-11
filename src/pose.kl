@@ -854,6 +854,8 @@ ROUTINE pose__vector_to_pose
 
 
 ROUTINE pose__cylindrical_to_cartesian
+  -- ..note:: This function only transforms the coordinate, not
+  --          its orientation
   VAR
     v : VECTOR
     o : XYZWPR
@@ -864,19 +866,15 @@ ROUTINE pose__cylindrical_to_cartesian
       CASE(X_AXES):
         v.x = cyl_pose.y ; v.y= 0 ; v.z=cyl_pose.z ;
         o = math__translate(math__rotx((origin), cyl_pose.x), v )
-        o.w = o.w + cyl_pose.w ; o.p = o.p + cyl_pose.p ; o.r = o.r + cyl_pose.r ;
       CASE(Y_AXES):
         v.x = 0 ; v.y= cyl_pose.y ; v.z=cyl_pose.z ;
         o = math__translate(math__roty((origin), cyl_pose.x), v )
-        o.w = o.w + cyl_pose.w ; o.p = o.p + cyl_pose.p ; o.r = o.r + cyl_pose.r ;
       CASE(Z_AXES):
         v.x = 0 ; v.y=cyl_pose.y ; v.z=cyl_pose.z ;
         o = math__translate(math__rotz((origin), cyl_pose.x), v )
-        o.w = o.w + cyl_pose.w ; o.p = o.p + cyl_pose.p ; o.r = o.r + cyl_pose.r ;
       CASE(VERT_AXES):
         v.x = 0 ; v.y=cyl_pose.z ; v.z=cyl_pose.y ;
         o = math__translate(math__rotz((origin), cyl_pose.x), v )
-        o.w = o.w + cyl_pose.w - 90 ; o.p = o.p + cyl_pose.p ; o.r = o.r + cyl_pose.r ;
     ENDSELECT
 
     RETURN(o)
@@ -908,6 +906,8 @@ ROUTINE pose__cylindrical_to_cartesian_vector
 
 
 ROUTINE pose__cartesian_to_cylindrical
+  -- ..note:: This function only transforms the coordinate, not
+  --          its orientation
   VAR
     p : XYZWPR
     o : XYZWPR
@@ -943,6 +943,8 @@ ROUTINE pose__cartesian_to_cylindrical
   END pose__cartesian_to_cylindrical
 
 ROUTINE pose__polar_to_cartesian
+  -- ..note:: This function only transforms the coordinate, not
+  --          its orientation
   VAR
     v : VECTOR
     o : XYZWPR
@@ -960,9 +962,6 @@ ROUTINE pose__polar_to_cartesian
         v.x = 0 ; v.y=pol_pose.z ; v.z=0 ;
         o = math__translate(math__rotx(math__roty((origin), pol_pose.x), pol_pose.y), v )
     ENDSELECT
-
-    --add cylindrical orientation
-        o.w = o.w + pol_pose.w ; o.p = o.p + pol_pose.p ; o.r = o.r + pol_pose.r ;
 
     RETURN(o)
   
