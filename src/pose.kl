@@ -841,6 +841,15 @@ ROUTINE pose__pose_to_orient
     RETURN(v)
   END pose__pose_to_orient
 
+ROUTINE pose__replace_orient
+  VAR
+    p : XYZWPR
+  BEGIN
+    p = pose
+    p.w = orient.x ; p.p = orient.y ; p.r = orient.z ;
+    RETURN(p)
+  END pose__replace_orient
+
 ROUTINE pose__vector_to_pose
   VAR
     p : XYZWPR
@@ -1141,6 +1150,8 @@ ROUTINE pose__vector_to_euler
 
 
 ROUTINE pose__vector_to_euler_cylindrical
+  -- warning:: This function modifies the 'tangent' variable. If mutability
+  --           is not desired encase argument in () brackets to copy.
   VAR
     out : VECTOR
     normal : VECTOR

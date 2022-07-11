@@ -91,6 +91,8 @@ declare_function(prog_name,pose_to_vector,prog_name_alias,pos2vec)
 ROUTINE pose__pose_to_vector(pose : XYZWPR) : VECTOR FROM pose
 declare_function(prog_name,pose_to_orient,prog_name_alias,pos2orn)
 ROUTINE pose__pose_to_orient(pose : XYZWPR) : VECTOR FROM pose
+declare_function(prog_name,replace_orient,prog_name_alias,rplorn)
+ROUTINE pose__replace_orient(pose : XYZWPR; orient : VECTOR) : XYZWPR FROM pose
 declare_function(prog_name,vector_to_pose,prog_name_alias,vec2pos)
 ROUTINE pose__vector_to_pose(v : VECTOR ; orient : VECTOR; cnf : CONFIG) : XYZWPR FROM pose
 declare_member(prog_name,cylindrical_to_cartesian,prog_name,cyl2crt)
