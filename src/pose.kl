@@ -242,6 +242,11 @@ ROUTINE pose__set_config
     RETURN(cnfg)
   END pose__set_config
 
+ROUTINE pose__replace_config
+  BEGIN
+    RETURN(POS(p.x, p.y, p.z, p.w, p.p, p.r, conf))
+  END pose__replace_config
+
 
 ROUTINE pose__set_jointpos
   VAR

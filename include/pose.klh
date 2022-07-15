@@ -26,6 +26,8 @@ ROUTINE pose__update_utool(frame : XYZWPR; frm_no, grp_no : INTEGER) FROM pose
 -- setters
 declare_function(prog_name,set_config,prog_name_alias,setcfg)
 ROUTINE pose__set_config(conf_str : STRING) : CONFIG FROM pose
+declare_function(prog_name,replace_config,prog_name_alias,rplcfg)
+ROUTINE pose__replace_config(p : XYZWPR; conf : CONFIG) : XYZWPR FROM pose
 -- use array
 declare_function(prog_name,set_jointpos,prog_name_alias,setjnt)
 ROUTINE pose__set_jointpos(arr: ARRAY[*] OF REAL) : JOINTPOS FROM pose
