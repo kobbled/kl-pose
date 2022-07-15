@@ -929,27 +929,25 @@ ROUTINE pose__cartesian_to_cylindrical
     --put position into center frame
     p = INV((origin)):cart_pose
 
-    --(theta,radius,z) -> (x,y,z)
+    -- (x,y,z) -> (theta,z,radius)
     --width radius as z height
     SELECT z_axis OF
       CASE(X_AXES):
-        o.x = ATAN2(p.y, p.z)
-        o.y = SQRT(p.y*p.y + p.z*p.z)
-        o.z = p.x
-        --..todo:: figure out orientation conversion
-        o.w = 0 ; o.p = 0 ; o.r = 0;
+        o.x = ATAN2(p.z, p.y)
+        o.y = p.x
+        o.z = SQRT(p.y*p.y + p.z*p.z)
       CASE(Y_AXES):
-        o.x = ATAN2(p.x, p.z)
-        o.y = SQRT(p.x*p.x + p.z*p.z)
-        o.z = p.y
-        --..todo:: figure out orientation conversion
-        o.w = 0 ; o.p = 0 ; o.r = 0;
+        o.x = ATAN2(p.z, p.x)
+        o.y = p.y
+        o.z = SQRT(p.x*p.x + p.z*p.z)
       CASE(Z_AXES):
-        o.x = ATAN2(p.x, p.y)
-        o.y = SQRT(p.x*p.x + p.y*p.y)
-        o.z = p.z
-        --..todo:: figure out orientation conversion
-        o.w = 0 ; o.p = 0 ; o.r = 0;
+        o.x = ATAN2(p.y, p.x)
+        o.y = p.z
+        o.z = SQRT(p.x*p.x + p.y*p.y)
+      CASE(VERT_AXES):
+        o.x = ATAN2(p.y, p.x)
+        o.y = p.z
+        o.z = SQRT(p.x*p.x + p.y*p.y)
     ENDSELECT
 
       RETURN(o)
