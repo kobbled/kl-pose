@@ -150,10 +150,14 @@ ROUTINE pose__set_userframe
       cur_ufnum = frm_no
       $MNUFRAMENUM[grp_no] = frm_no
       -- change to frame number, frm_no
-      IF frm_no = 0 THEN 
-          $UFRAME = $MOR_GRP[grp_no].$NILPOS
-      ELSE
-          $UFRAME = $MNUFRAME[grp_no,frm_no]
+
+      -- ..DANGER:: This is assuming the robot is on Group 1
+      IF grp_no = 1 THEN
+        IF frm_no = 0 THEN 
+            $UFRAME = $MOR_GRP[1].$NILPOS
+        ELSE
+            $UFRAME = $MNUFRAME[1,frm_no]
+        ENDIF
       ENDIF
   END pose__set_userframe
 
@@ -182,10 +186,14 @@ ROUTINE pose__set_toolframe
       cur_utnum = frm_no
       $MNUTOOLNUM[grp_no] = frm_no
       -- change to frame number, frm_no
-      IF frm_no = 0 THEN
-          $UTOOL = $MOR_GRP[grp_no].$NILPOS
-      ELSE
-          $UTOOL = $MNUTOOL[grp_no,frm_no]
+      
+      -- ..DANGER:: This is assuming the robot is on Group 1
+      IF grp_no = 1 THEN
+        IF frm_no = 0 THEN
+            $UTOOL = $MOR_GRP[1].$NILPOS
+        ELSE
+            $UTOOL = $MNUTOOL[1,frm_no]
+        ENDIF
       ENDIF
   END pose__set_toolframe
 
