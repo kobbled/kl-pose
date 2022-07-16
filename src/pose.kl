@@ -949,7 +949,7 @@ ROUTINE pose__cartesian_to_cylindrical
         o.y = p.y
         o.z = SQRT(p.x*p.x + p.z*p.z)
       CASE(Z_AXES):
-        o.x = ATAN2(p.y, p.x)
+        o.x = ATAN2(p.x, p.y)
         o.y = p.z
         o.z = SQRT(p.x*p.x + p.y*p.y)
       CASE(VERT_AXES):
