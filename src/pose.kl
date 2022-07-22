@@ -1196,6 +1196,7 @@ ROUTINE pose__vector_to_euler_cylindrical
 
     -- DO NOT evaluate equality on REAL values!!!
     IF (vecang.z > 0-EPSILON) AND (vecang.z < 90-EPSILON) THEN
+      --WRITE TPDISPLAY('Quadrant 1', vecang.z::6::2, CR)
       out = pose__vector_to_euler(torient.x, torient.y, torient.z, X_AXES)
 
 %define XCYL_ALIGN_EULER POS(0,0,0,90,0,0,(ZEROPOS(1).config_data))
@@ -1206,6 +1207,7 @@ ROUTINE pose__vector_to_euler_cylindrical
     ENDIF
 
     IF (vecang.z > 90-EPSILON) AND (vecang.z < 180-EPSILON) THEN
+      --WRITE TPDISPLAY('Quadrant 2', vecang.z::6::2, CR)
       out = pose__vector_to_euler(norient.x, norient.y, norient.z, X_AXES)
 
 %define YCYL_ALIGN_EULER POS(0,0,0,0,-90,-90,(ZEROPOS(1).config_data))
@@ -1215,7 +1217,8 @@ ROUTINE pose__vector_to_euler_cylindrical
       RETURN(out)
     ENDIF
 
-    IF ((vecang.z < 180+EPSILON) AND (vecang.z > 180-EPSILON)) OR ((vecang.z > -180-EPSILON) AND (vecang.z < -90-EPSILON)) THEN
+    IF ((vecang.z < 180+EPSILON) AND (vecang.z > 180-EPSILON)) OR ((vecang.z > -180+EPSILON) AND (vecang.z < -90+EPSILON)) THEN
+      --WRITE TPDISPLAY('Quadrant 3:', vecang.z::6::2, CR)
       out = pose__vector_to_euler(torient.x, torient.y, torient.z, X_AXES)
 
 %define MXCYL_ALIGN_EULER POS(0,0,0,-90,0,0,(ZEROPOS(1).config_data))
@@ -1225,7 +1228,8 @@ ROUTINE pose__vector_to_euler_cylindrical
       RETURN(out)
     ENDIF
 
-    IF (vecang.z > -90-EPSILON) AND (vecang.z < 0-EPSILON) THEN
+    IF (vecang.z > -90+EPSILON) AND (vecang.z < 0-EPSILON) THEN
+      --WRITE TPDISPLAY('Quadrant 4', vecang.z::6::2, CR)
       out = pose__vector_to_euler(torient.x, torient.y, torient.z, X_AXES)
 
 %define MYCYL_ALIGN_EULER POS(0,0,0,90,0,0,(ZEROPOS(1).config_data))
