@@ -1004,11 +1004,24 @@ ROUTINE pose__add_jpos
     arr2 : ARRAY[9] OF REAL
     out_arr : ARRAY[9] OF REAL
     out_jpos : JOINTPOS
-    status : INTEGER
+    i, status : INTEGER
   BEGIN
     CNV_JPOS_REL(pose1, arr1, status)
+    CHK_STAT(status)
     CNV_JPOS_REL(pose2, arr2, status)
-    matrix__add_1D(arr1, arr2, out_arr)
+    CHK_STAT(status)
+
+    FOR i=1 TO ARRAY_LEN(arr1) DO
+      IF (NOT UNINIT(arr1[i])) THEN
+        IF (NOT UNINIT(arr2[i])) THEN
+          out_arr[i] = arr1[i] + arr2[i]
+        ELSE
+          out_arr[i] = arr1[i]
+        ENDIF
+      ELSE
+        out_arr[i] = 0
+      ENDIF
+    ENDFOR
 
     CNV_REL_JPOS(out_arr, out_jpos, status)
     CHK_STAT(status)
