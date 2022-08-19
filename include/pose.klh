@@ -103,7 +103,7 @@ ROUTINE pose__cylindrical_to_cartesian(origin : XYZWPR;  cyl_pose : XYZWPR; z_ax
 declare_member(prog_name,cylindrical_to_cartesian_vector,prog_name,cy2ctv)
 ROUTINE pose__cylindrical_to_cartesian_vector(theta : REAL ; theta_hat : REAL ; rad_hat : REAL ; z_hat : REAL; vecAxis : INTEGER) : VECTOR FROM pose
 declare_member(prog_name,cartesian_to_cylindrical,prog_name,crt2cyl)
-ROUTINE pose__cartesian_to_cylindrical(origin : XYZWPR;  cart_pose : XYZWPR; z_axis : INTEGER) : XYZWPR FROM pose
+ROUTINE pose__cartesian_to_cylindrical(origin : XYZWPR;  cart_pose : XYZWPR; z_axis : INTEGER; radius : REAL; use_mm : BOOLEAN) : XYZWPR FROM pose
 declare_member(prog_name,polar_to_cartesian,prog_name,pol2crt)
 --pol_pose is the polar coordinates (theta,rho,r)
 ROUTINE pose__polar_to_cartesian(origin : XYZWPR;  pol_pose : XYZWPR; z_axis : INTEGER) : XYZWPR FROM pose
