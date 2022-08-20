@@ -963,7 +963,7 @@ ROUTINE pose__cartesian_to_cylindrical
 
     --change degrees to mm
     IF use_mm THEN
-      o.x = o.x*radius*M_PI/180
+      o.x = (-1*o.x)*radius*M_PI/180
     ENDIF
 
     --put position into center frame
