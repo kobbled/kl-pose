@@ -62,6 +62,18 @@ ROUTINE posetp__get_group_joint
     RETURN(pose.t_joint)
   END posetp__get_group_joint
 
+ROUTINE posetp__get_jpos_group
+  VAR
+    jpos : JOINTPOS6
+    arr : ARRAY[6] OF REAL
+    val : REAL
+    status : INTEGER
+  BEGIN
+    jpos = pose__get_jpos(grp_no)
+    CNV_JPOS_REL(jpos, arr, status)
+    RETURN(arr[axs])
+  END posetp__get_jpos_group
+
 ROUTINE posetp__set_pr_xyz
   BEGIN
     pose__set_posreg_xyz(POS(x,y,z,w,p,r, (ZEROPOS(1).config_data)), pr_num, 1)

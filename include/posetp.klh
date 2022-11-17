@@ -18,6 +18,8 @@ declare_function(prog_name,get_group_xyz,prog_name_alias,prgxyz)
 ROUTINE posetp__get_group_xyz(pr_num: INTEGER; grp_no : INTEGER) : XYZWPR FROM prog_name
 declare_function(prog_name,get_group_joint,prog_name_alias,prgjnt)
 ROUTINE posetp__get_group_joint(pr_num: INTEGER; grp_no : INTEGER) : JOINTPOS FROM prog_name
+declare_function(prog_name,get_jpos_group,prog_name_alias,gtjpgp)
+ROUTINE posetp__get_jpos_group(grp_no : INTEGER; axs : INTEGER) : REAL FROM prog_name
 
 declare_function(prog_name,set_pr_xyz,prog_name_alias,stxyz)
 ROUTINE posetp__set_pr_xyz(x : REAL; y : REAL; z : REAL; w : REAL; p : REAL; r : REAL; pr_num: INTEGER) FROM prog_name
