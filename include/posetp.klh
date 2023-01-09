@@ -22,9 +22,7 @@ declare_function(prog_name,get_jpos_group,prog_name_alias,gtjpgp)
 ROUTINE posetp__get_jpos_group(grp_no : INTEGER; axs : INTEGER) : REAL FROM prog_name
 
 declare_function(prog_name,set_pr_xyz,prog_name_alias,stxyz)
-ROUTINE posetp__set_pr_xyz(x : REAL; y : REAL; z : REAL; w : REAL; p : REAL; r : REAL; pr_num: INTEGER) FROM prog_name
-declare_function(prog_name,set_pr_xyz_group,prog_name_alias,stxyzg)
-ROUTINE posetp__set_pr_xyz_group(x : REAL; y : REAL; z : REAL; w : REAL; p : REAL; r : REAL; pr_num: INTEGER; grp_no : INTEGER) FROM prog_name
+ROUTINE posetp__set_pr_xyz(x : REAL; y : REAL; z : REAL; w : REAL; p : REAL; r : REAL; pr_num: INTEGER; grp_no : INTEGER) FROM prog_name
 declare_function(prog_name,set_pr_config,prog_name_alias,stcfg)
 ROUTINE posetp__set_pr_config(conf_str : STRING; pr_num: INTEGER; grp_no : INTEGER) FROM prog_name
 declare_function(prog_name,set_pr_jpos6,prog_name_alias,stjnt6)

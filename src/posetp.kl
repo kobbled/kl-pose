@@ -76,13 +76,8 @@ ROUTINE posetp__get_jpos_group
 
 ROUTINE posetp__set_pr_xyz
   BEGIN
-    pose__set_posreg_xyz(POS(x,y,z,w,p,r, (ZEROPOS(1).config_data)), pr_num, 1)
-  END posetp__set_pr_xyz
-
-ROUTINE posetp__set_pr_xyz_group
-  BEGIN
     pose__set_posreg_xyz(POS(x,y,z,w,p,r, (ZEROPOS(1).config_data)), pr_num, grp_no)
-  END posetp__set_pr_xyz_group
+  END posetp__set_pr_xyz
 
 ROUTINE posetp__set_pr_config
   VAR
