@@ -1,0 +1,12 @@
+%ifndef quaternion_t
+%define quaternion_t
+
+TYPE
+  T_QUAT FROM matpose = STRUCTURE
+		w : REAL
+    x : REAL
+    y : REAL
+    z : REAL
+	ENDSTRUCTURE
+
+%endif

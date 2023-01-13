@@ -1,0 +1,7 @@
+%include define_type.m
+-- declare type
+%defeval type_name t_matarr
+%defeval t_rows 4
+%defeval t_columns 4
+--atomic type of matrix
+%defeval inner_type REAL

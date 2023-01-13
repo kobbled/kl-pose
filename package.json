@@ -7,7 +7,8 @@
   "author" : "kobbled",
   "source" : [
     "lib/poselib/pose.kl",
-    "lib/poselib/posetp.kl"
+    "lib/poselib/posetp.kl",
+    "lib/matpose/matpose.kl"
   ],
   "tests" : [
     "test/test_pose.kl"
@@ -15,6 +16,7 @@
   "includes" : [
     "lib/poselib",
     "lib/poseclass",
+    "lib/matpose"
   ],
   "depends" : [
     "errors",
