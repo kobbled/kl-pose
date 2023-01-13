@@ -6,15 +6,15 @@
   "license" : "Apache 2.0",
   "author" : "kobbled",
   "source" : [
-    "src/pose.kl",
-    "src/posetp.kl"
+    "lib/poselib/pose.kl",
+    "lib/poselib/posetp.kl"
   ],
   "tests" : [
     "test/test_pose.kl"
   ],
   "includes" : [
-    "include",
-    "include/class"
+    "lib/poselib",
+    "lib/poseclass",
   ],
   "depends" : [
     "errors",
