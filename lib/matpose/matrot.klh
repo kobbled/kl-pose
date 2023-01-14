@@ -1,0 +1,47 @@
+%ifndef matrot_h
+%define matrot_h
+
+%include namespace.m
+
+%define prog_name matrot
+%define prog_name_alias matr
+
+--operations
+declare_function(prog_name,rotx,prog_name_alias,rotx)
+ROUTINE matrot__rotx(angle : REAL) : arry(type_name) FROM matrot
+declare_function(prog_name,roty,prog_name_alias,roty)
+ROUTINE matrot__roty(angle : REAL) : arry(type_name) FROM matrot
+declare_function(prog_name,rotz,prog_name_alias,rotz)
+ROUTINE matrot__rotz(angle : REAL) : arry(type_name) FROM matrot
+declare_function(prog_name,transl,prog_name_alias,transl)
+ROUTINE matrot__transl(x : REAL; y : REAL; z : REAL) : arry(type_name) FROM matrot
+
+--conversions
+declare_function(prog_name,pose_to_mat,prog_name_alias,pos2mat)
+ROUTINE matrot__pose_to_mat(pose : VECTOR; out_mat : arry(type_name)) FROM matrot
+declare_function(prog_name,mat_to_pose,prog_name_alias,mat2pos)
+ROUTINE matrot__mat_to_pose(mat : arry(type_name)) : VECTOR FROM matrot
+
+--quaternions
+declare_function(prog_name,set_quant,prog_name_alias,stquant)
+ROUTINE matrot__set_quant(w : REAL; x : REAL; y : REAL; z : REAL) : T_QUAT FROM matrot
+declare_function(prog_name,quat_normalize,prog_name_alias,quatnrm)
+ROUTINE matrot__quat_normalize(q : T_QUAT) : T_QUAT FROM matrot
+declare_function(prog_name,quat_mult,prog_name_alias,quatmlt)
+ROUTINE matrot__quat_mult(q1 : T_QUAT; q2 : T_QUAT) : T_QUAT FROM matrot
+
+--conversion quaternions
+declare_function(prog_name,mat_to_quat,prog_name_alias,mat2qat)
+ROUTINE matrot__mat_to_quat(mat : arry(type_name)) : T_QUAT FROM matrot
+declare_function(prog_name,quat_to_mat,prog_name_alias,qat2mat)
+ROUTINE matrot__quat_to_mat(q : T_QUAT; out_mat : arry(type_name)) FROM matrot
+declare_function(prog_name,pose_to_quat,prog_name_alias,pos2qat)
+ROUTINE matrot__pose_to_quat(p : VECTOR) : T_QUAT FROM matrot
+declare_function(prog_name,quat_to_pose,prog_name_alias,qat2pos)
+ROUTINE matrot__quat_to_pose(q : T_QUAT) : VECTOR FROM matrot
+
+--testing
+declare_function(prog_name,quat_test,prog_name_alias,qattest)
+ROUTINE matrot__quat_test(expected : T_QUAT; actual : T_QUAT) : BOOLEAN FROM matrot
+
+%endif --pose_h
