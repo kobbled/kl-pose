@@ -5,22 +5,33 @@ PROGRAM matpose
 %NOLOCKGROUP
 %NOPAUSE = COMMAND + TPENABLE + ERROR
 
+%include errors.klt
 %include quaternion.klt
 
 --matrix type
 %include define_type.m
-
+ -- 4 x 4
 %include matarr.klt
 t_arr2d_ref(t_rows,t_columns,type_name,inner_type)
 
 
+%from errors.klh %import CHK_STAT, karelError 
+%from strings.klh %import i_to_s, r_to_s
+%from kunit.klh %import kunit_eq_r
 %include matpose.klh
 
 --matrix class
+%ifdef DEBUG_BUILD
+ -- use for testing
+%class cmat('2dArray.klc','2dArray.klh','matarr_test.klt')
+%else
+ -- use for production
 %class cmat('2dArray.klc','2dArray.klh','matarr.klt')
+%endif
 
 
 
+--conversions
 ROUTINE matpose__pose_to_mat
   VAR
     ca, cb, cc : REAL
@@ -58,23 +69,68 @@ ROUTINE matpose__mat_to_pose
     IF (mat[3,1] > (1.0 - EPSILON)) THEN
       out_pose.w = 0
       out_pose.p = -90.0
-      out_pose.r = ATAN2(mat[2,2], -1*mat[2,3])
-    ELSE IF (mat[3,1] < (1.0 + EPSILON)) THEN
+      IF (mat[2,2] = 0) AND (mat[2,3] = 0) THEN out_pose.r = 0 ;
+      ELSE out_pose.r = ATAN2(mat[2,2], -1*mat[2,3]) ; ENDIF
+    ELSE IF (mat[3,1] < (-1.0 + EPSILON)) THEN
       out_pose.w = 0
       out_pose.p = 90.0
-      out_pose.r = ATAN2(mat[2,2], 1*mat[2,3])
+      IF (mat[2,2] = 0) AND (mat[2,3] = 0) THEN out_pose.r = 0 ;
+      ELSE out_pose.r = ATAN2(mat[2,2], 1*mat[2,3]) ; ENDIF
     ELSE
-      out_pose.w = ATAN2(mat[3,3], mat[3,2])
-      out_pose.p = ATAN2(SQRT(mat[1,1]*mat[1,1]+mat[2,1]*mat[2,1]), -1*mat[3,1])
-      out_pose.r = ATAN2(mat[1,1], mat[2,1])
+      IF (mat[3,3] = 0) AND (mat[3,2] = 0) THEN out_pose.w = 0 ;
+      ELSE out_pose.w = ATAN2(mat[3,3], mat[3,2]) ; ENDIF
+
+      IF (mat[1,1] = 0) AND (mat[2,1] = 0) AND (mat[3,1] = 0) THEN out_pose.p = 0 ;
+      ELSE out_pose.p = ATAN2(SQRT(mat[1,1]*mat[1,1]+mat[2,1]*mat[2,1]), -1*mat[3,1]) ; ENDIF
+
+      IF (mat[1,1] = 0) AND (mat[2,1] = 0) THEN out_pose.r = 0 ;
+      ELSE out_pose.r = ATAN2(mat[1,1], mat[2,1]) ; ENDIF
     ENDIF
     ENDIF 
     
     RETURN(out_pose)
   END matpose__mat_to_pose
 
-
 --quaternions
+ROUTINE matpose__set_quant
+  VAR
+    out : T_QUAT
+  BEGIN
+    out.w = w ; out.x = x ; out.y = y ; out.z = z;
+    RETURN(out)
+  END matpose__set_quant
+
+
+ROUTINE matpose__quat_normalize
+  VAR
+    out_quat : T_QUAT
+    norm :REAL
+  BEGIN
+    norm = SQRT(q.w*q.w + q.x*q.x + q.y*q.y + q.z*q.z)
+
+    out_quat.w = q.w/norm
+    out_quat.x = q.x/norm
+    out_quat.y = q.y/norm
+    out_quat.z = q.z/norm
+
+    RETURN(out_quat)
+  END matpose__quat_normalize
+
+ROUTINE matpose__quat_mult
+  VAR
+    outq : T_QUAT
+  BEGIN
+    outq.w = q1.w*q2.w - q1.x*q2.x - q1.y*q2.y - q1.z*q2.z
+    outq.x = q1.w*q2.x + q1.x*q2.w + q1.y*q2.z - q1.z*q2.y
+    outq.y = q1.w*q2.y - q1.x*q2.z + q1.y*q2.w + q1.z*q2.x
+    outq.z = q1.w*q2.z + q1.x*q2.y - q1.y*q2.x + q1.z*q2.w
+
+    RETURN(outq)
+    
+  END matpose__quat_mult
+
+
+--quaternions conversion
 
 ROUTINE max_val_(v1, v2 : inner_type) : inner_type
   BEGIN
@@ -111,9 +167,9 @@ ROUTINE matpose__quat_to_mat
     qnorm = matpose__quat_normalize(q)
 
     out_mat[1,1] = 1-2*q.y*q.y - 2*q.z*q.z ; out_mat[1,2] = 2*q.x*q.y - 2*q.z*q.w ; out_mat[1,3] = 2*q.x*q.z + 2*q.y*q.w ; out_mat[1,4] = 0
-    out_mat[2,1] = 2*q.x*q.y + 2*q.z*q.w ; out_mat[2,2] = 1- 2*q.x*q.x - 2*q.z*q.z ; out_mat[2,3] = 2*q.y*q.z - 2*q.x*q.w ; out_mat[2,4] = 0
-    out_mat[3,1] = 2*q.x*q.z - 2*q.y*q.w ; out_mat[3,2] = 2*q.y*q.z + 2*q.x*q.w ; out_mat[3,3] = 1 - 2*q.x*q.x - 2*q.y*q.y ; out_mat[3,4] = 0
-    out_mat[4,1] = 0 ; out_mat[4,2] = 0 ; out_mat[4,3] = 0 ; out_mat[3,4] = 1
+    out_mat[2,1] = 2*q.x*q.y + 2*q.z*q.w ; out_mat[2,2] = 1-2*q.x*q.x - 2*q.z*q.z ; out_mat[2,3] = 2*q.y*q.z - 2*q.x*q.w ; out_mat[2,4] = 0
+    out_mat[3,1] = 2*q.x*q.z - 2*q.y*q.w ; out_mat[3,2] = 2*q.y*q.z + 2*q.x*q.w ; out_mat[3,3] = 1-2*q.x*q.x - 2*q.y*q.y ; out_mat[3,4] = 0
+    out_mat[4,1] = 0 ; out_mat[4,2] = 0 ; out_mat[4,3] = 0 ; out_mat[4,4] = 1
 
   END matpose__quat_to_mat
 
@@ -131,9 +187,9 @@ ROUTINE matpose__pose_to_quat
     s.z = SIN(p.r*0.5)
 
     outq.w = c.x*c.y*c.z + s.x*s.y*s.z
-    outq.x = s.x*c.y*c.z - c.x*s.y*s.z
+    outq.x = c.x*c.y*s.z - s.x*s.y*c.z
     outq.y = c.x*s.y*c.z + s.x*c.y*s.z
-    outq.z = c.x*c.y*s.z - s.x*s.y*c.z
+    outq.z = s.x*c.y*c.z - c.x*s.y*s.z
 
     RETURN(outq)
 
@@ -142,42 +198,57 @@ ROUTINE matpose__pose_to_quat
 ROUTINE matpose__quat_to_pose
   VAR
     out : XYZWPR
+    x, y : REAL
   BEGIN
     out.x = 0 ; out.y = 0 ; out.z = 0
-    out.w = ATAN2(1-2*(q.x*q.x + q.y*q.y), 2*(q.w*q.x + q.y*q.z))
-    out.p = ASIN(2*(q.w*q.y + q.x*q.z))
-    out.r = ATAN2(1-2*(q.x*q.x+q.y*q.y), 2*(q.w*q.z + q.y*q.x))
+
+    x = 1-2*(q.y*q.y+q.z*q.z) ; y = 2*(q.w*q.z + q.y*q.x)
+    IF (x = 0) AND (y = 0) THEN out.w = 0 ;
+    ELSE out.w = ATAN2(x, y) ; ENDIF
+
+    x = SQRT(1-2*(q.w*q.y - q.x*q.z)) ; y = SQRT(1+2*(q.w*q.y - q.x*q.z))
+    IF (x = 0) AND (y = 0) THEN out.p = 0 ;
+    ELSE out.p = -90 + 2*ATAN2(x, y) ; ENDIF
+
+    x = 1-2*(q.x*q.x + q.y*q.y) ; y = 2*(q.w*q.x + q.y*q.z)
+    IF (x = 0) AND (y = 0) THEN out.r = 0 ;
+    ELSE out.r = ATAN2(x, y) ; ENDIF
 
     RETURN(out)
   END matpose__quat_to_pose
 
-ROUTINE matpose__quat_normalize
+-- testing
+
+ROUTINE matpose__quat_test
   VAR
-    out_quat : T_QUAT
-    norm :REAL
+    b : BOOLEAN
+    idx : INTEGER
+    actr, expr : REAL
+    ent, status : INTEGER
+    error_msg : STRING[127]
   BEGIN
-    norm = SQRT(q.w*q.w + q.x*q.x + q.y*q.y + q.z*q.z)
+    b = FALSE
+    idx = 0
 
-    out_quat.w = q.w/norm
-    out_quat.x = q.x/norm
-    out_quat.y = q.y/norm
-    out_quat.z = q.z/norm
+    b = kunit_eq_r(expected.w, actual.w)
+    IF NOT b THEN idx = 1; actr = actual.w; expr = expected.w; ENDIF
+    b = kunit_eq_r(expected.x, actual.x)
+    IF NOT b THEN idx = 2; actr = actual.x; expr = expected.x; ENDIF
+    b = kunit_eq_r(expected.y, actual.y)
+    IF NOT b THEN idx = 3; actr = actual.y; expr = expected.y; ENDIF
+    b = kunit_eq_r(expected.z, actual.z)
+    IF NOT b THEN idx = 4; actr = actual.z; expr = expected.z; ENDIF
 
-    RETURN(out_quat)
-  END matpose__quat_normalize
+    IF idx > 0 THEN
+      error_msg = 'quaternion index ' + i_to_s(idx) + ' is not equal.'
+      error_msg = error_msg + ' got ' + r_to_s(actr) + ' but expected ' + r_to_s(expr)
+      SET_VAR(ent, 'kunit', 'error_msg', error_msg, status)
+      CHK_STAT(status)
+      RETURN(FALSE)
+    ENDIF
 
-ROUTINE matpose__quat_mult
-  VAR
-    outq : T_QUAT
-  BEGIN
-    outq.w = q1.w*q2.w - q1.x*q2.x - q1.y*q2.y - q1.z*q2.z
-    outq.x = q1.w*q2.x + q1.x*q2.w + q1.y*q2.z - q1.z*q2.y
-    outq.y = q1.w*q2.y - q1.x*q2.z + q1.y*q2.w + q1.z*q2.x
-    outq.z = q1.w*q2.z + q1.x*q2.y - q1.y*q2.x + q1.z*q2.w
-
-    RETURN(outq)
-    
-  END matpose__quat_mult
+    RETURN(b)
+  END matpose__quat_test
 
 BEGIN
 END matpose
