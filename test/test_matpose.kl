@@ -12,9 +12,6 @@ PROGRAM test_matpose
  -- 4 x 4
 %include matarr.klt
 t_arr2d_ref(t_rows,t_columns,t_matarr,inner_type)
- -- 3 x 3
-%include rotarr.klt
-t_arr2d_ref(t_rows,t_columns,t_rotarr,inner_type)
 
 %include kunit.klh
 
