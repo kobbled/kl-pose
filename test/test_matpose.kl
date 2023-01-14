@@ -1,0 +1,268 @@
+PROGRAM test_matpose
+%NOBUSYLAMP
+%COMMENT = ''
+%NOLOCKGROUP
+
+%include systemvars.klt
+
+%include quaternion.klt
+
+--matrix type
+%include define_type.m
+ -- 4 x 4
+%include matarr.klt
+t_arr2d_ref(t_rows,t_columns,t_matarr,inner_type)
+ -- 3 x 3
+%include rotarr.klt
+t_arr2d_ref(t_rows,t_columns,t_rotarr,inner_type)
+
+%include kunit.klh
+
+%include matpose.klh
+
+--matrix class
+%class cmat('2dArray.klc','2dArray.klh','matarr_test.klt')
+
+ROUTINE t_getcol : BOOLEAN
+  VAR
+    mat : arry(t_matarr)
+    row1 : arrx(t_matarr)
+    row2 : arrx(t_matarr)
+    sol1 : arrx(t_matarr)
+    sol2 : arrx(t_matarr)
+  BEGIN
+
+    mat[1] = cmat__create_row_from_string('0, 0, 1, 0',',')
+    mat[2] = cmat__create_row_from_string('1, 0, 0, 0',',')
+    mat[3] = cmat__create_row_from_string('0, 1, 0, 0',',')
+    mat[4] = cmat__create_row_from_string('0, 0, 0, 1',',')
+
+    row1 = cmat__get_col(3, mat)
+    row2 = cmat__get_col(1, mat)
+
+    sol1 = cmat__create_row_from_string('1,0,0,0', ',')
+    sol2 = cmat__create_row_from_string('0,1,0,0', ',')
+
+    RETURN(cmat__test_row(sol1, row1) AND cmat__test_row(sol2, row2))
+  END t_getcol
+
+
+ROUTINE t_pose2mat : BOOLEAN
+  VAR
+    mat : arry(t_matarr)
+    sol : arry(t_matarr)
+    pose : XYZWPR
+  BEGIN
+    pose = POS(230,-200, 300,-30,-45,-60, (ZEROPOS(1).config_data))
+    --convert
+    matpose__pose_to_mat(pose, mat)
+
+    sol[1] = cmat__create_row_from_string('0.354, 0.926, 0.127, 230',',')
+    sol[2] = cmat__create_row_from_string('-0.612, 0.127, 0.780, -200',',')
+    sol[3] = cmat__create_row_from_string('0.707, -0.354, 0.612, 300',',')
+    sol[4] = cmat__create_row_from_string('0, 0, 0, 1',',')
+
+    RETURN(cmat__testing(sol, mat))
+
+  END t_pose2mat
+
+ROUTINE t_pose2mat2 : BOOLEAN
+  VAR
+    mat : arry(t_matarr)
+    sol : arry(t_matarr)
+    pose : XYZWPR
+  BEGIN
+    pose = POS(100, 200, 200, 90, 0, 90, (ZEROPOS(1).config_data))
+    --convert
+    matpose__pose_to_mat(pose, mat)
+
+    sol[1] = cmat__create_row_from_string('0, 0, 1, 100',',')
+    sol[2] = cmat__create_row_from_string('1, 0, 0, 200',',')
+    sol[3] = cmat__create_row_from_string('0, 1, 0, 200',',')
+    sol[4] = cmat__create_row_from_string('0, 0, 0, 1',',')
+
+    RETURN(cmat__testing(sol, mat))
+
+  END t_pose2mat2
+
+ROUTINE t_mat2pose : BOOLEAN
+  VAR
+    mat : arry(t_matarr)
+    pose : XYZWPR
+    sol : XYZWPR
+  BEGIN
+    
+    mat[1] = cmat__create_row_from_string('0, 0, 1, 100',',')
+    mat[2] = cmat__create_row_from_string('1, 0, 0, 200',',')
+    mat[3] = cmat__create_row_from_string('0, 1, 0, 200',',')
+    mat[4] = cmat__create_row_from_string('0, 0, 0, 1',',')
+
+    --convert
+    pose = matpose__mat_to_pose(mat)
+
+    sol = POS(100, 200, 200, 90, 0, 90, (ZEROPOS(1).config_data))
+
+    RETURN(kunit_eq_pos(sol, pose))
+
+  END t_mat2pose
+
+ROUTINE t_mat2pose2 : BOOLEAN
+  VAR
+    mat : arry(t_matarr)
+    pose : XYZWPR
+    sol : XYZWPR
+  BEGIN
+    
+    mat[1] = cmat__create_row_from_string('0.354, 0.926, 0.127, 230',',')
+    mat[2] = cmat__create_row_from_string('-0.612, 0.127, 0.780, -200',',')
+    mat[3] = cmat__create_row_from_string('0.707, -0.354, 0.612, 300',',')
+    mat[4] = cmat__create_row_from_string('0, 0, 0, 1',',')
+
+    --convert
+    pose = matpose__mat_to_pose(mat)
+
+    sol = POS(230,-200, 300,-30,-45,-60, (ZEROPOS(1).config_data))
+
+    RETURN(kunit_eq_pos(sol, pose))
+
+  END t_mat2pose2
+
+
+ROUTINE t_mat2quant : BOOLEAN
+  VAR
+    mat : arry(t_matarr)
+    pose1 : T_QUAT
+    pose2 : T_QUAT
+    sol1 : T_QUAT
+    sol2 : T_QUAT
+  BEGIN
+
+    -- 90, 0, 90
+    mat[1] = cmat__create_row_from_string('0, 0, 1, 100',',')
+    mat[2] = cmat__create_row_from_string('1, 0, 0, 200',',')
+    mat[3] = cmat__create_row_from_string('0, 1, 0, 200',',')
+    mat[4] = cmat__create_row_from_string('0, 0, 0, 1',',')
+
+    --convert
+    pose1 = matpose__mat_to_quat(mat)
+    sol1 = matpose__set_quant(0.5, 0.5, 0.5, 0.5)
+
+    -- -45, -30, 0
+    mat[1] = cmat__create_row_from_string('0.612, 0.707, -0.354, 0',',')
+    mat[2] = cmat__create_row_from_string('-0.612, 0.707, 0.354, 0',',')
+    mat[3] = cmat__create_row_from_string('0.5, 0, 0.866, 0',',')
+    mat[4] = cmat__create_row_from_string('0, 0, 0, 1',',')
+
+    --convert
+    pose2 = matpose__mat_to_quat(mat)
+    sol2 = matpose__set_quant(0.8924, -0.098, -0.2391, -0.3696)
+
+    RETURN(matpose__quat_test(sol1, pose1) AND matpose__quat_test(sol2, pose2))
+
+  END t_mat2quant
+
+ROUTINE t_quant2mat : BOOLEAN
+  VAR
+    pose : T_QUAT
+    mat1 : arry(t_matarr)
+    mat2 : arry(t_matarr)
+    sol1 : arry(t_matarr)
+    sol2 : arry(t_matarr)
+  BEGIN
+
+    -- 90, 0, 90
+    pose = matpose__set_quant(0.5, 0.5, 0.5, 0.5)
+
+    --convert
+    matpose__quat_to_mat(pose, mat1)
+
+    sol1[1] = cmat__create_row_from_string('0, 0, 1, 0',',')
+    sol1[2] = cmat__create_row_from_string('1, 0, 0, 0',',')
+    sol1[3] = cmat__create_row_from_string('0, 1, 0, 0',',')
+    sol1[4] = cmat__create_row_from_string('0, 0, 0, 1',',')
+
+    -- -45, -30, 0
+    pose = matpose__set_quant(0.8924, -0.098, -0.2391, -0.3696)
+
+    --convert
+    matpose__quat_to_mat(pose, mat2)
+
+    sol2[1] = cmat__create_row_from_string('0.612, 0.707, -0.354, 0',',')
+    sol2[2] = cmat__create_row_from_string('-0.612, 0.707, 0.354, 0',',')
+    sol2[3] = cmat__create_row_from_string('0.5, 0, 0.866, 0',',')
+    sol2[4] = cmat__create_row_from_string('0, 0, 0, 1',',')
+
+    RETURN(cmat__testing(sol1, mat1) AND cmat__testing(sol2, mat2))
+
+  END t_quant2mat
+
+
+ROUTINE t_pose2quat : BOOLEAN
+  VAR
+    pose : XYZWPR
+    quat1 : T_QUAT
+    quat2 : T_QUAT
+    sol1 : T_QUAT
+    sol2 : T_QUAT
+  BEGIN
+
+    -- 90, 0, 90
+    pose = POS(0,0,0,90,0,90, (ZEROPOS(1).config_data))
+
+    --convert
+    quat1 = matpose__pose_to_quat(pose)
+    sol1 = matpose__set_quant(0.5, 0.5, 0.5, 0.5)
+
+    -- -45, -30, 0
+    pose = POS(0,0,0,-45,-30,0, (ZEROPOS(1).config_data))
+
+    --convert
+    quat2 = matpose__pose_to_quat(pose)
+    sol2 = matpose__set_quant(0.8924, -0.099, -0.2391, -0.3696)
+
+    RETURN(matpose__quat_test(sol1, quat1) AND matpose__quat_test(sol2, quat2))
+
+  END t_pose2quat
+
+ROUTINE t_quat2pose : BOOLEAN
+  VAR
+    quat : T_QUAT
+    pose1 : XYZWPR
+    pose2 : XYZWPR
+    sol1 : XYZWPR
+    sol2 : XYZWPR
+  BEGIN
+
+    -- 90, 0, 90
+    quat = matpose__set_quant(0.5, 0.5, 0.5, 0.5)
+
+    --convert
+    pose1 = matpose__quat_to_pose(quat)
+    sol1 = POS(0,0,0,90,0,90, (ZEROPOS(1).config_data))
+
+    -- -45, -30, 0
+    quat = matpose__set_quant(0.8924, -0.099, -0.2391, -0.3696)
+
+    --convert
+    pose2 = matpose__quat_to_pose(quat)
+    sol2 = POS(0,0,0,-45,-30,0, (ZEROPOS(1).config_data))
+
+    RETURN(kunit_eq_pos(sol1, pose1) AND kunit_eq_pos(sol2, pose2))
+
+  END t_quat2pose
+
+
+
+BEGIN
+  kunit_test('test getting columns', t_getcol)
+  kunit_test('test convert pose to matrix', t_pose2mat)
+  kunit_test('test convert pose to matrix 2', t_pose2mat2)
+  kunit_test('test convert matrix to pose', t_mat2pose)
+  kunit_test('test convert matrix to pose 2', t_mat2pose2)
+  kunit_test('test convert matrix to quaternion', t_mat2quant)
+  kunit_test('test convert quaternion to matrix', t_quant2mat)
+  kunit_test('test convert pose to quaternion', t_pose2quat)
+  kunit_test('test convert quaternion to pose', t_quat2pose)
+
+  kunit_done
+END test_matpose

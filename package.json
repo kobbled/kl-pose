@@ -11,7 +11,8 @@
     "lib/matpose/matpose.kl"
   ],
   "tests" : [
-    "test/test_pose.kl"
+    "test/test_pose.kl",
+    "test/test_matpose.kl"
   ],
   "includes" : [
     "lib/poselib",
