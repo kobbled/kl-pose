@@ -29,7 +29,74 @@ t_arr2d_ref(t_rows,t_columns,type_name,inner_type)
 %class cmat('2dArray.klc','2dArray.klh','matarr.klt')
 %endif
 
+--operations
+ROUTINE matpose__rotx
+  VAR
+    row : arrx(type_name)
+    out_mat : arry(type_name)
+  BEGIN
+    row[1] = 1 ; row[2] = 0 ; row[3] = 0 ; row[4] = 0
+    cmat__set_row(1, row, out_mat)
+    row[1] = 0 ; row[2] = COS(angle) ; row[3] = -1*SIN(angle) ; row[4] = 0
+    cmat__set_row(2, row, out_mat)
+    row[1] = 0 ; row[2] = SIN(angle) ; row[3] = COS(angle) ; row[4] = 0
+    cmat__set_row(3, row, out_mat)
+    row[1] = 0 ; row[2] = 0 ; row[3] = 0 ; row[4] = 1
+    cmat__set_row(4, row, out_mat)
 
+    RETURN(out_mat)
+  END matpose__rotx
+
+ROUTINE matpose__roty
+  VAR
+    row : arrx(type_name)
+    out_mat : arry(type_name)
+  BEGIN
+    row[1] = COS(angle) ; row[2] = 0 ; row[3] = SIN(angle) ; row[4] = 0
+    cmat__set_row(1, row, out_mat)
+    row[1] = 0 ; row[2] = 1 ; row[3] = 0 ; row[4] = 0
+    cmat__set_row(2, row, out_mat)
+    row[1] = -1*SIN(angle) ; row[2] = 0 ; row[3] = COS(angle) ; row[4] = 0
+    cmat__set_row(3, row, out_mat)
+    row[1] = 0 ; row[2] = 0 ; row[3] = 0 ; row[4] = 1
+    cmat__set_row(4, row, out_mat)
+
+    RETURN(out_mat)
+  END matpose__roty
+
+ROUTINE matpose__rotz
+  VAR
+    row : arrx(type_name)
+    out_mat : arry(type_name)
+  BEGIN
+    row[1] = COS(angle) ; row[2] = -1*SIN(angle) ; row[3] = 0 ; row[4] = 0
+    cmat__set_row(1, row, out_mat)
+    row[1] = SIN(angle) ; row[2] = COS(angle) ; row[3] = 0 ; row[4] = 0
+    cmat__set_row(2, row, out_mat)
+    row[1] = 0 ; row[2] = 0 ; row[3] = 1 ; row[4] = 0
+    cmat__set_row(3, row, out_mat)
+    row[1] = 0 ; row[2] = 0 ; row[3] = 0 ; row[4] = 1
+    cmat__set_row(4, row, out_mat)
+
+    RETURN(out_mat)
+  END matpose__rotz
+
+ROUTINE matpose__transl
+  VAR
+    row : arrx(type_name)
+    out_mat : arry(type_name)
+  BEGIN
+    row[1] = 1 ; row[2] = 0 ; row[3] = 0 ; row[4] = x
+    cmat__set_row(1, row, out_mat)
+    row[1] = 0 ; row[2] = 1 ; row[3] = 0 ; row[4] = y
+    cmat__set_row(2, row, out_mat)
+    row[1] = 0 ; row[2] = 0 ; row[3] = 1 ; row[4] = z
+    cmat__set_row(3, row, out_mat)
+    row[1] = 0 ; row[2] = 0 ; row[3] = 0 ; row[4] = 1
+    cmat__set_row(4, row, out_mat)
+
+    RETURN(out_mat)
+  END matpose__transl
 
 --conversions
 ROUTINE matpose__pose_to_mat

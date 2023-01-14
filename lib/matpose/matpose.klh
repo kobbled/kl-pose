@@ -6,6 +6,17 @@
 %define prog_name matpose
 %define prog_name_alias mat
 
+--operations
+declare_function(prog_name,rotx,prog_name_alias,rotx)
+ROUTINE matpose__rotx(angle : REAL) : arry(t_matarr) FROM matpose
+declare_function(prog_name,roty,prog_name_alias,roty)
+ROUTINE matpose__roty(angle : REAL) : arry(t_matarr) FROM matpose
+declare_function(prog_name,rotz,prog_name_alias,rotz)
+ROUTINE matpose__rotz(angle : REAL) : arry(t_matarr) FROM matpose
+declare_function(prog_name,transl,prog_name_alias,transl)
+ROUTINE matpose__transl(x : REAL; y : REAL; z : REAL) : arry(t_matarr) FROM matpose
+
+--conversions
 declare_function(prog_name,pose_to_mat,prog_name_alias,pos2mat)
 ROUTINE matpose__pose_to_mat(pose : XYZWPR; out_mat : arry(t_matarr)) FROM matpose
 declare_function(prog_name,mat_to_pose,prog_name_alias,mat2pos)
