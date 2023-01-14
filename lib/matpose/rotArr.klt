@@ -1,0 +1,7 @@
+%include define_type.m
+-- declare type
+%defeval type_name t_rotarr
+%defeval t_rows 3
+%defeval t_columns 3
+--atomic type of matrix
+%defeval inner_type REAL
