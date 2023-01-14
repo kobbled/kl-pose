@@ -8,8 +8,7 @@
   "source" : [
     "lib/poselib/pose.kl",
     "lib/poselib/posetp.kl",
-    "lib/matpose/matpose.kl",
-    "lib/matpose/matrot.kl"
+    "lib/matpose/matpose.kl"
   ],
   "tests" : [
     "test/test_pose.kl",
