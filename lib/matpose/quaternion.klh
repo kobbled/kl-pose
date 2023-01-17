@@ -1,0 +1,31 @@
+%ifndef quaternion_h
+%define quaternion_h
+
+%include namespace.m
+
+%define prog_name quaternion
+%define prog_name_alias quat
+
+--quaternions
+declare_function(prog_name,set,prog_name_alias,set)
+ROUTINE quaternion__set(w : REAL; x : REAL; y : REAL; z : REAL) : T_QUAT FROM quaternion
+declare_function(prog_name,normalize,prog_name_alias,norm)
+ROUTINE quaternion__normalize(q : T_QUAT) : T_QUAT FROM quaternion
+declare_function(prog_name,mult,prog_name_alias,mult)
+ROUTINE quaternion__mult(q1 : T_QUAT; q2 : T_QUAT) : T_QUAT FROM quaternion
+
+--conversion quaternions
+declare_function(prog_name,mat_to_quat,prog_name_alias,mat2qat)
+ROUTINE quaternion__mat_to_quat(mat : arry(type_name)) : T_QUAT FROM quaternion
+declare_function(prog_name,quat_to_mat,prog_name_alias,qat2mat)
+ROUTINE quaternion__quat_to_mat(q : T_QUAT; out_mat : arry(type_name)) FROM quaternion
+declare_function(prog_name,pose_to_quat,prog_name_alias,pos2qat)
+ROUTINE quaternion__pose_to_quat(p : XYZWPR) : T_QUAT FROM quaternion
+declare_function(prog_name,quat_to_pose,prog_name_alias,qat2pos)
+ROUTINE quaternion__quat_to_pose(q : T_QUAT) : XYZWPR FROM quaternion
+
+--testing
+declare_function(prog_name,test,prog_name_alias,test)
+ROUTINE quaternion__test(expected : T_QUAT; actual : T_QUAT) : BOOLEAN FROM quaternion
+
+%endif --quaternion_h

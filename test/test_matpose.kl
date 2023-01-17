@@ -16,6 +16,7 @@ t_arr2d_ref(t_rows,t_columns,t_matarr,inner_type)
 %include kunit.klh
 
 %include matpose.klh
+%include quaternion.klh
 
 --matrix class
 %class cmat('2dArray.klc','2dArray.klh','matarr_test.klt')
@@ -141,8 +142,8 @@ ROUTINE t_mat2quant : BOOLEAN
     mat[4] = cmat__create_row_from_string('0, 0, 0, 1',',')
 
     --convert
-    pose1 = matpose__mat_to_quat(mat)
-    sol1 = matpose__set_quant(0.5, 0.5, 0.5, 0.5)
+    pose1 = quaternion__mat_to_quat(mat)
+    sol1 = quaternion__set(0.5, 0.5, 0.5, 0.5)
 
     -- -45, -30, 0
     mat[1] = cmat__create_row_from_string('0.612, 0.707, -0.354, 0',',')
@@ -151,10 +152,10 @@ ROUTINE t_mat2quant : BOOLEAN
     mat[4] = cmat__create_row_from_string('0, 0, 0, 1',',')
 
     --convert
-    pose2 = matpose__mat_to_quat(mat)
-    sol2 = matpose__set_quant(0.8924, -0.098, -0.2391, -0.3696)
+    pose2 = quaternion__mat_to_quat(mat)
+    sol2 = quaternion__set(0.8924, -0.098, -0.2391, -0.3696)
 
-    RETURN(matpose__quat_test(sol1, pose1) AND matpose__quat_test(sol2, pose2))
+    RETURN(quaternion__test(sol1, pose1) AND quaternion__test(sol2, pose2))
 
   END t_mat2quant
 
@@ -168,10 +169,10 @@ ROUTINE t_quant2mat : BOOLEAN
   BEGIN
 
     -- 90, 0, 90
-    pose = matpose__set_quant(0.5, 0.5, 0.5, 0.5)
+    pose = quaternion__set(0.5, 0.5, 0.5, 0.5)
 
     --convert
-    matpose__quat_to_mat(pose, mat1)
+    quaternion__quat_to_mat(pose, mat1)
 
     sol1[1] = cmat__create_row_from_string('0, 0, 1, 0',',')
     sol1[2] = cmat__create_row_from_string('1, 0, 0, 0',',')
@@ -179,10 +180,10 @@ ROUTINE t_quant2mat : BOOLEAN
     sol1[4] = cmat__create_row_from_string('0, 0, 0, 1',',')
 
     -- -45, -30, 0
-    pose = matpose__set_quant(0.8924, -0.098, -0.2391, -0.3696)
+    pose = quaternion__set(0.8924, -0.098, -0.2391, -0.3696)
 
     --convert
-    matpose__quat_to_mat(pose, mat2)
+    quaternion__quat_to_mat(pose, mat2)
 
     sol2[1] = cmat__create_row_from_string('0.612, 0.707, -0.354, 0',',')
     sol2[2] = cmat__create_row_from_string('-0.612, 0.707, 0.354, 0',',')
@@ -207,17 +208,17 @@ ROUTINE t_pose2quat : BOOLEAN
     pose = POS(0,0,0,90,0,90, (ZEROPOS(1).config_data))
 
     --convert
-    quat1 = matpose__pose_to_quat(pose)
-    sol1 = matpose__set_quant(0.5, 0.5, 0.5, 0.5)
+    quat1 = quaternion__pose_to_quat(pose)
+    sol1 = quaternion__set(0.5, 0.5, 0.5, 0.5)
 
     -- -45, -30, 0
     pose = POS(0,0,0,-45,-30,0, (ZEROPOS(1).config_data))
 
     --convert
-    quat2 = matpose__pose_to_quat(pose)
-    sol2 = matpose__set_quant(0.8924, -0.099, -0.2391, -0.3696)
+    quat2 = quaternion__pose_to_quat(pose)
+    sol2 = quaternion__set(0.8924, -0.099, -0.2391, -0.3696)
 
-    RETURN(matpose__quat_test(sol1, quat1) AND matpose__quat_test(sol2, quat2))
+    RETURN(quaternion__test(sol1, quat1) AND quaternion__test(sol2, quat2))
 
   END t_pose2quat
 
@@ -231,17 +232,17 @@ ROUTINE t_quat2pose : BOOLEAN
   BEGIN
 
     -- 90, 0, 90
-    quat = matpose__set_quant(0.5, 0.5, 0.5, 0.5)
+    quat = quaternion__set(0.5, 0.5, 0.5, 0.5)
 
     --convert
-    pose1 = matpose__quat_to_pose(quat)
+    pose1 = quaternion__quat_to_pose(quat)
     sol1 = POS(0,0,0,90,0,90, (ZEROPOS(1).config_data))
 
     -- -45, -30, 0
-    quat = matpose__set_quant(0.8924, -0.099, -0.2391, -0.3696)
+    quat = quaternion__set(0.8924, -0.099, -0.2391, -0.3696)
 
     --convert
-    pose2 = matpose__quat_to_pose(quat)
+    pose2 = quaternion__quat_to_pose(quat)
     sol2 = POS(0,0,0,-45,-30,0, (ZEROPOS(1).config_data))
 
     RETURN(kunit_eq_pos(sol1, pose1) AND kunit_eq_pos(sol2, pose2))

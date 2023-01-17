@@ -22,26 +22,4 @@ ROUTINE matpose__pose_to_mat(pose : XYZWPR; out_mat : arry(type_name)) FROM matp
 declare_function(prog_name,mat_to_pose,prog_name_alias,mat2pos)
 ROUTINE matpose__mat_to_pose(mat : arry(type_name)) : XYZWPR FROM matpose
 
---quaternions
-declare_function(prog_name,set_quant,prog_name_alias,stquant)
-ROUTINE matpose__set_quant(w : REAL; x : REAL; y : REAL; z : REAL) : T_QUAT FROM matpose
-declare_function(prog_name,quat_normalize,prog_name_alias,quatnrm)
-ROUTINE matpose__quat_normalize(q : T_QUAT) : T_QUAT FROM matpose
-declare_function(prog_name,quat_mult,prog_name_alias,quatmlt)
-ROUTINE matpose__quat_mult(q1 : T_QUAT; q2 : T_QUAT) : T_QUAT FROM matpose
-
---conversion quaternions
-declare_function(prog_name,mat_to_quat,prog_name_alias,mat2qat)
-ROUTINE matpose__mat_to_quat(mat : arry(type_name)) : T_QUAT FROM matpose
-declare_function(prog_name,quat_to_mat,prog_name_alias,qat2mat)
-ROUTINE matpose__quat_to_mat(q : T_QUAT; out_mat : arry(type_name)) FROM matpose
-declare_function(prog_name,pose_to_quat,prog_name_alias,pos2qat)
-ROUTINE matpose__pose_to_quat(p : XYZWPR) : T_QUAT FROM matpose
-declare_function(prog_name,quat_to_pose,prog_name_alias,qat2pos)
-ROUTINE matpose__quat_to_pose(q : T_QUAT) : XYZWPR FROM matpose
-
---testing
-declare_function(prog_name,quat_test,prog_name_alias,qattest)
-ROUTINE matpose__quat_test(expected : T_QUAT; actual : T_QUAT) : BOOLEAN FROM matpose
-
 %endif --pose_h
