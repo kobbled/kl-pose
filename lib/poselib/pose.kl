@@ -503,6 +503,17 @@ ROUTINE pose__set_posreg_joint
       ENDIF
   END pose__set_posreg_joint
 
+ROUTINE pose__set_vector_to_posreg
+  VAR
+    status : INTEGER
+    p : XYZWPR
+  BEGIN
+    p = POS(vec.x, vec.y, vec.z, 0, 0, 0, (ZEROPOS(1).config_data))
+    
+    SET_POS_REG(reg_no, (p), status, 1)
+    CHK_STAT(status)
+  END pose__set_vector_to_posreg
+
 --***********
 -- getters
 --***********

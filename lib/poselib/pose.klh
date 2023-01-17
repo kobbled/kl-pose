@@ -56,6 +56,9 @@ ROUTINE pose__mask_posreg_xyz(x : REAL; y : REAL; z : REAL ; reg_no : INTEGER ; 
 declare_function(prog_name,mask_posreg_orient,prog_name_alias,mskpro)
 ROUTINE pose__mask_posreg_orient(w : REAL; p : REAL; r : REAL ; reg_no : INTEGER ; grp_no : INTEGER) FROM pose
 
+declare_function(prog_name,set_vector_to_posreg,prog_name_alias,stvcpr)
+ROUTINE pose__set_vector_to_posreg(vec : VECTOR ; reg_no : INTEGER) FROM pose
+
 -- getters
 declare_function(prog_name,get_userframe,prog_name_alias,getUF)
 ROUTINE pose__get_userframe(grp_no : INTEGER) : XYZWPR FROM pose
