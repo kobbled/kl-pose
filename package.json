@@ -27,10 +27,10 @@
     "shapes",
     "matrix",
     "systemlib",
-    "ktransw-macros"
+    "ktransw-macros",
+    "KUnit"
   ],
   "tests-depends" : [
-    "KUnit",
     "display"
   ],
   "tp-interfaces" : [
