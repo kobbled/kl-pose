@@ -218,9 +218,9 @@ ROUTINE matrot__pose_to_quat
     s.z = SIN(p.z*0.5)
 
     outq.w = c.x*c.y*c.z + s.x*s.y*s.z
-    outq.x = c.x*c.y*s.z - s.x*s.y*c.z
+    outq.x = s.x*c.y*c.z - c.x*s.y*s.z
     outq.y = c.x*s.y*c.z + s.x*c.y*s.z
-    outq.z = s.x*c.y*c.z - c.x*s.y*s.z
+    outq.z = c.x*c.y*s.z - s.x*s.y*c.z
 
     RETURN(outq)
 
@@ -232,7 +232,7 @@ ROUTINE matrot__quat_to_pose
     x, y : REAL
   BEGIN
 
-    x = 1-2*(q.y*q.y+q.z*q.z) ; y = 2*(q.w*q.z + q.y*q.x)
+    x = 1-2*(q.x*q.x + q.y*q.y) ; y = 2*(q.w*q.x + q.y*q.z)
     IF (x = 0) AND (y = 0) THEN out.x = 0 ;
     ELSE out.x = ATAN2(x, y) ; ENDIF
 
@@ -240,7 +240,7 @@ ROUTINE matrot__quat_to_pose
     IF (x = 0) AND (y = 0) THEN out.y = 0 ;
     ELSE out.y = -90 + 2*ATAN2(x, y) ; ENDIF
 
-    x = 1-2*(q.x*q.x + q.y*q.y) ; y = 2*(q.w*q.x + q.y*q.z)
+    x = 1-2*(q.y*q.y+q.z*q.z) ; y = 2*(q.w*q.z + q.y*q.x)
     IF (x = 0) AND (y = 0) THEN out.z = 0 ;
     ELSE out.z = ATAN2(x, y) ; ENDIF
 

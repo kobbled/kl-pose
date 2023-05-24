@@ -212,7 +212,7 @@ ROUTINE t_pose2quat : BOOLEAN
     sol1 = quaternion__set(0.5, 0.5, 0.5, 0.5)
 
     -- -45, -30, 0
-    pose = POS(0,0,0,-45,-30,0, (ZEROPOS(1).config_data))
+    pose = POS(0,0,0,0,-30,-45, (ZEROPOS(1).config_data))
 
     --convert
     quat2 = quaternion__pose_to_quat(pose)
@@ -243,7 +243,7 @@ ROUTINE t_quat2pose : BOOLEAN
 
     --convert
     pose2 = quaternion__quat_to_pose(quat)
-    sol2 = POS(0,0,0,-45,-30,0, (ZEROPOS(1).config_data))
+    sol2 = POS(0,0,0,0,-30,-45, (ZEROPOS(1).config_data))
 
     RETURN(kunit_eq_pos(sol1, pose1) AND kunit_eq_pos(sol2, pose2))
 
