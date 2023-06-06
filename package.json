@@ -45,6 +45,7 @@
     {"routine" : "posetp__inv", "program_name" : "pos_inv"},
     {"routine" : "posetp__dot", "program_name" : "pos_dot"},
     {"routine" : "posetp__cross", "program_name" : "pos_cross"},
+    {"routine" : "pose__distance", "program_name" : "pos_dist"},
     {"routine" : "posetp__frame", "program_name" : "pos_frame"},
     {"routine" : "posetp__frame4", "program_name" : "pos_frame4"},
     {"routine" : "posetp__find_center", "program_name" : "pos_center"},

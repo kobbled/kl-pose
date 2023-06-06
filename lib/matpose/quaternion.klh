@@ -13,7 +13,7 @@ declare_function(prog_name,normalize,prog_name_alias,norm)
 ROUTINE quaternion__normalize(q : T_QUAT) : T_QUAT FROM quaternion
 declare_function(prog_name,mult,prog_name_alias,mult)
 ROUTINE quaternion__mult(q1 : T_QUAT; q2 : T_QUAT) : T_QUAT FROM quaternion
-declare_function(prog_name,conjugate,prog_name_alias,conj)
+declare_function(prog_name,conj,prog_name_alias,conj)
 ROUTINE quaternion__conj(q : T_QUAT) : T_QUAT FROM quaternion
 
 --conversion quaternions
