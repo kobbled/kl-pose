@@ -624,6 +624,23 @@ ROUTINE pose__get_jpos
       RETURN(jpos)
   END pose__get_jpos
 
+ROUTINE pose__get_posreg_rep
+  VAR
+    pos_type : INTEGER
+    num_axes  : INTEGER
+    status : INTEGER
+  BEGIN
+    POS_REG_TYPE(reg_no, grp_no, pos_type, num_axes, status)
+
+    -- abort out if something is wrong
+    CHK_STAT(status)
+    IF (status <> 0) THEN
+        ok = FALSE
+        karelError(POS_TYPE_MISMATCH,'pose type not set', ER_ABORT)
+    ENDIF
+
+    RETURN(pos_type)
+  END pose__get_posreg_rep
 
 ROUTINE pose__get_posreg_xyz
 -- -----------
