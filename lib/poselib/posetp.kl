@@ -162,7 +162,7 @@ ROUTINE posetp__add
     out_p : XYZWPR
   BEGIN
     out_p.x = p1.x+p2.x ; out_p.y = p1.y+p2.y ; out_p.z = p1.z+p2.z
-    out_p.w = p1.w+p2.w ; out_p.p = p1.p+p2.p ; out_p.r = p1.r+p2.r
+    out_p.w = normalizeAngle(p1.w+p2.w) ; out_p.p = normalizeAngle(p1.p+p2.p) ; out_p.r = normalizeAngle(p1.r+p2.r)
     out_p.config_data = p1.config_data
 
     RETURN(out_p)
@@ -173,7 +173,7 @@ ROUTINE posetp__sub
     out_p : XYZWPR
   BEGIN
     out_p.x = p1.x-p2.x ; out_p.y = p1.y-p2.y ; out_p.z = p1.z-p2.z
-    out_p.w = p1.w-p2.w ; out_p.p = p1.p-p2.p ; out_p.r = p1.r-p2.r
+    out_p.w = normalizeAngle(p1.w-p2.w) ; out_p.p = normalizeAngle(p1.p-p2.p) ; out_p.r = normalizeAngle(p1.r-p2.r)
     out_p.config_data = p1.config_data
 
     RETURN(out_p)
