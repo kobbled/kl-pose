@@ -19,6 +19,17 @@ path_type_define(t_node,kinpos)
 -- create template for kinematics
 %class kinpos('pose.klc','pose_class.klh','pose_type.klt')
 
+ROUTINE normalizeAngle(angle :REAL) : REAL
+  BEGIN
+    WHILE (angle > 180) DO
+      angle = angle - 360
+    ENDWHILE
+    WHILE (angle < -180) DO
+      angle = angle + 360
+    ENDWHILE
+
+    RETURN(angle)
+  END normalizeAngle
 
 --Routines needed for TP interfaces
 ROUTINE posetp__groups_length
