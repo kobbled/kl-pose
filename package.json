@@ -48,6 +48,7 @@
     {"routine" : "pose__distance", "program_name" : "pos_dist"},
     {"routine" : "posetp__frame", "program_name" : "pos_frame"},
     {"routine" : "posetp__frame4", "program_name" : "pos_frame4"},
+    {"routine" : "posetp__framevec", "program_name" : "pos_frmvec"},
     {"routine" : "posetp__find_center", "program_name" : "pos_center"},
     {"routine" : "posetp__set_pr_xyz", "program_name" : "pos_setxyz", "default_params" : {"8": 1}},
     {"routine" : "pose__mask_posreg_xyz", "program_name" : "pos_mskxyz", "default_params" : {"5": 1}},
@@ -62,7 +63,8 @@
     {"routine" : "posetp__num_of_axes", "program_name" : "pos_axescnt", "default_params" : {"2": 1}},
     {"routine" : "posetp__create_frame_from_normal", "program_name" : "pos_linefrm"},
     {"routine" : "posetp__line_increment", "program_name" : "pos_lineinc"},
-    {"routine" : "posetp__get_jpos_group", "program_name" : "pos_getjpos"}
+    {"routine" : "posetp__get_jpos_group", "program_name" : "pos_getjpos"},
+    {"routine" : "pose__vector_to_euler2", "program_name" : "pos_vec2eul"}
   ],
   "interface-depends" : [
     "TPElib"
