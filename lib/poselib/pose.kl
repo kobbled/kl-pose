@@ -902,6 +902,11 @@ ROUTINE pose__vector_to_pose
     RETURN(p)
   END  pose__vector_to_pose
 
+ROUTINE pose__norm
+  BEGIN
+    RETURN(v/math__norm(v))
+  END pose__norm
+
 
 ROUTINE pose__cylindrical_to_cartesian
   -- ..note:: This function only transforms the coordinate, not
