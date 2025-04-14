@@ -63,7 +63,8 @@
     {"routine" : "posetp__num_of_axes", "program_name" : "pos_axescnt", "default_params" : {"2": 1}},
     {"routine" : "posetp__create_frame_from_normal", "program_name" : "pos_linefrm"},
     {"routine" : "posetp__line_increment", "program_name" : "pos_lineinc"},
-    {"routine" : "posetp__get_jpos_group", "program_name" : "pos_getjpos"}
+    {"routine" : "posetp__get_jpos_group", "program_name" : "pos_getjpos"},
+    {"routine" : "pose__vector_to_euler2", "program_name" : "pos_vec2eul"}
   ],
   "interface-depends" : [
     "TPElib"

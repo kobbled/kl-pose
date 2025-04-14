@@ -5,9 +5,15 @@ PROGRAM pose
 %NOLOCKGROUP
 %NOPAUSE = COMMAND + TPENABLE + ERROR
 
+%include define_type.m
+
+%include matarr.klt
+t_arr2d_ref(t_rows,t_columns,t_matarr,inner_type)
+
 %include systemvars.klt
 %include errors.klt
 %include pose.klt
+%include quaternion.klt
 %include shapes.klt
 %include math.klt
 
@@ -32,6 +38,7 @@ VAR
 %include shapes.klh
 %include posetp.klh
 %include pose.klh
+%include quaternion.klh
 
 %ifdef DEBUG_BUILD
 %from display.klh %import clear, show
@@ -1165,60 +1172,59 @@ ROUTINE pose__find_circumcenter
     RETURN(c)
   END pose__find_circumcenter
 
+ROUTINE pose__vector_to_euler
+  VAR
+    out : VECTOR
+  BEGIN
+    RETURN(pose__vector_to_euler2(VEC(vi, vj, vk), vectorAxis))
+  END pose__vector_to_euler
+
+ROUTINE pose__vector_to_euler2
+  VAR
+    align_axis, align_vector : VECTOR
+    cross_prdct : VECTOR
+    dot_product : REAL
+    rot_quat    : T_QUAT
+    norm_quat   : T_QUAT
+    out_pose    : XYZWPR
+  CONST
+        X_AXIS = 1
+        Y_AXIS = 2
+        Z_AXIS = 3
+  BEGIN
+    align_axis.x = 0
+    align_axis.y = 0
+    align_axis.z = 0
+
+    -- select appropriate correction axis
+    SELECT vectorAxis OF
+        CASE(X_AXIS):
+            align_axis.x = 1
+        CASE(Y_AXIS):
+            align_axis.y = 1
+        CASE(Z_AXIS):
+            align_axis.z = 1
+    ENDSELECT
+
+    --normalize vector
+    align_vector = v/math__norm(v)
+
+    -- get rotation in quaternion
+    cross_prdct = align_axis # align_vector
+    dot_product = align_axis @ align_vector
+    rot_quat = quaternion__set(1 + dot_product, cross_prdct.x, cross_prdct.y, cross_prdct.z)
+    norm_quat = quaternion__normalize(rot_quat)
+    out_pose = quaternion__quat_to_pose(norm_quat)
+
+    RETURN(VEC(out_pose.w, out_pose.p, out_pose.r))
+    
+  END pose__vector_to_euler2
+
+
 ROUTINE pose__line_increment
   BEGIN
     RETURN(p1 + (p2-p1)*fraction)
   END pose__line_increment
-
-
-ROUTINE pose__vector_to_euler
-  VAR
-    rad : REAL
-    out : VECTOR
-  BEGIN
-    --convert into spherical coordinates to obtain the theta and phi angles.
-    --..note:: third angle is not computed here, as it is the rotation around
-    --         the vector (i.e doesn't change the vector)
-    rad = vi*vi+vj*vj+vk*vk
-
-    IF rad <> 1 THEN
-      rad = SQRT(rad)
-    ENDIF
-    
-    -- default assume vector is along x'-axis (X_AXES)
-    out.x = 0
-    IF (vk/rad > 1) OR (vk/rad < -1) THEN
-      karelError(VAL_OUT_OF_RNG, 'ACOS is out of range in pose__vector_to_euler : ' + r_to_s(vk/rad), ER_ABORT)
-    ENDIF
-    out.y = -90 + ACOS(vk/rad)
-    IF (vi < EPSILON) AND (vi > -EPSILON) AND (vj < EPSILON) AND (vj > -EPSILON) THEN
-      out.z = 0
-    ELSE
-      out.z = ATAN2(vi,vj)
-    ENDIF
-
-    SELECT vectorAxis OF
-      CASE(X_AXES):
-      -- no transformation needed
-      CASE(Y_AXES):
-         --rotate frame so y is along previous x-axis
-%define YROT_ALIGN_EULER POS(0,0,0,0,0,-90,(ZEROPOS(1).config_data))
-        out = pose__pose_to_orient(pose__vector_to_pose(VEC(0,0,0),(out),(ZEROPOS(1).config_data)):YROT_ALIGN_EULER)   
-      CASE(Z_AXES):
-        --rotate frame so z is along previous x-axis
-%define ZROT_ALIGN_EULER POS(0,0,0,0,90,0,(ZEROPOS(1).config_data))
-        out = pose__pose_to_orient(pose__vector_to_pose(VEC(0,0,0),(out),(ZEROPOS(1).config_data)):ZROT_ALIGN_EULER)
-    ENDSELECT
-
-    --::WARNING.. issue with =< V8.10. -180 should be converted to 180
-    IF (out.x = -180) THEN out.x = 180 ; ENDIF
-    IF (out.y = -180) THEN out.y = 180 ; ENDIF
-    IF (out.z = -180) THEN out.z = 180 ; ENDIF
-
-    RETURN(out)
-
-  END pose__vector_to_euler
-
 
 ROUTINE pose__vector_to_euler_cylindrical
   -- warning:: This function modifies the 'tangent' variable. If mutability
@@ -1249,7 +1255,7 @@ ROUTINE pose__vector_to_euler_cylindrical
 %endif
 
     --get angle of tangent vector
-    vecang = pose__vector_to_euler(tangent.x, tangent.y, tangent.z, X_AXES)
+    vecang = pose__vector_to_euler2(tangent, X_AXES)
 
 %ifdef DEBUG_BUILD
       usrdis__print(DEBUG,'tan eul:' + vec_to_s(vecang, ','))
@@ -1260,7 +1266,7 @@ ROUTINE pose__vector_to_euler_cylindrical
     -- DO NOT evaluate equality on REAL values!!!
     IF (vecang.z > 0-EPSILON) AND (vecang.z < 90-EPSILON) THEN
 
-      out = pose__vector_to_euler(torient.x, torient.y, torient.z, X_AXES)
+      out = pose__vector_to_euler2(torient, X_AXES)
 %ifdef DEBUG_BUILD
       usrdis__print(DEBUG,'Quadrant 1 theta:' + r_to_s(vecang.z))
       usrdis__print(DEBUG,'euler vec:' + vec_to_s(out, ','))
@@ -1274,7 +1280,7 @@ ROUTINE pose__vector_to_euler_cylindrical
     ENDIF
 
     IF (vecang.z > 90-EPSILON) AND (vecang.z < 180-EPSILON) THEN
-      out = pose__vector_to_euler(norient.x, norient.y, norient.z, X_AXES)
+      out = pose__vector_to_euler2(norient, X_AXES)
 %ifdef DEBUG_BUILD
       usrdis__print(DEBUG,'Quadrant 2 theta:' + r_to_s(vecang.z))
       usrdis__print(DEBUG,'euler vec:' + vec_to_s(out, ','))
@@ -1288,7 +1294,7 @@ ROUTINE pose__vector_to_euler_cylindrical
     ENDIF
 
     IF ((vecang.z < 180+EPSILON) AND (vecang.z > 180-EPSILON)) OR ((vecang.z > -180+EPSILON) AND (vecang.z < -90+EPSILON)) THEN
-      out = pose__vector_to_euler(torient.x, torient.y, torient.z, X_AXES)
+      out = pose__vector_to_euler2(torient, X_AXES)
 %ifdef DEBUG_BUILD
       usrdis__print(DEBUG,'Quadrant 3 theta:' + r_to_s(vecang.z))
       usrdis__print(DEBUG,'euler vec:' + vec_to_s(out, ','))
@@ -1302,7 +1308,7 @@ ROUTINE pose__vector_to_euler_cylindrical
     ENDIF
 
     IF (vecang.z > -90+EPSILON) AND (vecang.z < 0-EPSILON) THEN
-      out = pose__vector_to_euler(torient.x, torient.y, torient.z, X_AXES)
+      out = pose__vector_to_euler2(torient, X_AXES)
 %ifdef DEBUG_BUILD
       usrdis__print(DEBUG,'Quadrant 4 theta:' + r_to_s(vecang.z))
       usrdis__print(DEBUG,'euler vec:' + vec_to_s(out, ','))

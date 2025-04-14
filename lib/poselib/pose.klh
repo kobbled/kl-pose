@@ -141,6 +141,8 @@ declare_function(prog_name,line_increment,prog_name_alias,lninc)
 ROUTINE pose__line_increment(p1, p2 : VECTOR; fraction : REAL) : VECTOR FROM pose
 declare_function(prog_name,vector_to_euler,prog_name_alias,veceul)
 ROUTINE pose__vector_to_euler(vi : REAL; vj : REAL; vk : REAL; vectorAxis : INTEGER) : VECTOR FROM pose
+declare_function(prog_name,vector_to_euler2,prog_name_alias,veceul2)
+ROUTINE pose__vector_to_euler2(v : VECTOR; vectorAxis : INTEGER) : VECTOR FROM pose
 declare_function(prog_name,vector_to_euler_cylindrical,prog_name_alias,vcelcy)
 -- warning:: This function modifies the 'tangent' variable. If mutability
 --           is not desired encase argument in () brackets to copy.
