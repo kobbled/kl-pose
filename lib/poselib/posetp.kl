@@ -19,7 +19,7 @@ path_type_define(t_node,kinpos)
 -- create template for kinematics
 %class kinpos('pose.klc','pose_class.klh','pose_type.klt')
 
-ROUTINE normalizeAngle(angle :REAL) : REAL
+ROUTINE normAng(angle :REAL) : REAL
   BEGIN
     WHILE (angle > 180) DO
       angle = angle - 360
@@ -29,7 +29,7 @@ ROUTINE normalizeAngle(angle :REAL) : REAL
     ENDWHILE
 
     RETURN(angle)
-  END normalizeAngle
+  END normAng
 
 --Routines needed for TP interfaces
 ROUTINE posetp__groups_length
@@ -162,7 +162,7 @@ ROUTINE posetp__add
     out_p : XYZWPR
   BEGIN
     out_p.x = p1.x+p2.x ; out_p.y = p1.y+p2.y ; out_p.z = p1.z+p2.z
-    out_p.w = normalizeAngle(p1.w+p2.w) ; out_p.p = normalizeAngle(p1.p+p2.p) ; out_p.r = normalizeAngle(p1.r+p2.r)
+    out_p.w = normAng(p1.w+p2.w) ; out_p.p = normAng(p1.p+p2.p) ; out_p.r = normAng(p1.r+p2.r)
     out_p.config_data = p1.config_data
 
     RETURN(out_p)
@@ -173,7 +173,7 @@ ROUTINE posetp__sub
     out_p : XYZWPR
   BEGIN
     out_p.x = p1.x-p2.x ; out_p.y = p1.y-p2.y ; out_p.z = p1.z-p2.z
-    out_p.w = normalizeAngle(p1.w-p2.w) ; out_p.p = normalizeAngle(p1.p-p2.p) ; out_p.r = normalizeAngle(p1.r-p2.r)
+    out_p.w = normAng(p1.w-p2.w) ; out_p.p = normAng(p1.p-p2.p) ; out_p.r = normAng(p1.r-p2.r)
     out_p.config_data = p1.config_data
 
     RETURN(out_p)
