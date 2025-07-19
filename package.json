@@ -64,7 +64,8 @@
     {"routine" : "posetp__create_frame_from_normal", "program_name" : "pos_linefrm"},
     {"routine" : "posetp__line_increment", "program_name" : "pos_lineinc"},
     {"routine" : "posetp__get_jpos_group", "program_name" : "pos_getjpos"},
-    {"routine" : "pose__vector_to_euler2", "program_name" : "pos_vec2eul"}
+    {"routine" : "pose__vector_to_euler2", "program_name" : "pos_vec2eul"},
+    {"routine" : "pose__correctFrame", "program_name" : "pos_crtFrm"}
   ],
   "interface-depends" : [
     "TPElib"

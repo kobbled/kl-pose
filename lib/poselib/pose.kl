@@ -1142,6 +1142,126 @@ ROUTINE pose__create_frame_from_normal
     RETURN( parentfrm:posetp__framevec(p1, orient, approach) )
   END pose__create_frame_from_normal
 
+
+ROUTINE lpIntersect(p1 : VECTOR; p2 : VECTOR; center : VECTOR; normal : VECTOR) : VECTOR 
+    -- input: p1, p2, plane_center, plane_normal
+    VAR
+        u       : VECTOR
+        d       : REAL
+        w       : VECTOR
+        f       : REAL
+        eps     : REAL
+
+    BEGIN
+        eps = 0.000001
+
+        -- unit vectors
+        normal = normal / math__norm(normal)
+        u  = (p2 - p1) / math__norm(p2 - p1)
+
+        -- dot product
+        d = u@normal
+
+        IF ABS(d) > eps THEN
+            w = p1 - center            -- diff
+            f = - ((normal@w) / d)     -- factor
+            u = f * u
+            RETURN(p1 + u)
+        ELSE
+            karelError(0, 'segment is parallel to plane', 0)
+        ENDIF
+        
+    END lpIntersect
+
+ROUTINE pose__correctFrame
+
+    VAR
+        -- output
+        corr_offset                     : XYZWPR
+
+        align_axis                      : VECTOR
+        align_vector                    : VECTOR
+        cross_prdct                     : VECTOR
+        dot_product                     : REAL
+        rot_quat                        : T_QUAT
+        norm_quat                       : T_QUAT
+        orient_ofst                     : XYZWPR
+        offset                          : XYZWPR
+        vect_quat                       : T_QUAT
+        new_rot_quat                    : T_QUAT
+        quat_conj                       : T_QUAT
+        rot_vector                      : T_QUAT
+        pl_normal                       : VECTOR
+        pl_center                       : VECTOR
+        posit_ofst                      : VECTOR
+        pt1                             : VECTOR
+        pt2                             : VECTOR
+
+    CONST
+        X_AXIS = 1
+        Y_AXIS = 2
+        Z_AXIS = 3
+    
+    BEGIN
+        --inputs: crrAxisNo, point1, point2
+        --outputs: correction_offset
+
+        -- There are two steps to correct frame: orientation and position corrections
+        -- points should be wrt to the correction frame (local points).
+
+        -- initialization
+        corr_offset = ZEROPOS(1)
+        offset = ZEROPOS(1)
+
+        -- orientation correction: align frame axis to normal vector
+            align_axis.x = 0
+            align_axis.y = 0
+            align_axis.z = 0
+            
+            -- select appropriate correction axis
+            SELECT crrAixsNo OF
+                CASE(X_AXIS):
+                    align_axis.x = 1
+                CASE(Y_AXIS):
+                    align_axis.y = 1
+                CASE(Z_AXIS):
+                    align_axis.z = 1
+            ENDSELECT
+            
+            -- get vector to align axis with
+            align_vector = pose__pose_to_vector(posetp__sub(p2, p1))
+            align_vector = align_vector / math__norm(align_vector)
+
+            -- get rotation in quaternion
+            cross_prdct = align_axis # align_vector
+            dot_product = align_axis @ align_vector
+            rot_quat = quaternion__set(1 + dot_product, cross_prdct.x, cross_prdct.y, cross_prdct.z)
+            norm_quat = quaternion__normalize(rot_quat)
+            orient_ofst = quaternion__quat_to_pose(norm_quat)
+
+        -- position correction: find the intersection between line and plane
+            -- construct plane center and normal
+            pl_normal.x = 0; pl_normal.y = 0; pl_normal.z = 1
+            pl_center.x = 0; pl_center.y = 0; pl_center.z = 0
+
+            -- compute intersection
+            pt1 = pose__pose_to_vector(p1)
+            pt2 = pose__pose_to_vector(p2)
+            posit_ofst = lpIntersect(pt1, pt2, pl_center, pl_normal)
+
+        -- update position offset
+        corr_offset.x = posit_ofst.x
+        corr_offset.y = posit_ofst.y
+        corr_offset.z = posit_ofst.z
+        corr_offset.w = orient_ofst.w
+        corr_offset.p = orient_ofst.p
+        corr_offset.r = orient_ofst.r
+
+        RETURN(corr_offset)
+
+    END pose__correctFrame
+
+
 ROUTINE pose__find_circle_center
   VAR
     circ : T_CIRCLE
