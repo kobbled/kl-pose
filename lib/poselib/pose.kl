@@ -914,6 +914,11 @@ ROUTINE pose__norm
     RETURN(v/math__norm(v))
   END pose__norm
 
+ROUTINE pose__dot
+    BEGIN
+        RETURN(v1.x * v2.x + v1.y * v2.y + v1.z * v2.z)
+    END pose__dot
+
 
 ROUTINE pose__cylindrical_to_cartesian
   -- ..note:: This function only transforms the coordinate, not
@@ -1156,15 +1161,15 @@ ROUTINE lpIntersect(p1 : VECTOR; p2 : VECTOR; center : VECTOR; normal : VECTOR) 
         eps = 0.000001
 
         -- unit vectors
-        normal = normal / math__norm(normal)
-        u  = (p2 - p1) / math__norm(p2 - p1)
+        normal = pose__norm(normal)
+        u  = pose__norm(p2 - p1)
 
         -- dot product
-        d = u@normal
+        d = pose__dot(u, normal)
 
         IF ABS(d) > eps THEN
             w = p1 - center            -- diff
-            f = - ((normal@w) / d)     -- factor
+            f = - (pose__dot(normal,w) / d)     -- factor
             u = f * u
             RETURN(p1 + u)
         ELSE
@@ -1230,7 +1235,7 @@ ROUTINE pose__correctFrame
             
             -- get vector to align axis with
             align_vector = pose__pose_to_vector(posetp__sub(p2, p1))
-            align_vector = align_vector / math__norm(align_vector)
+            align_vector = pose__norm(align_vector)
 
             -- get rotation in quaternion
             cross_prdct = align_axis # align_vector
