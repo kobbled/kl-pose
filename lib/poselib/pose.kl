@@ -1281,30 +1281,27 @@ ROUTINE pose__find_circle_center
 
 ROUTINE pose__find_circumcenter
   VAR
-    c : T_CIRCLE
-    v12, v13, v23 : VECTOR
-    d12, d13, d23 : REAL
-    alpha, beta, gamma : REAL
+    circ : T_CIRCLE
+    A, B, C, D : REAL
   BEGIN
-    v12 = p2 - p1
-    v13 = p3 - p1
-    v23 = p3 - p2
+    A = (p1.x * (p2.y - p3.y)) - (p1.y * (p2.x - p3.x)) + (p2.x * p3.y) - (p3.x * p2.y)
 
-    -- using barycentric coordinates
-    -- (ref: https://en.wikipedia.org/wiki/Circumscribed_circle#Circumcenter_coordinates)
-    d12 = math__pow(math__norm(v12), 2)
-    d13 = math__pow(math__norm(v13), 2)
-    d23 = math__pow(math__norm(v23), 2)
+    IF ABS(A) < EPSILON THEN
+      karelError(VAR_UNINIT, 'Points are collinear', ER_ABORT)
+      RETURN(circ)
+    ENDIF
 
-    alpha = d23 * (d12 + d13 - d23)
-    beta = d13 * (d12 + d23 - d13)
-    gamma = d12 * (d13 + d23 - d12)
+    B = (p1.x * p1.x + p1.y * p1.y) * (p3.y - p2.y) + (p2.x * p2.x + p2.y * p2.y) * (p1.y - p3.y) + (p3.x * p3.x + p3.y * p3.y) * (p2.y - p1.y)
+    C = (p1.x * p1.x + p1.y * p1.y) * (p2.x - p3.x) + (p2.x * p2.x + p2.y * p2.y) * (p3.x - p1.x) + (p3.x * p3.x + p3.y * p3.y) * (p1.x - p2.x)
+    D = (p1.x * p1.x + p1.y * p1.y) * (p3.x * p2.y - p2.x * p3.y) + (p2.x * p2.x + p2.y * p2.y) * (p1.x * p3.y - p3.x * p1.y) + (p3.x * p3.x + p3.y * p3.y) * (p2.x * p1.y - p1.x * p2.y)
 
-    c.center = (alpha*p1 + beta*p2 + gamma*p3)/(alpha + beta + gamma)
+    circ.center.x = -B / (A * 2)
+    circ.center.y = -C / (A * 2)
+    circ.center.z = (p1.z + p2.z + p3.z)/3
 
-    c.radius = math__norm(c.center-p1)
+    circ.radius = SQRT(((B * B) + (C * C) - (4 * A * D)) / (4 * A * A))
 
-    RETURN(c)
+    RETURN(circ)
   END pose__find_circumcenter
 
 ROUTINE pose__vector_to_euler
