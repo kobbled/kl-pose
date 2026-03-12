@@ -48,7 +48,7 @@ ROUTINE pose__set_xyzwpr_str(pose_in : STRING; conf_str : STRING) : XYZWPR FROM 
 
 declare_function(prog_name,set_posreg_xyz,prog_name_alias,setprx)
 ROUTINE pose__set_posreg_xyz(pose_in : XYZWPR ; reg_no, grp_no : INTEGER) FROM pose
-declare_function(prog_name,set_posreg_xyz_ext,prog_name_alias,setprxext)
+declare_function(prog_name,set_posreg_xyz_ext,prog_name_alias,setprxe)
 ROUTINE pose__set_posreg_xyz_ext(pose_in : XYZWPREXT ; reg_no, grp_no : INTEGER) FROM pose
 declare_function(prog_name,set_posreg_joint,prog_name_alias,setprj)
 ROUTINE pose__set_posreg_joint(pose_in : JOINTPOS ; reg_no, grp_no : INTEGER) FROM pose
